@@ -12,6 +12,7 @@ import BlogMain from "./page/Blog/BlogMain";
 import BlogSearch from "./page/Blog/BlogSearch";
 import BlogWriting from "./page/Blog/BlogWriting";
 import PortfolioMain from "./page/Portfolio/PortfolioMain";
+//import header from "./particals/header.js";
 
 import "tailwindcss/tailwind.css";
 
@@ -75,9 +76,6 @@ function App() {
           />
         </Routes>
       </BrowserRouter>
-      <div className="App">
-        <header className="App-header">{testStr}</header>
-      </div>
     </>
   );
 }

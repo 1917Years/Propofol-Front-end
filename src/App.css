@@ -13,6 +13,61 @@
   }
 }
 
+@font-face {
+  font-family: "pretend-medium";
+  src: url("./font/Pretendard-Medium.ttf");
+}
+
+@font-face {
+  font-family: "pretend-bold";
+  src: url("./font/Pretendard-Bold.ttf");
+}
+
+@font-face {
+  font-family: "pretend-EBold";
+  src: url("./font/Pretendard-ExtraBold.ttf");
+}
+
+@font-face {
+  font-family: "pretend-ELight";
+  src: url("./font/Pretendard-ExtraLight.ttf");
+}
+
+@font-face {
+  font-family: "pretend-light";
+  src: url("./font/Pretendard-Light.ttf");
+}
+
+@font-face {
+  font-family: "pretend-Reg";
+  src: url("./font/Pretendard-Regular.ttf");
+}
+
+@font-face {
+  font-family: "pretend-SBold";
+  src: url("./font/Pretendard-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "pretend-Thin";
+  src: url("./font/Pretendard-Thin.ttf");
+}
+
+@font-face {
+  font-family: "quiche-Sans";
+  src: url("./font/QuicheSans.ttf");
+}
+
+@font-face {
+  font-family: "consoleFont";
+  src: url("./font/neodgm.ttf");
+}
+
+@font-face {
+  font-family: "consoleFont2";
+  src: url("./font/PFStardust.ttf");
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

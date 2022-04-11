@@ -57,7 +57,9 @@ module.exports = {
         confont1: ["consoleFont"],
         confont2: ["consoleFont2"],
       },
-
+      fontWeight: {
+        ssbold: 500,
+      },
       backgroundImage: {
         universe:
           "url('https://media.discordapp.net/attachments/874660081160044625/890236396487442472/2021_09_22_23_00_1.gif')",
