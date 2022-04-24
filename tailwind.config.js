@@ -13,6 +13,8 @@ module.exports = {
         bg2: "#908D8E",
         bg3: "#40382F",
         bg4: "#DCDCDC",
+        bg5: "#666263",
+        bg6: "#615e60",
         date: "#5755C3",
         scroll: "#A2B0C0",
         sscroll: "#49596B",
@@ -80,6 +82,7 @@ module.exports = {
       fontSize: {
         xs: ".75rem",
         tiny: ".875rem",
+        'baselg': '1.075rem',
         "3xl": "1.875rem",
         "4xl": "2.25rem",
         "5xl": "3rem",

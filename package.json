@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "animate.css": "^4.1.1",
     "axios": "^0.26.1",
+    "http-proxy-middleware": "^2.0.6",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.3.0",
@@ -27,7 +28,7 @@
       "react-app/jest"
     ]
   },
-  "proxy": "http://localhost:8080",
+  "proxy": "http://10.21.20.11:8080",
   "browserslist": {
     "production": [
       ">0.2%",

@@ -83,10 +83,40 @@
   color: #61dafb;
 }
 
+
+.text-shadow {
+  text-shadow:
+    0 0 1em rgb(0, 0, 0),
+    0 0 1em rgb(0, 0, 0);
+}
+
+.text-shadow-md {
+  text-shadow: 0 4px 8px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.08);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 15px 30px rgba(0, 0, 0, 0.11), 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.text-shadow-none {
+  text-shadow: none;
+}
+
+
+.form-tick:checked {
+  border-color: transparent;
+  background-image: url("data:image/svg+xml,%3csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M5.707 7.293a1 1 0 0 0-1.414 1.414l2 2a1 1 0 0 0 1.414 0l4-4a1 1 0 0 0-1.414-1.414L7 8.586 5.707 7.293z'/%3e%3c/svg%3e");
+  background-size: 100% 100%;
+  background-position: 50%;
+  background-repeat: no-repeat;
+  background-color: rgb(188, 189, 255);
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }

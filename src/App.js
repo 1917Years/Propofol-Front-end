@@ -12,6 +12,9 @@ import BlogMain from "./page/Blog/BlogMain";
 import BlogSearch from "./page/Blog/BlogSearch";
 import BlogWriting from "./page/Blog/BlogWriting";
 import PortfolioMain from "./page/Portfolio/PortfolioMain";
+import { SERVER_URL } from "./utils/SRC";
+import { createRoot } from 'react-dom/client';
+
 //import header from "./particals/header.js";
 
 import "tailwindcss/tailwind.css";
@@ -26,20 +29,33 @@ function App() {
   }
 
   // 첫 번째 렌더링을 마친 후 실행
+  /*
   useEffect(() => {
     axios({
-      url: "/home",
+      url: SERVER_URL + "/api/v1/health-check",
       method: "GET",
     }).then((res) => {
+      console.log(res.data);
       callback(res.data);
+    }).catch((err) => {
+      console.log("왜안돼");
+      if (err.response) {
+      }
     });
   }, []);
+*/
+  const Main = (props) => {
+    return <Mainpage {...props}></Mainpage>;
+  };
 
   return (
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" exact={true} element={<Mainpage />} />
+          <Route path="/"
+            exact={true}
+            element={<Main />}
+          />
         </Routes>
         <Routes>
           <Route path="/login" exact={true} element={<Login />} />

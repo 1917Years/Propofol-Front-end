@@ -1,7 +1,9 @@
 import React from "react";
 import "animate.css";
+import { useNavigate, Navigate } from "react-router-dom";
 
 function Mainpage(props) {
+  const navigate = useNavigate();
   const style = {
     backgroundImage:
       "url(https://cdn.discordapp.com/attachments/874658668434583658/962634682908942346/helena-lopes-UZe35tk5UoA-unsplash.jpg)",
@@ -11,11 +13,11 @@ function Mainpage(props) {
       <main>
         <div class="pt-20" style={{ minHeight: "75vh" }}>
           <div
-            class="bg-cover bg-center absolute top-0 w-full h-9/10 bg-bg2 bg-blend-multiply"
+            class="bg-cover bg-center absolute top-0 w-full h-[48rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%] "
             style={style}
           ></div>
-          <div class="container relative mx-auto">
-            <div class="w-full mt-20 pt-20 ml-auto mr-auto text-center pr-12">
+          <div class="relative mx-auto flex flex-col">
+            <div class="w-full mt-20 pt-20 ml-auto mr-auto text-center text-shadow">
               <div class="mb-10">
                 <h1 class="animate__animated animate__backInUp text-white font-test text-6xl">
                   Propofol
@@ -35,14 +37,19 @@ function Mainpage(props) {
               </p>
             </div>
             <div class="self-center">
-              <button class="text-2xl font-sbtest text-gray-200 px-8 py-4 rounded-xl bg-gray-900 hover:bg-gray-600 hover:text-gray-50">
+              <button
+                class="text-2xl font-sbtest text-gray-200 px-8 py-4 rounded-xl bg-gray-900 hover:bg-gray-600 hover:text-gray-50 mt-10"
+                onClick={() => {
+                  navigate('/login');
+                }}
+              >
                 Login
               </button>
             </div>
           </div>
         </div>
 
-        <section class="pb-40 bg-bg2 z-40">
+        <section class="relative pb-40 bg-bg2 z-40">
           <div class="container mx-auto px-4">
             <div class="flex flex-wrap items-center">
               <div class="w-full md:w-6/12 px-4 mr-auto ml-auto">
