@@ -6,20 +6,41 @@ function Mainpage(props) {
   const navigate = useNavigate();
   const style = {
     backgroundImage:
-      "url(https://cdn.discordapp.com/attachments/874658668434583658/962634682908942346/helena-lopes-UZe35tk5UoA-unsplash.jpg)",
+      "url(https://cdn.discordapp.com/attachments/766266146520563785/967860864743002112/cherrydeck-rMILC1PIwM0-unsplash.jpg)",
   };
   return (
     <div class="text-gray-800 antialiased z-1">
       <main>
-        <div class="pt-20" style={{ minHeight: "75vh" }}>
+        <div class="pt-20" style={{ minHeight: "54rem" }}>
           <div
-            class="bg-cover bg-center absolute top-0 w-full h-[48rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%] "
+            class="bg-cover bg-center absolute top-0 w-full h-[58rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%]  "
             style={style}
           ></div>
           <div class="relative mx-auto flex flex-col">
-            <div class="w-full mt-20 pt-20 ml-auto mr-auto text-center text-shadow">
+            <div class="absolute left-1/4 flex flex-row gap-[145%]">
+              <div>
+                <div class="text-white font-ttest">
+                  <div class="p-3 w-20 h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle pt-4 text-3xl">1</div>
+                  <div class="mt-3 text-center text-base">TIL 블로그</div>
+                </div>
+                <div class="absolute ml-36 bottom-24 border-t border-white opacity-50 w-full"></div>
+              </div>
+              <div>
+                <div class="text-white font-ttest">
+                  <div class="p-3 w-20 h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle pt-4 text-3xl">2</div>
+                  <div class="mt-3 text-center text-base">포트폴리오</div>
+                </div>
+                <div class="absolute ml-36 bottom-24 border-t border-white opacity-50 w-full"></div>
+              </div>
+
+              <div class="text-white font-ttest">
+                <div class="p-3 w-20 h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle pt-4 text-3xl">3</div>
+                <div class="mt-3 text-center text-base">프로젝트 매칭</div>
+              </div>
+            </div>
+            <div class="w-full mt-20 pt-20 ml-auto mr-auto text-center border-white">
               <div class="mb-10">
-                <h1 class="animate__animated animate__backInUp text-white font-test text-6xl">
+                <h1 class="mt-10 animate__animated animate__backInUp text-white font-rumpi text-6xl text-shadow">
                   Propofol
                 </h1>
                 <p class="animate__animated animate__fadeIn text-2xl text-white opacity-90 font-ltest">
@@ -27,7 +48,7 @@ function Mainpage(props) {
                   <a class="font-sbtest">Po</a>rt<a class="sbtest">fol</a>io )
                 </p>
               </div>
-              <p class="animate__animated animate__fadeIn pt-20 font-ltest text-lg text-gray-300">
+              <p class="animate__animated animate__fadeIn pt-10 font-ltest text-lg text-gray-300">
                 <p>
                   힘든 일일 학습, 지겨운 포트폴리오 작성, 번거로운 프로젝트
                   매칭.
@@ -36,45 +57,43 @@ function Mainpage(props) {
                 <p>프로포폴과 함께라면, 편하게 해결할 수 있어요.</p>
               </p>
             </div>
-            <div class="self-center">
+            <div class="self-center relative transform text-2xl font-sbtest text-white z-40 mt-12">
               <button
-                class="text-2xl font-sbtest text-gray-200 px-8 py-4 rounded-xl bg-gray-900 hover:bg-gray-600 hover:text-gray-50 mt-10"
+                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-200/10 hover:text-white mt-12 drop-shadow-lg"
                 onClick={() => {
                   navigate('/login');
                 }}
               >
                 Login
               </button>
+              <div class="font-ltest text-lg text-center my-2">or</div>
+              <button
+                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-200/10 hover:text-white drop-shadow-lg"
+                onClick={() => {
+                  navigate('/register');
+                }}
+              >
+                Register
+              </button>
             </div>
           </div>
         </div>
 
-        <section class="relative pb-40 bg-bg2 z-40">
-          <div class="container mx-auto px-4">
+        <section class="relative py-32 bg-white ">
+          <div class="container mx-auto px-4 z-30">
             <div class="flex flex-wrap items-center">
               <div class="w-full md:w-6/12 px-4 mr-auto ml-auto">
                 <div class="text-gray-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-gray-300"></div>
 
                 <h3 class="z-40 font-test text-3xl mb-2 font-semibold leading-normal">
-                  Gitime와 함께라면, 프로젝트 관리가 쉬워질 거예요.
+                  TIL 블로그
                 </h3>
                 <p class="font-test text-lg font-light leading-relaxed mt-4 mb-4 text-gray-700">
-                  더 이상 프로젝트와 관련된 업무들을 분산된 곳에서 처리할 필요가
-                  없어요. 업무들을 한 눈에 보기 쉽게 제공하는 Gitime만의
-                  대시보드를 통해, 통합된 업무 관리 서비스를 시작해보세요.
+                  솰랴솰랴
                 </p>
                 <p class="font-test text-lg font-light leading-relaxed mt-0 mb-8 text-gray-700">
-                  가입과 연동이라는 간단한 과정만으로도 모든 기능을 이용할 수
-                  있어요. 가입해 Gitime와 함께하세요!
+                  솰랴솰랴
                 </p>
-                <button
-                  class="font-ebtest font-bold text-gray-500 px-8 py-4 rounded-md bg-gray-50 hover:bg-gray-400 hover:text-gray-50"
-                  onClick={() => {
-                    props.history.push("/register");
-                  }}
-                >
-                  Sign Up!
-                </button>
               </div>
               <div class="w-full md:w-4/12 px-4 mr-auto ml-auto">
                 <div class="relative flex flex-col min-w-0 break-words bg-gray-300 w-full mb-6 shadow-lg rounded-lg bg-bg3">
@@ -287,7 +306,7 @@ function Mainpage(props) {
           </div>
         </section>
       </main>
-    </div>
+    </div >
   );
 }
 

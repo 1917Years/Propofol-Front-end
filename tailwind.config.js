@@ -18,6 +18,7 @@ module.exports = {
         date: "#5755C3",
         scroll: "#A2B0C0",
         sscroll: "#49596B",
+        bbg: "#E8E3E1",
       },
 
       transitionDelay: {
@@ -58,6 +59,7 @@ module.exports = {
         quiche: ["quiche-Sans"],
         confont1: ["consoleFont"],
         confont2: ["consoleFont2"],
+        rumpi: ["rumpi"],
       },
       fontWeight: {
         ssbold: 500,

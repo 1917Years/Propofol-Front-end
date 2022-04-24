@@ -68,6 +68,11 @@
   src: url("./font/PFStardust.ttf");
 }
 
+@font-face {
+  font-family: "rumpi";
+  src: url("./font/Rumpi.ttf");
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

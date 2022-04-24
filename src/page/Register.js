@@ -158,7 +158,7 @@ function Register() {
     </div>
     <div className="Login" class="flex flex-col gap-6 mt-16">
       <div>
-        <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5">
+        <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
           <input
             class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
             placeholder="이메일"
@@ -172,9 +172,9 @@ function Register() {
             중복 확인
           </button>
         </div>
-        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1">{emailMsg}</div>
+        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">{emailMsg}</div>
       </div>
-      <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5">
+      <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
         <input
           class="w-full py-2 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-lg font-ltest"
           placeholder="비밀번호"
@@ -183,7 +183,7 @@ function Register() {
         />
         <div class="text-red-500 font-ltest mt-1">{pwdMsg}</div>
       </div>
-      <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 ">
+      <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
         <input
           class="w-full py-2 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-lg font-ltest"
           placeholder="비밀번호 확인"
@@ -192,7 +192,7 @@ function Register() {
         />
         <div class="text-red-500 font-ltest mt-1">{pwdCheckMsg}</div>
       </div>
-      <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5">
+      <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
         <input
           class="py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
           placeholder="핸드폰 번호"
@@ -204,7 +204,7 @@ function Register() {
           인증
         </button>
       </div>
-      <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5">
+      <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
         <input
           class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
           placeholder="인증번호"
@@ -217,7 +217,7 @@ function Register() {
         </button>
       </div>
       <select
-        class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-2 px-3 border rounded-lg bg-white border-gray-300 focus:outline-0 text-lg font-ltest text-gray-400"
+        class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-2 px-3 border rounded-lg bg-white border-gray-300 focus:outline-0 text-lg font-ltest text-gray-400 min-w-[20rem]"
         placeholder="주요 개발 분야"
         onChange={onDevInputHandler}
       >
@@ -229,12 +229,12 @@ function Register() {
       </select>
       <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 flex items-center justify-center gap-3 mt-2">
         <input type="checkbox" class="rounded-sm appearance-none w-5 h-5 border border-gray-300 checked:border-transparent checked:back
-        form-tick
+        form-tick min-w-[1em] min-h-[1em]
         " />
-        <div class="text-center text-gray-400 text-baselg font-ltest">이용약관 및 개인정보 처리방침에 동의합니다.</div>
+        <div class="text-center text-gray-400 2xl:text-baselg font-ltest min-w-[18em] xl:text-base">이용약관 및 개인정보 처리방침에 동의합니다.</div>
       </div>
       <button
-        class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 rounded-lg bg-black text-white py-3 mt-3 text-2xl font-sbtest"
+        class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 rounded-lg bg-black text-white py-3 mt-3 text-2xl font-sbtest min-w-[20rem]"
         onClick={() => {
           onRegisterButtonHandler();
           const data = {
@@ -248,7 +248,7 @@ function Register() {
       >
         계정 만들기
       </button>
-      <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-1 border-t pt-5 border-gray-400 flex justify-center gap-2 text-gray-500 font-ltest text-center">
+      <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-1 border-t pt-5 border-gray-400 flex justify-center gap-2 text-gray-500 font-ltest text-center min-w-[20rem]">
         <div>이미 계정이 있다면? </div>
         <button
           onClick={() => {

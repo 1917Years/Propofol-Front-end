@@ -57,19 +57,19 @@ function Login(props) {
           </p>
         </div>
       </div>
-      <div className="Login" class="flex flex-col gap-8 mt-16">
+      <div className="Login" class="flex flex-col gap-8 mt-16 ">
         <input
-          class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-3 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-xl font-ltest"
+          class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-3 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-xl font-ltest min-w-[20rem]"
           placeholder="아이디"
           onChange={onEmailHandler}
           type="text" />
         <input
-          class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-3 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-xl font-ltest"
+          class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-3 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-xl font-ltest min-w-[20rem]"
           placeholder="비밀번호"
           onChange={onPasswordHandler}
           type="password" />
         <button
-          class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 rounded-lg bg-black text-white py-3 text-2xl font-sbtest"
+          class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 rounded-lg bg-black text-white py-3 text-2xl font-sbtest min-w-[20rem]"
           onClick={() => {
             const data = {
               email: email,
@@ -90,7 +90,7 @@ function Login(props) {
         >
           Login
         </button>
-        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-1 border-b pb-5 border-gray-400 flex justify-center gap-2 text-gray-500 font-ltest text-center">
+        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-1 border-b pb-5 border-gray-400 flex justify-center gap-2 text-gray-500 font-ltest text-center min-w-[20rem]">
           <div>아직 계정이 없다면? </div>
           <button
             onClick={() => {
@@ -100,7 +100,7 @@ function Login(props) {
         </div>
       </div>
       <div className="SocialLogin" class="">
-        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-10 text-gray-500 font-ltest text-center text-lg">
+        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-10 text-gray-500 font-ltest text-center text-lg min-w-[20rem]">
           <h1>혹은</h1>
           <p>SNS 계정으로 로그인하기</p>
         </div>
