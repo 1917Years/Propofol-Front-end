@@ -19,6 +19,7 @@ module.exports = {
         scroll: "#A2B0C0",
         sscroll: "#49596B",
         bbg: "#E8E3E1",
+        bluepurple: "#8F8BD9",
       },
 
       transitionDelay: {

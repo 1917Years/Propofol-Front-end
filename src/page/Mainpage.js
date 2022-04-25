@@ -1,6 +1,7 @@
 import React from "react";
 import "animate.css";
 import { useNavigate, Navigate } from "react-router-dom";
+import { Link } from 'react-scroll';
 
 function Mainpage(props) {
   const navigate = useNavigate();
@@ -11,41 +12,57 @@ function Mainpage(props) {
   return (
     <div class="text-gray-800 antialiased z-1">
       <main>
+        <div class="absolute h-full 2xl:ml-[15%] border-l border-white opacity-50 z-40 animate__animated animate__fadeIn "></div>
+        <div class="absolute h-full 2xl:ml-[85%] border-l border-white opacity-50 z-40 animate__animated animate__fadeIn "></div>
         <div class="pt-20" style={{ minHeight: "54rem" }}>
+
           <div
             class="bg-cover bg-center absolute top-0 w-full h-[58rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%]  "
             style={style}
-          ></div>
+          >
+          </div>
           <div class="relative mx-auto flex flex-col">
-            <div class="absolute left-1/4 flex flex-row gap-[145%]">
+            <div class="animate__animated animate__fadeIn absolute flex lg:gap-[145%] md:gap-[130%] gap-[15px] 3xl:left-1/4 2xl:left-[20%] xl:left-[17%] md:left-[10%] left-[5%]">
               <div>
-                <div class="text-white font-ttest">
-                  <div class="p-3 w-20 h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle pt-4 text-3xl">1</div>
-                  <div class="mt-3 text-center text-base">TIL 블로그</div>
+                <div class="text-white font-ttest flex md:flex-col flex-row ">
+                  <Link to="TIL" spy={true} smooth={true}>
+                    <button class="hover:animate-pulse p-3 w-12 h-12 md:pt-4 lg:w-20 lg:h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle lg:pt-4 lg:text-3xl md:w-16 md:h-16 md:text-2xl">
+                      1
+                    </button>
+                  </Link>
+                  <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center lg:text-base md:text-sm">TIL 블로그</div>
                 </div>
-                <div class="absolute ml-36 bottom-24 border-t border-white opacity-50 w-full"></div>
+                <div class="absolute lg:ml-36 lg:bottom-20 md:ml-20 md:bottom-20 border-t border-white opacity-50 md:w-full"></div>
               </div>
               <div>
-                <div class="text-white font-ttest">
-                  <div class="p-3 w-20 h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle pt-4 text-3xl">2</div>
-                  <div class="mt-3 text-center text-base">포트폴리오</div>
+                <div class="text-white font-ttest flex md:flex-col flex-row">
+                  <Link to="Portfolio" spy={true} smooth={true}>
+                    <button class="hover:animate-pulse p-3 w-12 h-12 md:pt-4 lg:w-20 lg:h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle lg:pt-4 lg:text-3xl md:w-16 md:h-16 md:text-2xl">
+                      2
+                    </button>
+                  </Link>
+                  <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center lg:text-base md:text-sm">포트폴리오</div>
                 </div>
-                <div class="absolute ml-36 bottom-24 border-t border-white opacity-50 w-full"></div>
+                <div class="absolute lg:ml-36 lg:bottom-20 md:ml-20 md:bottom-20 border-t border-white opacity-50 md:w-full"></div>
               </div>
 
-              <div class="text-white font-ttest">
-                <div class="p-3 w-20 h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle pt-4 text-3xl">3</div>
-                <div class="mt-3 text-center text-base">프로젝트 매칭</div>
+              <div class="text-white font-ttest flex md:flex-col flex-row">
+                <Link to="Project" spy={true} smooth={true}>
+                  <button class="hover:animate-pulse p-3 w-12 h-12 md:pt-4 lg:w-20 lg:h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle lg:pt-4 lg:text-3xl md:w-16 md:h-16 md:text-2xl">
+                    3
+                  </button>
+                </Link>
+                <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center text-sm">프로젝트 매칭</div>
               </div>
             </div>
             <div class="w-full mt-20 pt-20 ml-auto mr-auto text-center border-white">
               <div class="mb-10">
-                <h1 class="mt-10 animate__animated animate__backInUp text-white font-rumpi text-6xl text-shadow">
+                <h1 class="mt-10 text-white font-rumpi text-6xl text-shadow">
                   Propofol
                 </h1>
                 <p class="animate__animated animate__fadeIn text-2xl text-white opacity-90 font-ltest">
                   ( <a class="font-sbtest">Pro</a>file +{" "}
-                  <a class="font-sbtest">Po</a>rt<a class="sbtest">fol</a>io )
+                  <a class="font-sbtest">Po</a>rt<a class="font-sbtest">fol</a>io )
                 </p>
               </div>
               <p class="animate__animated animate__fadeIn pt-10 font-ltest text-lg text-gray-300">
@@ -57,32 +74,34 @@ function Mainpage(props) {
                 <p>프로포폴과 함께라면, 편하게 해결할 수 있어요.</p>
               </p>
             </div>
-            <div class="self-center relative transform text-2xl font-sbtest text-white z-40 mt-12">
+            <div class="self-center relative transform text-2xl font-test text-white z-40 mt-12 animate__animated animate__backInUp ">
               <button
-                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-200/10 hover:text-white mt-12 drop-shadow-lg"
+                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-100/10 hover:text-white mt-12 drop-shadow-lg"
                 onClick={() => {
                   navigate('/login');
                 }}
               >
-                Login
+                로그인
               </button>
               <div class="font-ltest text-lg text-center my-2">or</div>
               <button
-                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-200/10 hover:text-white drop-shadow-lg"
+                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-100/10 hover:text-white drop-shadow-lg"
                 onClick={() => {
                   navigate('/register');
                 }}
               >
-                Register
+                회원가입
               </button>
             </div>
           </div>
         </div>
 
-        <section class="relative py-32 bg-white ">
-          <div class="container mx-auto px-4 z-30">
+        <section class="relative bg-white" id="TIL">
+          <div class="absolute h-full 2xl:ml-[15%] border-l border-gray-300 z-40 animate__animated animate__fadeIn "></div>
+          <div class="absolute h-full 2xl:ml-[85%] border-l border-gray-300 z-40 animate__animated animate__fadeIn "></div>
+          <div class="container mx-auto px-4 z-30 py-32 ">
             <div class="flex flex-wrap items-center">
-              <div class="w-full md:w-6/12 px-4 mr-auto ml-auto">
+              <div class="w-full md:w-1/4 px-4 mr-auto ml-auto">
                 <div class="text-gray-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-gray-300"></div>
 
                 <h3 class="z-40 font-test text-3xl mb-2 font-semibold leading-normal">
@@ -131,7 +150,7 @@ function Mainpage(props) {
           </div>
         </section>
 
-        <section class="relative py-32 bg-bg4">
+        <section class="relative py-32 bg-bg4" id="Portfolio">
           <div
             class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
             style={{ height: "80px", transform: "translateZ(0px)" }}
@@ -226,7 +245,7 @@ function Mainpage(props) {
         <section class="text-gray-600 body-font bg-bg4">
           <div class="container px-5 py-14 mx-auto"></div>
         </section>
-        <section class="pb-20 relative block bg-gray-900">
+        <section class="pb-20 relative block bg-gray-900" id="Project">
           <div
             class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
             style={{ height: "80px", transform: "translateZ(0px)" }}

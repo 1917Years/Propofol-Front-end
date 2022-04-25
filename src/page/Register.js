@@ -147,12 +147,12 @@ function Register() {
   return (<div class="w-full font-test">
     <div className="Header" class="">
       <div class="mt-10 text-center">
-        <h1 class="text-black font-test text-6xl">
+        <h1 class="text-black font-rumpi text-6xl">
           Propofol
         </h1>
-        <p class="text-2xl text-black opacity-90 font-ltest">
-          ( <a class="font-sbtest">Pro</a>file +{" "}
-          <a class="font-sbtest">Po</a>rt<a class="sbtest">fol</a>io )
+        <p class="text-2xl opacity-90 font-ltest text-gray-500">
+          ( <a class="font-sbtest text-black">Pro</a>file +{" "}
+          <a class="font-sbtest text-black">Po</a>rt<a class="font-sbtest text-black">fol</a>io )
         </p>
       </div>
     </div>

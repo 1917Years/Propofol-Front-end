@@ -12,6 +12,7 @@ import BlogMain from "./page/Blog/BlogMain";
 import BlogSearch from "./page/Blog/BlogSearch";
 import BlogWriting from "./page/Blog/BlogWriting";
 import PortfolioMain from "./page/Portfolio/PortfolioMain";
+import Header from "./particals/Header";
 import { SERVER_URL } from "./utils/SRC";
 import { createRoot } from 'react-dom/client';
 
@@ -48,49 +49,37 @@ function App() {
     return <Mainpage {...props}></Mainpage>;
   };
 
+  const Hd = (props) => {
+    return
+    <Header
+      props={props}
+    />;
+  }
+
   return (
     <>
       <BrowserRouter>
+        <Header />
         <Routes>
           <Route path="/"
             exact={true}
             element={<Main />}
           />
-        </Routes>
-        <Routes>
           <Route path="/login" exact={true} element={<Login />} />
-        </Routes>
-        <Routes>
           <Route path="/register" exact={true} element={<Register />} />
-        </Routes>
-
-        <Routes>
           <Route path="/pm/main" exact={true} element={<ProjectMain />} />
-        </Routes>
-        <Routes>
           <Route path="/pm/detail" exact={true} element={<ProjectDetail />} />
-        </Routes>
-        <Routes>
           <Route path="/pm/search" exact={true} element={<ProjectSearch />} />
-        </Routes>
-
-        <Routes>
           <Route path="/blog/main" exact={true} element={<BlogMain />} />
-        </Routes>
-        <Routes>
           <Route path="/blog/search" exact={true} element={<BlogSearch />} />
-        </Routes>
-        <Routes>
           <Route path="/blog/writing" exact={true} element={<BlogWriting />} />
-        </Routes>
-
-        <Routes>
           <Route
             path="/portfolio/main"
             exact={true}
             element={<PortfolioMain />}
           />
         </Routes>
+
       </BrowserRouter>
     </>
   );
