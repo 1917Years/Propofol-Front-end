@@ -104,9 +104,17 @@ function Login(props) {
           <h1>혹은</h1>
           <p>SNS 계정으로 로그인하기</p>
         </div>
-        <div class="flex">
-          <button>
-
+        <div class="mt-10 flex justify-center ">
+          <button
+            class="w-[20%] z-10"
+            onClick={() => {
+              window.location.href =
+                "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=678d756d0781894fae5a6e2baebfd493&redirect_uri=http://localhost:3000/oauth2/kakao/login";
+            }}>
+            <img
+              src="https://cdn.discordapp.com/attachments/874658668434583655/968415948904210472/kakao_login_medium_wide.png"
+              class="w-full align-middle rounded-t-lg"
+            ></img>
           </button>
 
         </div>

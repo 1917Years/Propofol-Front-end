@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom"; import { BrowserRouter as Router } from 'react-router-dom';
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
@@ -12,15 +12,15 @@ import BlogMain from "./page/Blog/BlogMain";
 import BlogSearch from "./page/Blog/BlogSearch";
 import BlogWriting from "./page/Blog/BlogWriting";
 import PortfolioMain from "./page/Portfolio/PortfolioMain";
+import T1 from "./page/Portfolio/Template/T1";
 import Header from "./particals/Header";
 import { SERVER_URL } from "./utils/SRC";
 import { createRoot } from 'react-dom/client';
-
-//import header from "./particals/header.js";
-
 import "tailwindcss/tailwind.css";
+import KakaoOauth from "./utils/oauth/KakaoOauth";
 
 function App() {
+  //const cors = require('cors');
   // 요청받은 정보를 담아줄 변수 선언
   const [testStr, setTestStr] = useState("");
 
@@ -31,20 +31,20 @@ function App() {
 
   // 첫 번째 렌더링을 마친 후 실행
   /*
-  useEffect(() => {
-    axios({
-      url: SERVER_URL + "/api/v1/health-check",
-      method: "GET",
-    }).then((res) => {
-      console.log(res.data);
-      callback(res.data);
-    }).catch((err) => {
-      console.log("왜안돼");
-      if (err.response) {
-      }
-    });
-  }, []);
-*/
+    useEffect(() => {
+      axios({
+        url: SERVER_URL + "/test",
+        method: "GET",
+      }).then((res) => {
+        console.log(res.data);
+        callback(res.data);
+      }).catch((err) => {
+        //console.log("왜안돼");
+        if (err.response) {
+        }
+      });
+    }, []);
+  */
   const Main = (props) => {
     return <Mainpage {...props}></Mainpage>;
   };
@@ -56,33 +56,41 @@ function App() {
     />;
   }
 
+  const KakOauth = (props) => {
+    return <KakaoOauth {...props}></KakaoOauth>;
+  }
+
+
   return (
     <>
       <BrowserRouter>
         <Header />
         <Routes>
           <Route path="/"
-            exact={true}
             element={<Main />}
           />
-          <Route path="/login" exact={true} element={<Login />} />
-          <Route path="/register" exact={true} element={<Register />} />
-          <Route path="/pm/main" exact={true} element={<ProjectMain />} />
-          <Route path="/pm/detail" exact={true} element={<ProjectDetail />} />
-          <Route path="/pm/search" exact={true} element={<ProjectSearch />} />
-          <Route path="/blog/main" exact={true} element={<BlogMain />} />
-          <Route path="/blog/search" exact={true} element={<BlogSearch />} />
-          <Route path="/blog/writing" exact={true} element={<BlogWriting />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/pm/main" element={<ProjectMain />} />
+          <Route path="/pm/detail" element={<ProjectDetail />} />
+          <Route path="/pm/search" element={<ProjectSearch />} />
+          <Route path="/blog/main" element={<BlogMain />} />
+          <Route path="/blog/search" element={<BlogSearch />} />
+          <Route path="/blog/writing" element={<BlogWriting />} />
+          <Route
+            path="/oauth2/kakao/login"
+            element={<KakOauth />}
+          />
           <Route
             path="/portfolio/main"
-            exact={true}
             element={<PortfolioMain />}
           />
+          <Route path="/portfolio/template/t1" element={<T1 />} />
         </Routes>
 
       </BrowserRouter>
     </>
   );
 }
-
+//app.use(cors());
 export default App;
