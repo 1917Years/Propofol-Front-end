@@ -36,12 +36,12 @@ function Login(props) {
   const [emailError, setEmailError] = useState(false);
   const [pwdError, setPwdError] = useState(false);
   const [loginError, setLoginError] = useState(false);
-  const onEmailHandler = (event) => {
-    setEmail(event.currentTarget.value);
+  const onEmailHandler = (e) => {
+    setEmail(e.currentTarget.value);
     console.log(email);
   };
-  const onPasswordHandler = (event) => {
-    setPassword(event.currentTarget.value);
+  const onPasswordHandler = (e) => {
+    setPassword(e.currentTarget.value);
     console.log(password);
   };
   return (

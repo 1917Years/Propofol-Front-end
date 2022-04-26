@@ -12,19 +12,17 @@ function Mainpage(props) {
   return (
     <div class="text-gray-800 antialiased z-1">
       <main>
-        <div class="absolute h-full 2xl:ml-[15%] border-l border-white opacity-50 z-40 animate__animated animate__fadeIn "></div>
-        <div class="absolute h-full 2xl:ml-[85%] border-l border-white opacity-50 z-40 animate__animated animate__fadeIn "></div>
+        <div class="absolute w-[75%] h-full left-[12.5%] xl:border-l xl:border-r border-white opacity-50 z-10"></div>
         <div class="pt-20" style={{ minHeight: "54rem" }}>
-
           <div
             class="bg-cover bg-center absolute top-0 w-full h-[58rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%]  "
             style={style}
           >
           </div>
           <div class="relative mx-auto flex flex-col">
-            <div class="animate__animated animate__fadeIn absolute flex lg:gap-[145%] md:gap-[130%] gap-[15px] 3xl:left-1/4 2xl:left-[20%] xl:left-[17%] md:left-[10%] left-[5%]">
+            <div class="z-20 animate__animated animate__fadeIn absolute flex lg:gap-[145%] md:gap-[130%] gap-[15px] 3xl:left-1/4 2xl:left-[20%] xl:left-[17%] md:left-[10%] left-[5%]">
               <div>
-                <div class="text-white font-ttest flex md:flex-col flex-row ">
+                <div class=" text-white font-ttest flex md:flex-col flex-row ">
                   <Link to="TIL" spy={true} smooth={true}>
                     <button class="hover:animate-pulse p-3 w-12 h-12 md:pt-4 lg:w-20 lg:h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle lg:pt-4 lg:text-3xl md:w-16 md:h-16 md:text-2xl">
                       1
@@ -97,8 +95,7 @@ function Mainpage(props) {
         </div>
 
         <section class="relative bg-white" id="TIL">
-          <div class="absolute h-full 2xl:ml-[15%] border-l border-gray-300 z-40 animate__animated animate__fadeIn "></div>
-          <div class="absolute h-full 2xl:ml-[85%] border-l border-gray-300 z-40 animate__animated animate__fadeIn "></div>
+          <div class="absolute w-[75%] h-full left-[12.5%] xl:border-l xl:border-r border-gray-300 z-40"></div>
           <div class="container mx-auto px-4 z-30 py-32 ">
             <div class="flex flex-wrap items-center">
               <div class="w-full md:w-1/4 px-4 mr-auto ml-auto">
