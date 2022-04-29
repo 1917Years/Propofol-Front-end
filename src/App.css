@@ -92,12 +92,36 @@
 .App-link {
   color: #61dafb;
 }
+.ql-toolbar.ql-snow {
+  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.25));
+}
 
+.ql-container.ql-snow {
+  width: 60rem;
+  left: 50%;
+  transform: translate(-50%);
+  border: 0px dashed gray !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="12px"]::before {
+  content: "12px";
+  font-size: 12px !important;
+}
+.ql-snow .ql-size .ql-picker-item[data-value="14px"]::before {
+  content: "14px";
+  font-size: 14px !important;
+}
+.ql-snow .ql-size .ql-picker-item[data-value="16px"]::before {
+  content: "16px";
+  font-size: 16px !important;
+}
+.ql-snow .ql-size .ql-picker-item[data-value="18px"]::before {
+  content: "18px";
+  font-size: 18px !important;
+}
 
 .text-shadow {
-  text-shadow:
-    0 0 1em rgb(0, 0, 0),
-    0 0 1em rgb(0, 0, 0);
+  text-shadow: 0 0 1em rgb(0, 0, 0), 0 0 1em rgb(0, 0, 0);
 }
 
 .text-shadow-md {
@@ -111,7 +135,6 @@
 .text-shadow-none {
   text-shadow: none;
 }
-
 
 .form-tick:checked {
   border-color: transparent;

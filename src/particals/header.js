@@ -3,7 +3,7 @@ import { SERVER_URL } from "../utils/SRC";
 import logo from "../assets/img/logo_tmp.png";
 import { useNavigate, Navigate } from "react-router-dom";
 
-function Header({ }) {
+function Header({}) {
   const navigate = useNavigate();
   return (
     <div>
@@ -11,7 +11,7 @@ function Header({ }) {
         <button
           class="relative"
           onClick={() => {
-            navigate('/');
+            navigate("/");
           }}
         >
           메인페이지
@@ -19,7 +19,7 @@ function Header({ }) {
         <button
           class="relative left-[10%]"
           onClick={() => {
-            navigate('/blog/main');
+            navigate("/blog/main");
           }}
         >
           블로그
@@ -27,7 +27,7 @@ function Header({ }) {
         <button
           class="relative left-[20%]"
           onClick={() => {
-            navigate('/portfolio/main');
+            navigate("/portfolio/main");
           }}
         >
           포폴
@@ -35,14 +35,13 @@ function Header({ }) {
         <button
           class="relative left-[30%]"
           onClick={() => {
-            navigate('/pm/main');
+            navigate("/pm/main");
           }}
         >
           플젝
         </button>
       </div>
-      <div class="h-14">
-      </div>
+      <div class="h-14"></div>
     </div>
   );
 }
