@@ -61,6 +61,7 @@ module.exports = {
         confont1: ["consoleFont"],
         confont2: ["consoleFont2"],
         rumpi: ["rumpi"],
+        iroBatang: ["iroBatang"],
       },
       fontWeight: {
         ssbold: 500,

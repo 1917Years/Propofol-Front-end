@@ -19,6 +19,8 @@ import { createRoot } from 'react-dom/client';
 import "tailwindcss/tailwind.css";
 import KakaoOauth from "./utils/oauth/KakaoOauth";
 
+import BlogWr2 from "./page/Blog/BlogWr2";
+
 function App() {
   //const cors = require('cors');
   // 요청받은 정보를 담아줄 변수 선언
@@ -77,6 +79,7 @@ function App() {
           <Route path="/blog/main" element={<BlogMain />} />
           <Route path="/blog/search" element={<BlogSearch />} />
           <Route path="/blog/writing" element={<BlogWriting />} />
+          <Route path="/blog/writing2" element={<BlogWr2 />} />
           <Route
             path="/oauth2/kakao/login"
             element={<KakOauth />}

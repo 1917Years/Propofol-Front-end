@@ -73,6 +73,11 @@
   src: url("./font/Rumpi.ttf");
 }
 
+@font-face {
+  font-family: "iroBatang";
+  src: url("./font/IropkeBatangM.ttf");
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

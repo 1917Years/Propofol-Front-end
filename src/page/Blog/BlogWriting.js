@@ -1,6 +1,11 @@
-import React from "react";
+import { React, useState, useEffect, useRef } from "react";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import BlogEditor from "../../Component/BlogEditor";
 
 function BlogWriting() {
+  const [htmlContent, setHtmlContent] = useState("");
+  const quillRef = useRef();
   return (
     <div class="bg-white w-full h-screen font-test">
       <div class="fixed w-full h-16 bg-gray-100 border-b border border-gray-300 z-50 flex items-center gap-5 px-2">
