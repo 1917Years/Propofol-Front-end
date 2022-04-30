@@ -2,7 +2,9 @@ import { React, useState, useEffect, useMemo } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-//import hljs from 'highlight.js';
+import hljs from 'highlight.js';
+import 'highlight.js/styles/vs2015.css';
+
 /*
 
 export const modules = useMemo(
@@ -56,6 +58,10 @@ let Size = Quill.import("attributors/style/size");
 Size.whitelist = ["12px", "14px", "16px", "18px", "20px", "22px", "24px", "26px", "28px", "30px", "36px", "48px", "60px"];
 Quill.register(Size, true);
 
+hljs.configure({   // optionally configure hljs
+    languages: ['javascript', 'ruby', 'python', 'c', 'c++']
+});
+
 export const modules = {
     toolbar: {
         /*
@@ -74,11 +80,11 @@ export const modules = {
             */
         container: "#toolbar",
     },
-    /*
+
     syntax: {
         highlight: (text) => hljs.highlightAuto(text).value,
     },
-    */
+
 };
 
 export const formats = [

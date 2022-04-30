@@ -149,6 +149,34 @@
   border: 0px none rgb(255, 255, 255) !important;
 }
 
+/*
+pre::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  border-right: 1px solid #ddd;
+  padding: .5em;
+  margin-right: .5em;
+  color: #888
+}
+*/
+
+
+.ql-syntax {
+  /*counter-reset: line;*/
+  /*border-radius: 1rem !important;*/
+  padding-top: 1rem !important;
+  padding-bottom: 1rem !important;
+  padding-left: 2rem !important;
+  padding-right: 2rem !important;
+}
+
+/*
+pre::after {
+  content: "\n";
+}
+*/
+
 /*---*/
 
 .ql-snow .ql-size .ql-picker-item[data-value="12px"]::before {

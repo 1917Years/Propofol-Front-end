@@ -25,7 +25,7 @@ function BlogEditor({ quillRef, htmlContent, setHtmlContent }) {
     setTitle(e.target.value);
   }
   const onHtmlChangeHandler = (value) => {
-    console.log(htmlContent);
+    //console.log(htmlContent);
     //console.log(e.target.value);
     setHtmlContent(value);
   };
