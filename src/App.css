@@ -78,6 +78,36 @@
   src: url("./font/IropkeBatangM.ttf");
 }
 
+@font-face {
+  font-family: "maruBuri";
+  src: url("./font/MaruBuri/MaruBuri-Regular.ttf");
+}
+
+@font-face {
+  font-family: "nanumGothic";
+  src: url("./font/NanumGothic/NanumGothic.ttf");
+}
+
+@font-face {
+  font-family: "nanumMyeongjo";
+  src: url("./font/NanumMyeongjo/NanumMyeongjo.ttf");
+}
+
+@font-face {
+  font-family: "nanumPen";
+  src: url("./font/NanumPen/NanumPen.ttf");
+}
+
+@font-face {
+  font-family: "nanumSquare";
+  src: url("./font/NanumSquare/NanumSquareR.ttf");
+}
+
+@font-face {
+  font-family: "tvn";
+  src: url("./font/tvN/tvN\ 즐거운이야기\ Medium.ttf");
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -92,32 +122,211 @@
 .App-link {
   color: #61dafb;
 }
+
 .ql-toolbar.ql-snow {
-  filter: drop-shadow(0 6px 20px rgba(0, 0, 0, 0.25));
+  filter: drop-shadow(0 0px 5px rgba(0, 0, 0, 0.15));
+  border: 0px none rgb(255, 255, 255) !important;
+}
+
+.ql-editor {
+  height: 100%;
+  font-size: 18px !important;
+  font-family: "iroBatang" !important;
+}
+
+.quill {
+  padding-left: 2px;
+  padding-right: 2px;
+  margin-top: 3rem;
+  height: 80vh;
 }
 
 .ql-container.ql-snow {
   width: 60rem;
   left: 50%;
+  height: 100%;
   transform: translate(-50%);
-  border: 0px dashed gray !important;
+  border: 0px none rgb(255, 255, 255) !important;
 }
+
+/*---*/
 
 .ql-snow .ql-size .ql-picker-item[data-value="12px"]::before {
   content: "12px";
   font-size: 12px !important;
 }
+
 .ql-snow .ql-size .ql-picker-item[data-value="14px"]::before {
   content: "14px";
   font-size: 14px !important;
 }
+
 .ql-snow .ql-size .ql-picker-item[data-value="16px"]::before {
   content: "16px";
   font-size: 16px !important;
 }
+
 .ql-snow .ql-size .ql-picker-item[data-value="18px"]::before {
   content: "18px";
   font-size: 18px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="20px"]::before {
+  content: "20px";
+  font-size: 20px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="22px"]::before {
+  content: "22px";
+  font-size: 22px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="24px"]::before {
+  content: "24px";
+  font-size: 24px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="26px"]::before {
+  content: "26px";
+  font-size: 26px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="28px"]::before {
+  content: "28px";
+  font-size: 28px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="30px"]::before {
+  content: "30px";
+  font-size: 30px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="36px"]::before {
+  content: "36px";
+  font-size: 36px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="48px"]::before {
+  content: "48px";
+  font-size: 48px !important;
+}
+
+.ql-snow .ql-size .ql-picker-item[data-value="60px"]::before {
+  content: "60px";
+  font-size: 60px !important;
+}
+
+/*---*/
+
+.ql-snow .ql-font .ql-picker-item[data-value="iroBatang"]::before {
+  content: "iroBatang";
+  font-family: "iroBatang" !important;
+}
+
+.ql-snow .ql-font .ql-picker-item[data-value="nanumGothic"]::before {
+  content: "nanumGothic";
+  font-family: "nanumGothic" !important;
+}
+
+.ql-snow .ql-font .ql-picker-item[data-value="nanumMyeongjo"]::before {
+  content: "nanumMyeongjo";
+  font-family: "nanumMyeongjo" !important;
+}
+
+.ql-snow .ql-font .ql-picker-item[data-value="maruBuri"]::before {
+  content: "maruBuri";
+  font-family: "maruBuri" !important;
+}
+
+.ql-snow .ql-font .ql-picker-item[data-value="nanumPen"]::before {
+  content: "nanumPen";
+  font-family: "nanumPen" !important;
+}
+
+.ql-snow .ql-font .ql-picker-item[data-value="nanumSquare"]::before {
+  content: "nanumSquare";
+  font-family: "nanumSquare" !important;
+}
+
+.ql-snow .ql-font .ql-picker-item[data-value="tvn"]::before {
+  content: "tvn";
+  font-family: "tvn" !important;
+}
+
+/*---*/
+
+.ql-snow .ql-font .ql-picker-label[data-value="iroBatang"]::before {
+  content: "iroBatang";
+  font-family: "iroBatang" !important;
+}
+
+.ql-snow .ql-font .ql-picker-label[data-value="nanumGothic"]::before {
+  content: "nanumGothic";
+  font-family: "nanumGothic" !important;
+}
+
+.ql-snow .ql-font .ql-picker-label[data-value="nanumMyeongjo"]::before {
+  content: "nanumMyeongjo";
+  font-family: "nanumMyeongjo" !important;
+}
+
+.ql-snow .ql-font .ql-picker-label[data-value="maruBuri"]::before {
+  content: "maruBuri";
+  font-family: "maruBuri" !important;
+}
+
+.ql-snow .ql-font .ql-picker-label[data-value="nanumPen"]::before {
+  content: "nanumPen";
+  font-family: "nanumPen" !important;
+}
+
+.ql-snow .ql-font .ql-picker-label[data-value="nanumSquare"]::before {
+  content: "nanumSquare";
+  font-family: "nanumSquare" !important;
+}
+
+.ql-snow .ql-font .ql-picker-label[data-value="tvn"]::before {
+  content: "tvn";
+  font-family: "tvn" !important;
+}
+
+/*---*/
+
+.ql-snow .ql-font {
+  width: 8rem !important;
+}
+
+.ql-snow .ql-font .ql-picker-item {
+  padding-left: 1px !important;
+  padding-right: 1px !important;
+}
+
+.ql-font-iroBatang {
+  font-family: "iroBatang";
+}
+
+.ql-font-nanumGothic {
+  font-family: "nanumGothic";
+}
+
+.ql-font-nanumMyeongjo {
+  font-family: "nanumMyeongjo";
+}
+
+.ql-font-maruBuri {
+  font-family: "maruBuri";
+}
+
+.ql-font-nanumPen {
+  font-family: "nanumPen";
+}
+
+.ql-font-nanumSquare {
+  font-family: "nanumSquare";
+}
+
+.ql-font-tvn {
+  font-family: "tvn";
 }
 
 .text-shadow {

@@ -78,8 +78,8 @@ function App() {
           <Route path="/pm/search" element={<ProjectSearch />} />
           <Route path="/blog/main" element={<BlogMain />} />
           <Route path="/blog/search" element={<BlogSearch />} />
-          <Route path="/blog/writing" element={<BlogWriting />} />
-          <Route path="/blog/writing2" element={<BlogWr2 />} />
+          <Route path="/blog/writing" element={<BlogWr2 />} />
+          <Route path="/blog/writing_prev" element={<BlogWriting />} />
           <Route
             path="/oauth2/kakao/login"
             element={<KakOauth />}
