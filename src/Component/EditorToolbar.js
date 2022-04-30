@@ -2,7 +2,7 @@ import { React, useState, useEffect, useMemo } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
-
+//import hljs from 'highlight.js';
 /*
 
 export const modules = useMemo(
@@ -74,6 +74,11 @@ export const modules = {
             */
         container: "#toolbar",
     },
+    /*
+    syntax: {
+        highlight: (text) => hljs.highlightAuto(text).value,
+    },
+    */
 };
 
 export const formats = [

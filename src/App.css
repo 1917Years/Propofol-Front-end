@@ -142,7 +142,7 @@
 }
 
 .ql-container.ql-snow {
-  width: 60rem;
+  width: 54rem;
   left: 50%;
   height: 100%;
   transform: translate(-50%);
@@ -217,6 +217,9 @@
 }
 
 /*---*/
+.ql-snow .ql-font .ql-picker-item::before {
+  font-size: 20px;
+}
 
 .ql-snow .ql-font .ql-picker-item[data-value="iroBatang"]::before {
   content: "iroBatang";
@@ -254,6 +257,10 @@
 }
 
 /*---*/
+
+.ql-snow .ql-font .ql-picker-label::before {
+  font-size: 15px;
+}
 
 .ql-snow .ql-font .ql-picker-label[data-value="iroBatang"]::before {
   content: "iroBatang";

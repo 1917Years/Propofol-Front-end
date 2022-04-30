@@ -9,6 +9,7 @@
     "animate.css": "^4.1.1",
     "axios": "^0.26.1",
     "cors": "^2.8.5",
+    "highlight.js": "^11.5.1",
     "http-proxy-middleware": "^2.0.6",
     "qs": "^6.10.3",
     "query-string": "^7.1.1",
