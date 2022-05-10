@@ -25,7 +25,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "PUBLIC_URL=/ react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -36,7 +36,6 @@
       "react-app/jest"
     ]
   },
-  "proxy": "http://10.21.21.155:8080",
   "browserslist": {
     "production": [
       ">0.2%",
