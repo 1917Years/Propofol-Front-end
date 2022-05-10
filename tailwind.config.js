@@ -17,6 +17,8 @@ module.exports = {
         bg6: "#615e60",
         bg7: "#FBEAE0",
         bg8: "#DEDFDA",
+        bg9: "#F07787",
+        bg10: "#BE4555",
         date: "#5755C3",
         scroll: "#A2B0C0",
         sscroll: "#49596B",
