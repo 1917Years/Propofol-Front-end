@@ -3,7 +3,7 @@ import { SERVER_URL } from "../utils/SRC";
 import logo from "../assets/img/logo_tmp.png";
 import { useNavigate, Navigate } from "react-router-dom";
 
-function Header({ }) {
+function Header({}) {
   const navigate = useNavigate();
   return (
     <div>
