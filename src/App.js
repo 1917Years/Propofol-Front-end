@@ -16,6 +16,8 @@ import PortfolioMain from "./page/Portfolio/PortfolioMain";
 import T1 from "./page/Portfolio/Template/T1";
 import T2 from "./page/Portfolio/Template/T2";
 import T3 from "./page/Portfolio/Template/T3";
+import T4 from "./page/Portfolio/Template/T4";
+import T5 from "./page/Portfolio/Template/T5";
 import Header from "./particals/Header";
 import { SERVER_URL } from "./utils/SRC";
 import { createRoot } from "react-dom/client";
@@ -83,6 +85,8 @@ function App() {
           <Route path="/portfolio/template/t1" element={<T1 />} />
           <Route path="/portfolio/template/t2" element={<T2 />} />
           <Route path="/portfolio/template/t3" element={<T3 />} />
+          <Route path="/portfolio/template/t4" element={<T4 />} />
+          <Route path="/portfolio/template/t5" element={<T5 />} />
         </Routes>
       </BrowserRouter>
     </>

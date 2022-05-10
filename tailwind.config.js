@@ -15,6 +15,8 @@ module.exports = {
         bg4: "#DCDCDC",
         bg5: "#666263",
         bg6: "#615e60",
+        bg7: "#FBEAE0",
+        bg8: "#DEDFDA",
         date: "#5755C3",
         scroll: "#A2B0C0",
         sscroll: "#49596B",
@@ -26,6 +28,7 @@ module.exports = {
         2000: "2000ms",
       },
       spacing: {
+        0.25: "0.0625rem",
         "1/10": "10%",
         "12/100": "12%",
         "15/100": "15%",
