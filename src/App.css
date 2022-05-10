@@ -108,6 +108,21 @@
   src: url("./font/tvN/tvN\ 즐거운이야기\ Medium.ttf");
 }
 
+@font-face {
+  font-family: "dolce";
+  src: url("./font/Dolce.ttf");
+}
+
+@font-face {
+  font-family: "timeless";
+  src: url("./font/Timeless.ttf");
+}
+
+@font-face {
+  font-family: "timelessB";
+  src: url("./font/Timeless-Bold.ttf");
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;
@@ -160,7 +175,6 @@ pre::before {
   color: #888
 }
 */
-
 
 .ql-syntax {
   /*counter-reset: line;*/
@@ -364,6 +378,10 @@ pre::after {
   font-family: "tvn";
 }
 
+.text-shadow-sm {
+  text-shadow: 0 0 0.2em rgb(0, 0, 0), 0 0 0.01em rgb(0, 0, 0);
+}
+
 .text-shadow {
   text-shadow: 0 0 1em rgb(0, 0, 0), 0 0 1em rgb(0, 0, 0);
 }
@@ -374,6 +392,11 @@ pre::after {
 
 .text-shadow-lg {
   text-shadow: 0 15px 30px rgba(0, 0, 0, 0.11), 0 5px 15px rgba(0, 0, 0, 0.08);
+}
+
+.text-shadow-white {
+  text-shadow: 0 0 0.25em rgb(255, 255, 255, 0.3),
+    0 0 0.5em rgb(255, 255, 255, 0.2);
 }
 
 .text-shadow-none {

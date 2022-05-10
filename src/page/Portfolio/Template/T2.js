@@ -2,6 +2,7 @@ import { React, useState } from "react";
 import profileImage from "../../../assets/img/profile.jpg";
 import projectImage from "../../../assets/img/projectImage.jpg";
 import projectImage2 from "../../../assets/img/projectImage2.jpg";
+
 //갬성버전
 function T1() {
   const style = {
@@ -10,158 +11,132 @@ function T1() {
   };
   return (
     <div class="w-full">
-      <div class="flex flex-col justify-center" style={{ minHeight: "48rem" }}>
-        <div
-          class="bg-cover bg-center absolute top-0 w-full h-[58rem] bg-bg6 bg-blend-multiply brightness-[65%] grayscale-[10%] -z-10"
-          style={style}
-        ></div>
-        <div class="w-full flex gap-10 justify-center items-center">
-          <div>
-            <div
-              className="ProfileImage"
-              class="mx-auto mt-20 w-48 h-48 rounded-full"
-            >
-              <img
-                src={profileImage}
-                class="w-48 h-48 rounded-full drop-shadow-md"
-                alt="profile"
-              />
-            </div>
+      <div class="absolute w-full h-[80%] top-[10%] xl:border-t xl:border-t border-gray-200 mix-blend-multiply z-40"></div>
+      <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-gray-200 mix-blend-multiply z-40"></div>
+      <div
+        class="flex justify-center bg-blue-200"
+        style={{ minHeight: "35rem" }}
+      >
+        <div class="mt-50 w-3/4 pt-10">
+          <div
+            className="ProfileImage"
+            class="mx-auto mt-20 w-48 h-48 rounded-full"
+          >
+            <img
+              src={profileImage}
+              class="w-48 h-48 rounded-full drop-shadow-md"
+              alt="profile"
+            />
           </div>
-          <div>
-            <div class="mt-20 text-5xl text-white z-20 font-iroBatang text-shadow-white mb-8">
-              개발자 이지원
-            </div>
-            <div
-              className="인사말"
-              class="text-2xl font-iroBatang text-white z-20 opacity-[70%] mb-2"
-            >
-              {">"} 안녕하세요.
-            </div>
-            <div
-              className="소개"
-              class="text-2xl font-iroBatang text-white z-20 opacity-[70%]"
-            >
-              {">"} 저는 개발과 공부를 좋아하고, 호기심이 많은 개발자
-              이지원입니다.
-            </div>
+          <div class="mt-10 text-5xl text-gray-900 z-20 font-btest text-center">
+            <p>안녕하세요.</p>
+            <p>저는 개발자 이지원입니다.</p>
           </div>
         </div>
-        <div class="w-[60%] mx-auto mt-20 flex justify-center">
-          <div class="px-16 ">
-            <div class="w-full flex items-center gap-5">
-              <div class="text-white opacity-[90%] text-4xl font-timeless text-center border-b border-white/50">
-                about me
-              </div>
-            </div>
-            <div class="text-xl text-white flex flex-col gap-10 mt-12">
-              <div class="flex items-center">
-                <div class="p-1 mr-3 font-iroBatang opacity-[90%] ">연락처</div>
-                <div class="opacity-[65%]">010-1234-5678</div>
-              </div>
-              <div class="flex items-center">
-                <div class="p-1 mr-3 font-iroBatang opacity-[90%] ">이메일</div>
-                <div class="font-timeless opacity-[65%] ">
-                  email1234@email.com
+      </div>
+
+      <section class="relative bg-white py-10" id="aboutme">
+        <div class="absolute w-full h-[80%] top-[10%] xl:border-b xl:border-t xl:border-t border-blue-100 mix-blend-multiply z-40"></div>
+        <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-blue-100 z-40"></div>
+        <div class="w-[60%] mx-auto px-4 z-30 py-16 ">
+          <div class="flex justify-center">
+            <div class="w-1/2 px-20 ">
+              <div class="w-full flex items-center gap-5">
+                <div class="w-12 h-12 shadow-md rounded-full bg-blue-300"></div>
+                <div class="text-gray-600 text-4xl font-btest text-center ">
+                  about me
                 </div>
               </div>
-              <div class="flex items-center">
-                <div class="p-1 mr-3 font-timeless opacity-[90%] ">Github</div>
-                <div class="font-timeless opacity-[65%] ">
+              <div class="text-xl font-test text-gray-600 flex flex-col gap-10 mt-20">
+                <div>
+                  <a class="bg-blue-100 p-1 mr-3 font-sbtest">연락처</a>{" "}
+                  010-1234-5678
+                </div>
+                <div>
+                  <a class="bg-blue-100 p-1 mr-3 font-sbtest">이메일</a>{" "}
+                  email1234@email.com
+                </div>
+                <div>
+                  <a class="bg-blue-100 p-1 mr-3 font-sbtest">Github</a>{" "}
                   https://github.com/1917Years
                 </div>
               </div>
             </div>
-          </div>
-          <div class="px-16">
-            <div class="w-full flex items-center gap-5">
-              <div class="text-white text-4xl opacity-[90%] font-timeless text-center text-shadow-sm border-b border-white/50">
-                skills
+            <div class="w-1/2 px-20 ">
+              <div class="w-full flex items-center gap-5">
+                <div class="w-12 h-12 shadow-md rounded-full bg-blue-300"></div>
+                <div class="text-gray-600 text-4xl font-btest text-center ">
+                  skills
+                </div>
               </div>
-            </div>
 
-            <div class="text-2xl h-3/4 font-timeless text-white opacity-70 mt-5 flex items-center gap-4 py-3 px-3">
-              <div class="flex flex-col gap-10 py-5">
-                <div class="flex gap-3">
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      Java
-                    </a>
+              <div class="text-xl h-3/4 font-test text-gray-600 mt-10 flex items-center gap-4 py-3 px-3">
+                <div class="w-4 h-full rounded-md relative bg-gradient-to-b from-blue-200 to-blue-100 z-40"></div>
+                <div class="ml-6 flex flex-col gap-10 py-5">
+                  <div class="flex gap-3">
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">Java</a>
+                    </div>
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">JavaScript</a>
+                    </div>
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">Spring</a>
+                    </div>
                   </div>
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      JavaScript
-                    </a>
+                  <div class="flex gap-3">
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">Python</a>
+                    </div>
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">TypeScript</a>
+                    </div>
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">Android</a>
+                    </div>
                   </div>
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      Spring
-                    </a>
-                  </div>
-                </div>
-                <div class="flex gap-3">
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      Python
-                    </a>
-                  </div>
-                  <div>
-                    <a class=" mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      TypeScript
-                    </a>
-                  </div>
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      Android
-                    </a>
-                  </div>
-                </div>
-                <div class="flex gap-3">
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      Vue
-                    </a>
-                  </div>
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      node.js
-                    </a>
-                  </div>
-                  <div>
-                    <a class="mr-3 border border-white/70 rounded-lg px-2 py-1">
-                      dasdasd
-                    </a>
+                  <div class="flex gap-3">
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">Vue</a>
+                    </div>
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">node.js</a>
+                    </div>
+                    <div>
+                      <a class="bg-blue-100 p-1 mr-3 font-sbtest">dasdasd</a>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <section class="relative bg-gray-600" id="project">
-        <div class="w-[63%] mx-auto px-4 z-30 pt-16 pb-32">
+      </section>
+      <section class="relative bg-gray-100" id="project">
+        <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-gray-300 z-40"></div>
+        <div class="w-[60%] mx-auto px-4 z-30 py-16 ">
           <div class="flex justify-center">
             <div class="w-full px-24 ">
               <div class="w-full flex items-center justify-center gap-5">
-                <div class="text-white text-5xl font-timelessB border-b border-white/50 opacity-[95%] text-center">
+                <div class="text-black text-5xl font-btest text-center bg-blue-100 p-1">
                   Project
                 </div>
               </div>
               <div
-                class="text-xl font-test bg-gray-200 rounded-xl text-gray-900 mt-20 border-b-2 border-gray-300 px-10 py-16"
+                class="text-xl font-test  text-gray-900 mt-20 border-b-2 border-t-2 border-gray-300 px-6 py-12"
                 id="project_first"
               >
                 <div class="flex justify-center gap-10">
-                  <div class="w-full h-full" style={{ minHeight: "16rem" }}>
+                  <div class="w-full h-full" style={{ minHeight: "20rem" }}>
                     <img
                       src={projectImage}
                       class="w-full h-full drop-shadow-md"
-                      style={{ maxHeight: "16rem" }}
+                      style={{ maxHeight: "20rem" }}
                       alt="profile"
                     />
                   </div>
                   <div class="w-3/4 flex flex-col gap-3 px-3 justify-center">
-                    <div class="mr-3 font-timelessB text-4xl mb-2">Gitime</div>
+                    <div class="mr-3 font-sbtest text-4xl mb-2">Gitime</div>
                     <div class="mr-3 font-test text-xl px-1">
                       개발 날짜
                       <a class="ml-3 text-gray-600">2021.09 ~ 2021.12</a>
@@ -182,7 +157,7 @@ function T1() {
                     </div>
                   </div>
                 </div>
-                <div class="text-gray-600 mt-5 font-test text-lg break-all">
+                <div class="text-gray-600 font-test text-lg break-all">
                   <div class="border-b border-gray-400 w-full pb-2 mb-2 text-gray-800">
                     프로젝트 설명
                   </div>
@@ -196,25 +171,23 @@ function T1() {
                 </div>
               </div>
               <div
-                class="text-xl font-test bg-gray-200 rounded-xl text-gray-900 mt-20 border-b-2 border-gray-300 px-10 py-16"
+                class="text-xl font-test  text-gray-900 mt-20 border-b-2 border-t-2 border-gray-300 px-6 py-12"
                 id="project_second"
               >
                 <div class="flex justify-center items-center gap-10">
                   <div
                     class="w-full h-full flex items-center"
-                    style={{ minHeight: "16rem" }}
+                    style={{ minHeight: "20rem" }}
                   >
                     <img
                       src={projectImage2}
                       class="w-full h-full drop-shadow-md"
-                      style={{ maxHeight: "16rem" }}
+                      style={{ maxHeight: "20rem" }}
                       alt="profile"
                     />
                   </div>
                   <div class="w-3/4 flex flex-col gap-3 px-3 justify-center">
-                    <div class="mr-3 font-timelessB text-4xl mb-2">
-                      Propofol
-                    </div>
+                    <div class="mr-3 font-sbtest text-4xl mb-2">Propofol</div>
                     <div class="mr-3 font-test text-xl px-1">
                       개발 날짜
                       <a class="ml-3 text-gray-600">2022.03 ~ 2022.6</a>
@@ -235,7 +208,7 @@ function T1() {
                     </div>
                   </div>
                 </div>
-                <div class="text-gray-600 mt-5 font-test text-lg break-all">
+                <div class="text-gray-600 font-test text-lg break-all">
                   <div class="border-b border-gray-400 w-full pb-2 mb-2 text-gray-800">
                     프로젝트 설명
                   </div>
@@ -250,44 +223,43 @@ function T1() {
           </div>
         </div>
       </section>
-      <section class="relative bg-gray-800" id="award">
+
+      <section class="relative bg-white" id="award">
+        <div class="absolute w-full h-[85%] top-[7.5%] xl:border-b xl:border-t xl:border-t border-indigo-100 mix-blend-multiply z-40"></div>
+        <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-indigo-100 z-40"></div>
         <div class="w-[60%] mx-auto px-4 z-30 py-24">
           <div class="flex justify-center">
-            <div class="px-20 flex flex-col items-center">
+            <div class="w-3/4 px-20 flex flex-col items-center">
               <div class="w-full flex items-center justify-center gap-5">
-                <div class="text-gray-100 text-5xl font-timelessB text-center border-b border-white/50 text-shadow-white">
+                <div class="text-gray-900 text-5xl font-btest text-center border-b-2 border-indigo-300">
                   Award
                 </div>
               </div>
 
-              <div class="text-xl font-test text-gray-100 opacity-[80%] mt-10 flex items-center gap-4 py-3 px-3">
-                <div class="w-[0.5px] h-full opacity-[0%] relative bg-white z-40"></div>
-                <div class="ml-6 flex flex-col gap-20 py-5 border-l border-white px-10 ">
-                  <div class="flex gap-2 items-center ">
-                    <div class="w-5 h-5 rounded-full border border-white/70 bg-white -translate-x-[3.125rem] drop-shadow-[0_0px_8px_rgba(255,255,255,0.30)]"></div>
-                    <div class="w-10 h-[0.5px] bg-white opacity-[80%] absolute -translate-x-[1.5rem]"></div>
+              <div class="text-xl h-3/4 font-test text-gray-600 mt-10 flex items-center gap-4 py-3 px-3">
+                <div class="w-4 h-full rounded-md relative bg-gradient-to-b from-indigo-300 to-blue-200 z-40"></div>
+                <div class="ml-6 flex flex-col gap-20 py-5">
+                  <div class="flex gap-2 items-center">
+                    <div class="w-3 h-3 mr-3 rounded-full bg-indigo-300"></div>
                     <div class="mr-3 font-sbtest">2019.01</div>
-                    <div class="mr-3 font-iroBatang">전국 공모전 대상 수상</div>
+                    <div class="mr-3 font-test">전국 공모전 대상 수상</div>
                   </div>
                   <div class="flex gap-2 items-center">
-                    <div class="w-5 h-5 rounded-full border border-white/70 bg-gray-700 -translate-x-[3.125rem] drop-shadow-[0_0px_8px_rgba(255,255,255,0.10)]"></div>
-                    <div class="w-10 h-[0.5px] bg-white opacity-[80%] absolute -translate-x-[1.5rem]"></div>
+                    <div class="w-3 h-3 mr-3 rounded-full bg-indigo-300"></div>
                     <div class="mr-3 font-sbtest">2020.03</div>
-                    <div class="mr-3 font-iroBatang">
+                    <div class="mr-3 font-test">
                       웹 프로젝트 공모전 우수상 수상
                     </div>
                   </div>
                   <div class="flex gap-2 items-center">
-                    <div class="w-5 h-5 rounded-full border border-white/70 bg-white -translate-x-[3.125rem] drop-shadow-[0_0px_8px_rgba(255,255,255,0.30)]"></div>
-                    <div class="w-10 h-[0.5px] bg-white opacity-[80%] absolute -translate-x-[1.5rem]"></div>
+                    <div class="w-3 h-3 mr-3 rounded-full bg-indigo-300"></div>
                     <div class="mr-3 font-sbtest">2021.05</div>
-                    <div class="mr-3 font-iroBatang">AAA 대회 대상 수상</div>
+                    <div class="mr-3 font-test">AAA 대회 대상 수상</div>
                   </div>
                   <div class="flex gap-2 items-center">
-                    <div class="w-5 h-5 rounded-full border border-white/70 bg-gray-700 -translate-x-[3.125rem] drop-shadow-[0_0px_8px_rgba(255,255,255,0.10)]"></div>
-                    <div class="w-10 h-[0.5px] bg-white opacity-[80%] absolute -translate-x-[1.5rem]"></div>
+                    <div class="w-3 h-3 mr-3 rounded-full bg-indigo-300"></div>
                     <div class="mr-3 font-sbtest">2022.01</div>
-                    <div class="mr-3 font-iroBatang">BBB 대회 대상 수상</div>
+                    <div class="mr-3 font-test">BBB 대회 대상 수상</div>
                   </div>
                 </div>
               </div>
@@ -296,16 +268,19 @@ function T1() {
         </div>
       </section>
 
-      <section class="relative bg-gray-500" id="workExperience">
-        <div class="w-[60%] mx-auto px-4 z-30 pt-24 pb-32">
+      <section class="relative bg-indigo-100" id="workExperience">
+        <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-indigo-200 z-40"></div>
+        <div class="w-[60%] mx-auto px-4 z-30 py-24">
           <div class="w-full flex justify-center">
             <div class="w-full px-20 flex flex-col items-center">
-              <div class="text-white text-5xl font-timelessB text-center border-b border-white mb-10">
-                Work Experience
+              <div class="w-full flex items-center justify-center gap-5">
+                <div class="text-gray-900 text-5xl font-btest text-center bg-indigo-200">
+                  Work Experience
+                </div>
               </div>
 
-              <div class="text-xl w-full h-3/4 font-test text-gray-600 mt-10 flex justify-center items-center gap-4 py-6 px-8 bg-white rounded-xl shadow-md">
-                <div class="w-1/4 relative border-r border-gray-300 py-2">
+              <div class="text-xl w-full h-3/4 font-test text-gray-600 mt-10 flex justify-center items-center gap-4 py-3 px-3">
+                <div class="w-1/4 relative border-r-2 border-indigo-300 py-2">
                   <div class="text-2xl text-gray-700 font-sbtest">
                     ABC System(가칭)
                   </div>
@@ -320,8 +295,8 @@ function T1() {
                   스킬을 n년 동안 사용하였습니다.
                 </div>
               </div>
-              <div class="text-xl w-full h-3/4 font-test text-gray-600 mt-10 flex justify-center items-center gap-4 py-6 px-8 bg-white rounded-xl shadow-md">
-                <div class="w-1/4 relative border-r border-gray-300 py-2">
+              <div class="text-xl w-full h-3/4 font-test text-gray-600 mt-10 flex justify-center items-center gap-4 py-3 px-3">
+                <div class="w-1/4 relative border-r-2 border-indigo-300 py-2">
                   <div class="text-2xl text-gray-700 font-sbtest">
                     DEF System(가칭)
                   </div>
@@ -338,34 +313,34 @@ function T1() {
           </div>
         </div>
       </section>
-      <section class="relative bg-gray-200" id="blog">
+      <section class="relative bg-yellow-50" id="blog">
+        <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-[#f1e7d0] z-40"></div>
         <div class="w-[60%] mx-auto px-4 z-30 py-24">
           <div class="w-full flex justify-center font-test">
             <div class="w-full px-20 flex flex-col items-center">
-              <div class="text-gray-900 text-5xl font-timelessB text-center">
+              <div class="text-gray-900 text-5xl font-btest text-center bg-[#ffeeb2] p-1">
                 Blog
               </div>
-              <div class="flex justify-center items-center mt-5 border-b border-gray-700/50 pb-8">
+              <div class="flex justify-center items-center mt-5">
                 <div class="text-xl text-gray-600">
                   🔗 https://www/propofol/blog/username(임시 주소)
                 </div>
               </div>
               <div class="text-xl w-full h-3/4 font-test text-gray-600 mt-10 flex justify-center items-center gap-4 py-3 px-3"></div>
               <div class="mt-8 w-full">
-                <div class="flex items-center gap-3">
-                  <div class="w-5 h-5 bg-gray-500"></div>
-                  <div class="text-2xl font-iroBatang font-semibold text-gray-600">
-                    추천수 상위글
-                  </div>
+                <div class="text-2xl font-sbtest text-gray-700 border-b-2 border-gray-400 pb-1">
+                  추천수 상위글
                 </div>
                 <div
-                  class="mt-6 w-full relative py-4 px-6 rounded-md shadow-md bg-white"
+                  class="mt-6 w-full relative py-4 px-6 border-2 border-gray-300 rounded-md shadow-lg bg-white"
                   style={{ minHeight: "12rem" }}
                 >
-                  <div class="text-2xl text-gray-700 font-sbtest text-left">
-                    React란? 리액트 기초부터 심화 내용까지 한 번에 알아보기
+                  <div class="flex items-center">
+                    <div class="w-3 h-3 mr-3 bg-gray-400"></div>
+                    <div class="text-2xl text-gray-700 font-sbtest text-center">
+                      React란? 리액트 기초부터 심화 내용까지 한 번에 알아보기
+                    </div>
                   </div>
-
                   <div
                     class="flex justify-center items-center mt-3 gap-6"
                     style={{ maxHeight: "14rem", minWidth: "48rem" }}
@@ -375,7 +350,7 @@ function T1() {
                       style={{ minWidth: "10rem" }}
                     ></div>
                     <div class="grow">
-                      <div class="relative py-2 break-all text-gray-500">
+                      <div class="relative py-2 break-all">
                         지방의회의 조직·권한·의원선거와 지방자치단체의 장의
                         선임방법 기타 지방자치단체의 조직과 운영에 관한 사항은
                         법률로 정한다. 대한민국의 경제질서는 개인과 기업의
@@ -393,13 +368,15 @@ function T1() {
                   </div>
                 </div>
                 <div
-                  class="mt-6 w-full relative py-4 px-6 rounded-md shadow-md bg-white"
+                  class="mt-6 w-full relative py-4 px-6 border-2 border-gray-300 rounded-md shadow-lg bg-white"
                   style={{ minHeight: "12rem" }}
                 >
-                  <div class="text-2xl text-gray-700 font-sbtest text-left">
-                    Spring이란? 스프링 기초부터 심화 내용까지 한 번에 알아보기
+                  <div class="flex items-center">
+                    <div class="w-3 h-3 mr-3 bg-gray-400"></div>
+                    <div class="text-2xl text-gray-700 font-sbtest text-center">
+                      Spring이란? 스프링 기초부터 심화 내용까지 한 번에 알아보기
+                    </div>
                   </div>
-
                   <div
                     class="flex justify-center items-center mt-3 gap-6"
                     style={{ maxHeight: "14rem", minWidth: "48rem" }}
@@ -409,7 +386,7 @@ function T1() {
                       style={{ minWidth: "10rem" }}
                     ></div>
                     <div class="grow">
-                      <div class="relative py-2 break-all text-gray-500">
+                      <div class="relative py-2 break-all">
                         법관은 헌법과 법률에 의하여 그 양심에 따라 독립하여
                         심판한다. 이 헌법은 1988년 2월 25일부터 시행한다. 다만,
                         이 헌법을 시행하기 위하여 필요한 법률의 제정·개정과 이

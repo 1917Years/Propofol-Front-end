@@ -1,4 +1,5 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom"; import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
@@ -13,9 +14,11 @@ import BlogSearch from "./page/Blog/BlogSearch";
 import BlogWriting from "./page/Blog/BlogWriting";
 import PortfolioMain from "./page/Portfolio/PortfolioMain";
 import T1 from "./page/Portfolio/Template/T1";
+import T2 from "./page/Portfolio/Template/T2";
+import T3 from "./page/Portfolio/Template/T3";
 import Header from "./particals/Header";
 import { SERVER_URL } from "./utils/SRC";
-import { createRoot } from 'react-dom/client';
+import { createRoot } from "react-dom/client";
 import "tailwindcss/tailwind.css";
 import KakaoOauth from "./utils/oauth/KakaoOauth";
 
@@ -52,25 +55,20 @@ function App() {
   };
 
   const Hd = (props) => {
-    return
-    <Header
-      props={props}
-    />;
-  }
+    return;
+    <Header props={props} />;
+  };
 
   const KakOauth = (props) => {
     return <KakaoOauth {...props}></KakaoOauth>;
-  }
-
+  };
 
   return (
     <>
       <BrowserRouter>
         <Header />
         <Routes>
-          <Route path="/"
-            element={<Main />}
-          />
+          <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/pm/main" element={<ProjectMain />} />
@@ -80,17 +78,12 @@ function App() {
           <Route path="/blog/search" element={<BlogSearch />} />
           <Route path="/blog/writing" element={<BlogWr2 />} />
           <Route path="/blog/writing_prev" element={<BlogWriting />} />
-          <Route
-            path="/oauth2/kakao/login"
-            element={<KakOauth />}
-          />
-          <Route
-            path="/portfolio/main"
-            element={<PortfolioMain />}
-          />
+          <Route path="/oauth2/kakao/login" element={<KakOauth />} />
+          <Route path="/portfolio/main" element={<PortfolioMain />} />
           <Route path="/portfolio/template/t1" element={<T1 />} />
+          <Route path="/portfolio/template/t2" element={<T2 />} />
+          <Route path="/portfolio/template/t3" element={<T3 />} />
         </Routes>
-
       </BrowserRouter>
     </>
   );

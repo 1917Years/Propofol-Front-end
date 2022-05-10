@@ -62,6 +62,9 @@ module.exports = {
         confont2: ["consoleFont2"],
         rumpi: ["rumpi"],
         iroBatang: ["iroBatang"],
+        dolce: ["dolce"],
+        timeless: ["timeless"],
+        timelessB: ["timelessB"],
       },
       fontWeight: {
         ssbold: 500,
@@ -86,7 +89,7 @@ module.exports = {
       fontSize: {
         xs: ".75rem",
         tiny: ".875rem",
-        'baselg': '1.075rem',
+        baselg: "1.075rem",
         "3xl": "1.875rem",
         "4xl": "2.25rem",
         "5xl": "3rem",
