@@ -2,10 +2,10 @@ FROM node:16
 
 WORKDIR /server
 
-COPY ./* .
+COPY . .
 
-CMD ["npm","init","-y"]
+RUN ["npm","init","-y"]
 
-CMD ["npm","install"]
+RUN ["npm","install"]
 
 ENTRYPOINT ["npm","run","start"]
