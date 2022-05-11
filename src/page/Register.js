@@ -7,7 +7,7 @@ function postRegister(data) {
   console.log("확인");
   console.log(data);
   axios
-    .post(SERVER_URL + "/auth/join", JSON.stringify(data), {
+    .post(SERVER_URL + "/user-service/auth/join", JSON.stringify(data), {
       headers: { "Content-Type": "application/json" },
     })
     .then((res) => {
@@ -112,6 +112,10 @@ function Register() {
       setEmailMsg("");
       setEmailVaild(true);
     }
+  };
+
+  const onNickNameCheckHandler = (e) => {
+    /** 여기에 닉네임 중복 체크 만들어주삼 */
   };
   const onPasswordInputHandler = (e) => {
     setPwdInput(e.target.value);
@@ -236,25 +240,29 @@ function Register() {
             {emailMsg}
           </div>
         </div>
-        <div>
-          <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
-            <input
-              class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
-              placeholder="이름"
-              type="text"
-              onChange={onNameInputHandler}
-            />
-            <input
-              class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
-              placeholder="닉네임"
-              type="text"
-              onChange={onNickNameInputHandler}
-            />
-          </div>
-          <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
-            {emailMsg}
-          </div>
+        <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
+          <input
+            class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
+            placeholder="닉네임"
+            type="text"
+            onChange={onNickNameInputHandler}
+          />
+          <button
+            class="rounded-lg bg-gray-500 text-white flex-grow"
+            onClick={onNickNameCheckHandler}
+          >
+            중복 확인
+          </button>
         </div>
+        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
+          <input
+            class="w-full py-2 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-lg font-ltest"
+            placeholder="이름"
+            type="text"
+            onChange={onNameInputHandler}
+          />
+        </div>
+
         <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
           <input
             class="w-full py-2 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-lg font-ltest"
@@ -336,7 +344,7 @@ function Register() {
         >
           계정 만들기
         </button>
-        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-1 border-t pt-5 border-gray-400 flex justify-center gap-2 text-gray-500 font-ltest text-center min-w-[20rem]">
+        <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 mt-1 mb-5 border-t pt-5 border-gray-400 flex justify-center gap-2 text-gray-500 font-ltest text-center min-w-[20rem]">
           <div>이미 계정이 있다면? </div>
           <button
             onClick={() => {
