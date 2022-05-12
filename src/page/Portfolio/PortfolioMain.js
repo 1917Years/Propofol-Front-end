@@ -5,6 +5,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 let tmpSkillList = [];
 let tmpWorkList = [];
 let tmpPrjSkillsList = [];
+let tmpPrjList = [];
 
 function PortfolioMain() {
   const [skillsAdd, setSkillsAdd] = useState(false);
@@ -12,10 +13,15 @@ function PortfolioMain() {
   const [workNameInput, setWorkNameInput] = useState("");
   const [workDetailInput, setWorkDetailInput] = useState("");
   const [workAdd, setWorkAdd] = useState(false);
-  const [prjSkillsNumberList, setPrjSkillsNumberList] = useState([]);
+  const [prjName, setPrjName] = useState("");
+  const [prjImg, setPrjImg] = useState(null);
+  const [prjDevStart, setPrjDevStart] = useState("");
+  const [prjDevEnd, setPrjDevEnd] = useState("");
+  const [prjDev, setPrjDev] = useState("");
   const [prjSkillsList, setPrjSkillsList] = useState([]);
   const [prjSkillInput, setPrjSkillInput] = useState("");
   const [prjSkillsAdd, setPrjSkillsAdd] = useState(false);
+  const [prjDetailInput, setPrjDetailInput] = useState("");
   const [projectAdd, setProjectAdd] = useState(false);
 
   const onWorkInputHandler = () => {
@@ -203,112 +209,244 @@ function PortfolioMain() {
               </div>
               <div>
                 <div class="text-xl mt-4">참여한 프로젝트</div>
-                <button
-                  class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                  onClick={() => {
-                    setProjectAdd(true);
-                  }}
-                >
-                  +
-                </button>
-                <div class="text-xl font-test bg-white rounded-xl text-gray-900 mt-20 border border-gray-300 px-10 pt-8 pb-4">
-                  <input
-                    class="w-full border-b border-gray-300 pb-2 font-test text-2xl mb-2 bg-inherit text-gray-700 focus:outline-0"
-                    placeholder="프로젝트명 입력"
-                  />
-                  <div class="flex justify-center gap-10 mt-5">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      id="input-prjimg"
-                      class="w-0 h-0"
-                    />
-                    <label for="input-prjimg" class="">
+                {tmpPrjList.map((item) => {
+                  return (
+                    <div class="text-xl font-test bg-gray-50/50 rounded-xl text-gray-900 mt-2 border border-gray-300 px-10 pt-8 pb-4">
                       <div
-                        class="w-full h-full"
-                        style={{ minHeight: "18rem", minWidth: "18rem" }}
+                        class="w-full border-b border-gray-300 pb-2 font-test text-2xl mb-2 bg-inherit text-gray-700 focus:outline-0"
                       >
-                        <button
-                          class="w-full h-full text-lg text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0"
-                          style={{ minHeight: "18rem" }}
-                        >
-                          <div>+</div>프로젝트 대표 사진 추가
-                        </button>
+                        {item.name}
                       </div>
-                    </label>
-                    <div class="w-3/4 flex flex-col gap-4 px-3 justify-center">
-                      <div class="mr-3 font-test text-xl px-1">
-                        개발 날짜
-                        <div class="mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
-                          <input class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0" />
-                          <div>~</div>
-                          <input class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0" />
+                      <div class="flex justify-center gap-5 mt-5">
+                        <div class="flex flex-col items-center">
+                          <img
+                            class="w-60rem h-60rem border border-gray-300"
+                            src={item.img}
+                            style={{ minHeight: "17rem", minWidth: "26rem", maxHeight: "17rem", maxWidth: "26rem" }}
+                          />
                         </div>
-                      </div>
-                      <div class="flex gap-6 font-test text-lg items-center">
-                        <div class="font-test text-xl pl-1 pr-3 border-r border-gray-300 ">
-                          맡은 직군
-                        </div>
-                        <input
-                          class="text-gray-600 w-1/2 focus:outline-0"
-                          placeholder="입력"
-                        />
-                      </div>
-
-                      <div class="mr-3 font-test text-xl">
-                        <div class="border-b border-gray-400 w-full px-1 pb-2">
-                          사용 기술
-                        </div>
-                        <div class="grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                          {prjSkillsList.map((item) => {
-                            return (
-                              <div class="w-full rounded-lg bg-gray-50 border border-gray-300 px-2 text-center py-1 ">
-                                {item}
+                        <div class="w-full flex flex-col gap-4 px-3 justify-center">
+                          <div class="mr-3 font-test text-xl px-1">
+                            개발 날짜
+                            <div class="mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
+                              <div
+                                class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                              >
+                                {item.start}
                               </div>
-                            );
-                          })}
-                          {prjSkillsAdd ? (
-                            <input
-                              class="w-full rounded-lg border border-gray-300 px-2 text-center py-1 focus:outline-0"
-                              placeholder="입력"
-                              onKeyPress={(e) => {
-                                if (e.key === "Enter") {
-                                  onPrjSkillInputHandler(e);
-                                }
-                              }}
-                              onChange={(e) => {
-                                setPrjSkillInput(e.target.value);
-                              }}
-                            />
-                          ) : (
-                            <button
-                              class="w-full rounded-lg border border-dashed border-gray-300 p-1"
-                              onClick={() => {
-                                setPrjSkillsAdd(true);
-                              }}
+                              <div>~</div>
+                              <div
+                                class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                              >
+                                {item.end}
+                              </div>
+                            </div>
+                          </div>
+                          <div class="flex gap-6 font-test text-lg items-center">
+                            <div class="font-test text-xl pl-1 pr-3 border-r border-gray-300 ">
+                              맡은 직군
+                            </div>
+                            <div
+                              class="text-gray-600 w-1/2"
                             >
-                              +
-                            </button>
-                          )}
+                              {item.dev}
+                            </div>
+                          </div>
+
+                          <div class="mr-3 font-test text-xl">
+                            <div class="border-b border-gray-400 w-full px-1 pb-2">
+                              사용 기술
+                            </div>
+                            <div class="grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
+                              {item.skills.map((skill) => {
+                                return (
+                                  <div class="w-full rounded-lg bg-gray-50 border border-gray-300 px-2 text-center py-1 ">
+                                    {skill}
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-gray-600 mt-5 font-test text-lg break-all border-b border-gray-300">
+                        <div class="border-b border-gray-300 w-full pb-2 mb-2 text-gray-700">
+                          프로젝트 설명
+                        </div>
+                        <div
+                          class="w-full bg-inherit min-h-[10rem] "
+                        >
+                          {item.detail}
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="text-gray-600 mt-5 font-test text-lg break-all border-b border-gray-300">
-                    <div class="border-b border-gray-300 w-full pb-2 mb-2 text-gray-700">
-                      프로젝트 설명
-                    </div>
-                    <textarea
-                      class="w-full focus:outline-0 resize-none bg-inherit min-h-[10rem] "
-                      placeholder="설명"
+                  );
+                })}
+                {projectAdd ? (
+                  <div class="text-xl mt-5 font-test bg-white rounded-xl text-gray-900 mt-2 border border-gray-300 px-10 pt-8 pb-4">
+                    <input
+                      class="w-full border-b border-gray-300 pb-2 font-test text-2xl mb-2 bg-inherit text-gray-700 focus:outline-0"
+                      placeholder="프로젝트명 입력"
+                      onChange={(e) => { setPrjName(e.target.value); }}
                     />
-                  </div>
-                  <div class="w-full flex justify-end">
-                    <button class="w-[15%] ml-full py-1 mt-1 px-4 bg-inherit text-gray-800 text-lg font-test rounded-xl min-w-[5rem]">
-                      추가하기
-                    </button>
-                  </div>
-                </div>
+                    <div class="flex justify-center gap-5 mt-5">
+
+
+                      {prjImg ?
+                        (<div class="flex flex-col items-center">
+                          <img
+                            class="w-60rem h-60rem border border-gray-300"
+                            src={prjImg}
+                            style={{ minHeight: "17rem", minWidth: "26rem", maxHeight: "17rem", maxWidth: "26rem" }}
+                          />
+                          <label for="input-prjimg" class="w-full flex justify-end">
+                            <div
+                              class="mt-3 w-1/4 py-1 text-base text-white bg-gray-500 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
+                            >
+                              <div>사진 수정</div>
+                            </div>
+                          </label>
+                        </div>) :
+                        (<div>
+                          <label for="input-prjimg" class="">
+                            <div
+                              class="w-full h-full text-lg text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
+                              style={{ minHeight: "18rem", minWidth: "26rem", maxHeight: "18rem", maxWidth: "26rem" }}
+                            >
+                              <div>+</div>프로젝트 대표 사진 추가
+                            </div>
+                          </label>
+                        </div>)}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        id="input-prjimg"
+                        class="w-0 h-0"
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          if (e.target.value.length > 0) {
+                            let imgTarget = (e.target.files)[0];
+                            let fileReader = new FileReader();
+                            fileReader.readAsDataURL(imgTarget);
+                            fileReader.onload = function (evt) {
+                              /* file을 꺼내서 State로 지정 */
+                              setPrjImg(evt.target.result);
+                            }
+                          }
+                        }}
+                      />
+
+                      <div class="w-full flex flex-col gap-4 px-3 justify-center">
+                        <div class="mr-3 font-test text-xl px-1">
+                          개발 날짜
+                          <div class="mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
+                            <input
+                              class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                              onChange={(e) => { setPrjDevStart(e.target.value); }}
+                            />
+                            <div>~</div>
+                            <input
+                              class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                              onChange={(e) => { setPrjDevEnd(e.target.value); }}
+                            />
+                          </div>
+                        </div>
+                        <div class="flex gap-6 font-test text-lg items-center">
+                          <div class="font-test text-xl pl-1 pr-3 border-r border-gray-300 ">
+                            맡은 직군
+                          </div>
+                          <input
+                            class="text-gray-600 w-1/2 focus:outline-0"
+                            placeholder="입력"
+                            onChange={(e) => { setPrjDev(e.target.value); }}
+                          />
+                        </div>
+
+                        <div class="mr-3 font-test text-xl">
+                          <div class="border-b border-gray-400 w-full px-1 pb-2">
+                            사용 기술
+                          </div>
+                          <div class="grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
+                            {prjSkillsList.map((item) => {
+                              return (
+                                <div class="w-full rounded-lg bg-gray-50 border border-gray-300 px-2 text-center py-1 ">
+                                  {item}
+                                </div>
+                              );
+                            })}
+                            {prjSkillsAdd ? (
+                              <input
+                                class="w-full rounded-lg border border-gray-300 px-2 text-center py-1 focus:outline-0"
+                                placeholder="입력"
+                                onKeyPress={(e) => {
+                                  if (e.key === "Enter") {
+                                    onPrjSkillInputHandler(e);
+                                  }
+                                }}
+                                onChange={(e) => {
+                                  setPrjSkillInput(e.target.value);
+                                }}
+                              />
+                            ) : (
+                              <button
+                                class="w-full rounded-lg border border-dashed border-gray-300 p-1"
+                                onClick={() => {
+                                  setPrjSkillsAdd(true);
+                                }}
+                              >
+                                +
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-gray-600 mt-5 font-test text-lg break-all border-b border-gray-300">
+                      <div class="border-b border-gray-300 w-full pb-2 mb-2 text-gray-700">
+                        프로젝트 설명
+                      </div>
+                      <textarea
+                        class="w-full focus:outline-0 resize-none bg-inherit min-h-[10rem] "
+                        placeholder="설명"
+                        onChange={(e) => {
+                          setPrjDetailInput(e.target.value);
+                        }}
+                      />
+                    </div>
+                    <div class="w-full flex justify-end">
+                      <button class="w-[15%] ml-full py-1 mt-1 px-4 bg-inherit text-gray-800 text-lg font-test rounded-xl min-w-[5rem]"
+                        onClick={() => {
+                          const data = {
+                            name: prjName,
+                            start: prjDevStart,
+                            end: prjDevEnd,
+                            skills: prjSkillsList,
+                            detail: prjDetailInput,
+                            img: prjImg,
+                          };
+                          tmpPrjList.push(data);
+                          setProjectAdd(false);
+                          setPrjName("");
+                          setPrjDevStart("");
+                          setPrjDevEnd("");
+                          setPrjSkillsList([]);
+                          setPrjDetailInput("");
+                          setPrjImg(null);
+                          console.log(data);
+                        }}
+                      >
+                        추가하기
+                      </button>
+                    </div>
+                  </div>) : (<button
+                    class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]"
+                    onClick={() => {
+                      setProjectAdd(true);
+                    }}
+                  >
+                    +
+                  </button>)}
+
               </div>
               <div>
                 <div class="text-xl mt-4">블로그</div>
@@ -332,8 +470,8 @@ function PortfolioMain() {
             </div>
           </div>
         </section>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 

@@ -7,6 +7,7 @@ import Mainpage from "./page/Mainpage";
 import Login from "./page/Login";
 import Register from "./page/Register";
 import ProjectMain from "./page/ProjectMatching/ProjectMain";
+import ProjectList from "./page/ProjectMatching/ProjectList";
 import ProjectDetail from "./page/ProjectMatching/ProjectDetail";
 import ProjectSearch from "./page/ProjectMatching/ProjectSearch";
 import BlogMain from "./page/Blog/BlogMain";
@@ -74,6 +75,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/pm/main" element={<ProjectMain />} />
+          <Route path="/pm/list" element={<ProjectList />} />
           <Route path="/pm/detail" element={<ProjectDetail />} />
           <Route path="/pm/search" element={<ProjectSearch />} />
           <Route path="/blog/main" element={<BlogMain />} />

@@ -17,6 +17,7 @@ function ProjectMain() {
     "언어1",
     "언어2",
   ];
+  const [isTC, setIsTC] = useState(false);
   const [isTagChecked, setIsTagChecked] = useState([]);
   const [isTagFull, setIsTagFull] = useState(false);
   const [checkedTagList, setCheckedTagList] = useState([]);
@@ -97,7 +98,7 @@ function ProjectMain() {
                   class="bg-gray-50 grow focus:outline-0 text-gray-500 ml-2"
                   type="text"
                   onKeyPress={keyPressHandler}
-                  placeholder={"원하는 프로젝트를 검색해 보세요!"} // 이거 태그 선택됐을 때는 안 뜨게 하고 싶은데 isTagChecked.length==0으로 하는 거 혹시 아니니...? ㅠ
+                  placeholder={checkedTagList.length == 0 ? "원하는 프로젝트를 검색해 보세요!" : null}
                 />
               </div>
             </div>

@@ -3,25 +3,6 @@ import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
 import { useNavigate, Navigate } from "react-router-dom";
 
-function postRegister(data) {
-  console.log("확인");
-  console.log(data);
-  axios
-    .post(SERVER_URL + "/user-service/auth/join", JSON.stringify(data), {
-      headers: { "Content-Type": "application/json" },
-    })
-    .then((res) => {
-      //localStorage.setItem("Authorization", JWT); //이런 식으로 JWT 부분에 받은 토큰 넣어주면 될 것 같은데? (post로 요청보낼 때)
-      //localStorage.getItem("Authorization"); // 이렇게 하면 받아와질 것 같은데 맞는지는 모름 ㅎㅎ;
-      console.log("여기 찍힘?");
-      console.log(res);
-    })
-    .catch((err) => {
-      console.log(err);
-      console.log("뭐야 ㅅㅄㅄ");
-      console.log(err.request);
-    });
-}
 /*
 const postRegister = async ({ data }) => {
   console.log("확인");
@@ -55,6 +36,7 @@ function Register() {
   const [devInput, setDevInput] = useState("");
   const [registerData, setRegisterData] = useState(null);
   /*메시지*/
+  const [nickNameMsg, setNickNameMsg] = useState("");
   const [emailMsg, setEmailMsg] = useState("");
   const [pwdMsg, setPwdMsg] = useState("");
   const [pwdCheckMsg, setPwdCheckMsg] = useState("");
@@ -63,11 +45,69 @@ function Register() {
   const [deveMsg, setDevMsg] = useState("");
   const [errMsg, setErrMsg] = useState("");
   /*유효성*/
+  const [nickNameVaild, setNickNameVaild] = useState(false);
   const [emailVaild, setEmailVaild] = useState(false);
   const [pwdVaild, setPwdVaild] = useState(false);
   const [pwdCheckVaild, setPwdCheckVaild] = useState(false);
   const [phoneVaild, setPhoneVaild] = useState(false);
   const [devVaild, setDevVaild] = useState(false);
+
+
+  function postRegister(data) {
+    console.log("확인");
+    console.log(data);
+    axios
+      .post(SERVER_URL + "/user-service/auth/join", JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        //localStorage.setItem("Authorization", JWT); //이런 식으로 JWT 부분에 받은 토큰 넣어주면 될 것 같은데? (post로 요청보낼 때)
+        //localStorage.getItem("Authorization"); // 이렇게 하면 받아와질 것 같은데 맞는지는 모름 ㅎㅎ;
+        console.log("여기 찍힘?");
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log("뭐야 ㅅㅄㅄ");
+        console.log(err.request);
+      });
+  }
+
+  // 로그인, 회원가입 과정 JWT X
+  function postEmail(data) {
+    console.log(data);
+    console.log(JSON.stringify(data));
+    axios
+      .post(SERVER_URL + "/user-service/auth/email", JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res.data.result);
+        setEmailVaild(true);
+      })
+      .catch((err) => {
+        console.log(err.request);
+        setEmailVaild(false);
+      });
+  }
+
+  function postNickName(data) {
+    console.log(data);
+    console.log(JSON.stringify(data));
+    axios
+      .post(SERVER_URL + "/user-service/auth/nickname", JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res.data.result);
+        return true;
+      })
+      .catch((err) => {
+        console.log(err.request);
+        return false;
+      });
+  }
+
 
   const onLoginButtonHandler = () => {
     const tmp = {
@@ -105,18 +145,38 @@ function Register() {
       setEmailMsg("올바르지 않은 이메일 형식입니다. 다시 입력해주세요.");
       setEmailVaild(false);
     } else {
-      /*
-        if(중복)
-          setEmailMsg("이미 존재하는 이메일입니다. 다른 이메일을 입력해주세요.");
-      */
-      setEmailMsg("");
-      setEmailVaild(true);
+      console.log("왜안돼!!!!!!!!!!!!!!!!!!!!!!!!!1");
+
+      //console.log("asdas" + postEmail({ email: emailInput }));
+      postEmail({ email: emailInput });
+      if (!emailVaild) {
+        setEmailMsg("이미 존재하는 이메일입니다. 다른 이메일을 입력해주세요.");
+      }
+      else {
+        setEmailMsg("사용 가능한 이메일입니다.");
+      }
+
+
+    }
+  };
+  const onNickNameCheckHandler = (e) => {
+    if (nickNameInput == "") {
+      setNickNameMsg("닉네임을 입력해주세요.");
+      setEmailVaild(false);
+    } else {
+      console.log("왜안돼!!!!!!!!!!!!!!!!!!!!!!!!!1");
+
+      if (postNickName({ nickname: nickNameInput }) == false)
+        setNickNameMsg("이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.");
+      else {
+        setNickNameMsg("사용 가능한 닉네임입니다.");
+        setNickNameVaild(true);
+      }
+
+
     }
   };
 
-  const onNickNameCheckHandler = (e) => {
-    /** 여기에 닉네임 중복 체크 만들어주삼 */
-  };
   const onPasswordInputHandler = (e) => {
     setPwdInput(e.target.value);
     if (e.target.value.length > 16) {
@@ -240,19 +300,24 @@ function Register() {
             {emailMsg}
           </div>
         </div>
-        <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
-          <input
-            class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
-            placeholder="닉네임"
-            type="text"
-            onChange={onNickNameInputHandler}
-          />
-          <button
-            class="rounded-lg bg-gray-500 text-white flex-grow"
-            onClick={onNickNameCheckHandler}
-          >
-            중복 확인
-          </button>
+        <div>
+          <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
+            <input
+              class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
+              placeholder="닉네임"
+              type="text"
+              onChange={onNickNameInputHandler}
+            />
+            <button
+              class="rounded-lg bg-gray-500 text-white flex-grow"
+              onClick={onNickNameCheckHandler}
+            >
+              중복 확인
+            </button>
+          </div>
+          <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
+            {nickNameMsg}
+          </div>
         </div>
         <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
           <input

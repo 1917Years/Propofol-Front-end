@@ -2,33 +2,65 @@ import { React, useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
 import { useNavigate, Navigate } from "react-router-dom";
+import Cookies from 'universal-cookie';
+import { setRefreshTokenToCookie, getRefreshToken } from "../utils/oauth/auth.js"
 
-const postLogin = async ({
-  data,
-  setSync,
-  setLoginError,
-}) => {
-  await axios
-    .post(SERVER_URL + "/api/v1/login", data) //나중에 경로 /user-service/ 추가하기
-    .then((res) => {
-      /*
-      setCookie("token", "Bearer " + res.data.accessToken, {
-        path: "/",
-        expires: 0,
-      });
-      */
-      setLoginError(false);
-      console.log("제대로 보냄!!");
-    })
-    .catch((err) => {
-      setLoginError(true);
-      if (err.response) {
-        console.log(err.response.data); // => the response payload 오 굿굿
-      }
-    });
-};
+const cookies = new Cookies();
+
+/*
+export function setRefreshTokenToCookie(refresh_token) { //나중에 로그아웃 시 쿠키 삭제하는 코드 추가!!
+  cookies.set('refresh_token', refresh_token, { sameSite: 'strict' });
+}
+*/
 
 function Login(props) {
+  const { accessToken, setAccessToken } = useState(null);
+  const postLogin = async ({
+    data,
+    setSync,
+    setLoginError,
+  }) => {
+    await axios
+      .post(SERVER_URL + "/user-service/auth/login", data) //나중에 경로 /user-service/ 추가하기
+      .then((res) => {
+        /*
+        setCookie("token", "Bearer " + res.data.accessToken, {
+          path: "/",
+          expires: 0,
+        });
+        */
+        setLoginError(false);
+        const at = res.data.data.accessToken;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+        setRefreshTokenToCookie(res.data.data.refreshToken);
+        console.log(getRefreshToken());
+        //setAccessToken(res.data.data.accessToken);
+        moveToMain(at);
+        console.log(at);
+      })
+      .catch((err) => {
+        setLoginError(true);
+        if (err.response) {
+          console.log(err.response.data); // => the response payload 오 굿굿
+        }
+      });
+  };
+
+  function moveToMain(at) {
+    axios
+      .get(SERVER_URL + "/user-service/api/v1/members", at)
+      .then((res) => {
+        console.log(res);
+        navigate('/');
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response.data);
+        }
+      });
+
+  }
+
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
