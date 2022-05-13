@@ -6,6 +6,7 @@ import "./App.css";
 import Mainpage from "./page/Mainpage";
 import Login from "./page/Login";
 import Register from "./page/Register";
+import ProjectAdd from "./page/ProjectMatching/ProjectAdd";
 import ProjectMain from "./page/ProjectMatching/ProjectMain";
 import ProjectList from "./page/ProjectMatching/ProjectList";
 import ProjectDetail from "./page/ProjectMatching/ProjectDetail";
@@ -31,7 +32,6 @@ function App() {
   //const cors = require('cors');
   // 요청받은 정보를 담아줄 변수 선언
   const [testStr, setTestStr] = useState("");
-
   // 변수 초기화
   function callback(str) {
     setTestStr(str);
@@ -57,11 +57,6 @@ function App() {
     return <Mainpage {...props}></Mainpage>;
   };
 
-  const Hd = (props) => {
-    return;
-    <Header props={props} />;
-  };
-
   const KakOauth = (props) => {
     return <KakaoOauth {...props}></KakaoOauth>;
   };
@@ -74,6 +69,7 @@ function App() {
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/pm/add" element={<ProjectAdd />} />
           <Route path="/pm/main" element={<ProjectMain />} />
           <Route path="/pm/list" element={<ProjectList />} />
           <Route path="/pm/detail" element={<ProjectDetail />} />

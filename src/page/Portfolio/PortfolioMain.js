@@ -313,7 +313,7 @@ function PortfolioMain() {
                               class="w-full h-full text-lg text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
                               style={{ minHeight: "18rem", minWidth: "26rem", maxHeight: "18rem", maxWidth: "26rem" }}
                             >
-                              <div>+</div>프로젝트 대표 사진 추가
+                              <div>+</div>프로젝트 대표 이미지 추가
                             </div>
                           </label>
                         </div>)}

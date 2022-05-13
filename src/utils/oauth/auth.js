@@ -1,3 +1,4 @@
+import { React, useState } from "react";
 import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
@@ -12,4 +13,8 @@ export function getRefreshToken() {
     } else {
         return "no refresh_token";
     }
+}
+
+export function auth() {
+
 }

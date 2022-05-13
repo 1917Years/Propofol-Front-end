@@ -5,29 +5,6 @@ import "react-quill/dist/quill.snow.css";
 import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css";
 
-/*
-
-export const modules = useMemo(
-    () => ({
-        toolbar: {
-            container: [
-                ["bold", "italic", "underline", "strike", "blockquote"],
-                [{ size: ["small", false, "large", "huge"] }, { color: [] }],
-                [
-                    { list: "ordered" },
-                    { list: "bullet" },
-                    { indent: "-1" },
-                    { indent: "+1" },
-                    { align: [] },
-                ],
-                ["image", "video"],
-            ],
-        },
-    }),
-    []
-);
-*/
-
 const CustomTmpSave = () => {
   return (
     <button class="z-40 w-[5rem] rounded-[18px] bg-none border border-gray-400 text-gray-600 font-sbtest px-5 py-1 flex bg-white items-center gap-2">
@@ -77,6 +54,27 @@ hljs.configure({
   languages: ["javascript", "ruby", "python", "c", "c++"],
 });
 
+function imageHandler() {
+  const input = document.createElement("input");
+  input.setAttribute("type", "file");
+  input.setAttribute("accept", "image/*");
+  input.click();
+
+  input.onchange = async () => {
+    const file = input.files[0]; // 현재 커서 위치 저장 
+    //const range = quillRef.current.getSelection(true); // 서버에 올려질때까지 표시할 로딩 placeholder 삽입 
+    //getEditor().insertEmbed(range.index, "image", `/images/loading.gif`);
+    //try { // 필자는 파이어 스토어에 저장하기 때문에 이런식으로 유틸함수를 따로 만들어줬다 // 이런식으로 서버에 업로드 한뒤 이미지 태그에 삽입할 url을 반환받도록 구현하면 된다 
+    //const filePath = `contents/temp/${Date.now()}`;
+    //const url = await uploadImage(file, filePath); // 정상적으로 업로드 됐다면 로딩 placeholder 삭제 
+    //getEditor().deleteText(range.index, 1); // 받아온 url을 이미지 태그에 삽입 
+    //getEditor().insertEmbed(range.index, "image", url); // 사용자 편의를 위해 커서 이미지 오른쪽으로 이동 
+    //getEditor().setSelection(range.index + 1);
+    //} catch (e) { getEditor().deleteText(range.index, 1); }
+  };
+
+}
+
 export const modules = {
   toolbar: {
     /*
@@ -94,6 +92,9 @@ export const modules = {
             ],
             */
     container: "#toolbar",
+    handlers: {
+      image: imageHandler
+    }
   },
 
   syntax: {

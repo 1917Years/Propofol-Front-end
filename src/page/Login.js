@@ -14,7 +14,6 @@ export function setRefreshTokenToCookie(refresh_token) { //나중에 로그아�
 */
 
 function Login(props) {
-  const { accessToken, setAccessToken } = useState(null);
   const postLogin = async ({
     data,
     setSync,
@@ -23,25 +22,23 @@ function Login(props) {
     await axios
       .post(SERVER_URL + "/user-service/auth/login", data) //나중에 경로 /user-service/ 추가하기
       .then((res) => {
-        /*
-        setCookie("token", "Bearer " + res.data.accessToken, {
-          path: "/",
-          expires: 0,
-        });
-        */
+        //console.log("성공.");
+        console.log(res);
         setLoginError(false);
-        const at = res.data.data.accessToken;
-        axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
-        setRefreshTokenToCookie(res.data.data.refreshToken);
-        console.log(getRefreshToken());
-        //setAccessToken(res.data.data.accessToken);
-        moveToMain(at);
-        console.log(at);
+        if (res.data.data.accessToken != null) {
+          const at = res.data.data.accessToken;
+          axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+          setRefreshTokenToCookie(res.data.data.refreshToken);
+          console.log(getRefreshToken());
+          moveToMain(at);
+          console.log(at);
+        }
       })
       .catch((err) => {
+        console.log("실패.");
         setLoginError(true);
         if (err.response) {
-          console.log(err.response.data); // => the response payload 오 굿굿
+          console.log(err.response.data);
         }
       });
   };

@@ -194,23 +194,63 @@ function ProjectDetail() {
 
                 </div>
               </div>
-              <div class="ml-5 w-1/4">
-                <div class="mt-10 text-xl font-btest ml-10">팀장 정보</div>
-                <div class="flex mt-2">
-                  <div className="ProfileImage" class=" w-14 h-14 rounded-full">
-                    <img
-                      src={profileImage}
-                      class="w-14 h-14 rounded-full drop-shadow-lg"
-                      alt="profile"
-                    />
+              <div class="ml-5 w-1/4 py-5">
+
+                <div class="mt-10 mb-4 text-xl font-btest">팀장 정보</div>
+
+                <div class="bg-gray-100 py-4 px-4 rounded-lg">
+                  <div class="flex mt-2">
+                    <div className="ProfileImage" class=" w-14 h-14 rounded-full">
+                      <img
+                        src={profileImage}
+                        class="w-14 h-14 rounded-full drop-shadow-lg"
+                        alt="profile"
+                      />
+                    </div>
+                    <div class="ml-4 my-auto text-2xl font-btest">신유진</div>
                   </div>
-                  <div class="ml-4 my-auto text-2xl font-btest">신유진</div>
+                  <div class="mt-4 text-sm font-ltest">안녕하세요.
+                    저는 개발자 신유진입니다. 개발을 저의 인생 모토로 삼아 일일 공부를
+                    목표로 하여 TIL 블로그를 운영하고 있습니다. 사람들에게 더 편리한
+                    UI를 제공하는 것을 목표로 삼아 멋진 디자인을 만드는 프론트엔드
+                    디자이너가 되기 위해 오늘도 달리는 중입니다. :D</div>
                 </div>
-                <div class="mt-4 text-sm font-ltest">안녕하세요.
-                  저는 개발자 신유진입니다. 개발을 저의 인생 모토로 삼아 일일 공부를
-                  목표로 하여 TIL 블로그를 운영하고 있습니다. 사람들에게 더 편리한
-                  UI를 제공하는 것을 목표로 삼아 멋진 디자인을 만드는 프론트엔드
-                  디자이너가 되기 위해 오늘도 달리는 중입니다. :D</div>
+                <button class="ml-6 mt-4 font-ltest text-sm"> 팀장의 포트폴리오 확인하기 ></button>
+                <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
+                <button class="mt-4 border text-md rounded-lg w-full py-2">지원하기</button>
+                <div class="mt-6 text-lg font-btest">현재 참여 중인 팀원</div>
+                <div class="mt-3">
+                  <div class="flex mb-2">
+                    <div className="ProfileImage" class=" w-6 h-6 rounded-full">
+                      <img
+                        src={profileImage}
+                        class="w-6 h-6 rounded-full drop-shadow-lg"
+                        alt="profile"
+                      />
+                    </div>
+                    <div class="ml-2 my-auto font-btest">최영찬</div>
+                  </div>
+                  <div class="flex mb-2">
+                    <div className="ProfileImage" class="w-6 h-6 rounded-full">
+                      <img
+                        src={profileImage}
+                        class="w-6 h-6 rounded-full drop-shadow-lg"
+                        alt="profile"
+                      />
+                    </div>
+                    <div class="ml-2 my-auto font-btest">최영찬</div>
+                  </div>
+                  <div class="flex mb-2">
+                    <div className="ProfileImage" class="w-6 h-6 rounded-full">
+                      <img
+                        src={profileImage}
+                        class="w-6 h-6 rounded-full drop-shadow-lg"
+                        alt="profile"
+                      />
+                    </div>
+                    <div class="ml-2 my-auto font-btest">최영찬</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
