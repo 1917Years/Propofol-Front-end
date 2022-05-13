@@ -41,11 +41,13 @@ function BlogEditor() {
       }
       */
       const range = quillRef.current.getEditor().getSelection();
+      //quillRef.current.getEditor().insertEmbed(range.index, "image", require(process.env.PUBLIC_URL + "C:/Users/Yujin/Propofol-Front-end/src/Component/lenna.png"));
       try {
         const result = await axios.post(SERVER_URL + '/til-service/api/v1/boards/image', formData);
         console.log(result);
-        const IMG_URL = result.data.url;
-        quillRef.current.getEditor().insertEmbed(range.index, "image", require(IMG_URL)); // require -> react에서 src로 이미지 불러올 때 생기는 오류 해결하기 위함
+        const IMG_URL = result.data.data; //일케하면되니?
+        console.log("유알엘 : " + IMG_URL);
+        quillRef.current.getEditor().insertEmbed(range.index, "image", require(process.env.PUBLIC_URL + IMG_URL)); // require -> react에서 src로 이미지 불러올 때 생기는 오류 해결하기 위함
         quillRef.current.getEditor().setSelection(range.index + 1);
       } catch (e) { quillRef.current.getEditor().deleteText(range.index, 1); }
     };
@@ -92,8 +94,7 @@ function BlogEditor() {
   Quill.register(Size, true);
 
   hljs.configure({
-    // optionally configure hljs
-    languages: ["javascript", "ruby", "python", "c", "c++"],
+    languages: ["javascript", "ruby", "python", "c", "c++", "java"],
   });
 
   const modules = {
