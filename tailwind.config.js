@@ -25,7 +25,14 @@ module.exports = {
         bbg: "#E8E3E1",
         bluepurple: "#8F8BD9",
       },
-
+      gridTemplateRows: {
+        '80': '80px',
+        '100': '100px',
+        '7': 'repeat(7, 15px)'
+      },
+      gridTemplateColumns: {
+        '54': 'repeat(54, minmax(0, 1fr))'
+      },
       transitionDelay: {
         2000: "2000ms",
       },

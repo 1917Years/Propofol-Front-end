@@ -1,13 +1,24 @@
+import axios from "axios";
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useParams, useLocation, useSearchParams } from "react-router-dom";
+import { SERVER_URL } from "../../utils/SRC";
 
 function BlogSearch(props) {
+  //const keyword = useParams().keyword;
+  //const option = useParams().option;
+  // const keyword = useLocation();
+  // const option = useLocation();
   const navigate = useNavigate();
   const tagList = ["JAVA", "Spring", "C++", "JavaScript", "C#", "C", "Python", "냠냠", "ㅁㄴㅇ", "울랄라", "언어1", "언어2"];
   const [isTagChecked, setIsTagChecked] = useState([]);
   const [isTagFull, setIsTagFull] = useState(false);
   const [checkedTagList, setCheckedTagList] = useState([]);
   const [tmp, setTmp] = useState(false);
+  const [searchResult, setSearchResult] = useState([]);
+  const [searchParams, setSeratchParams] = useSearchParams();
+  const keyword = searchParams.get('keyword');
+  const option = searchParams.get('option');
+
   const onTagButtonClickHandler = (e) => {
     if (e.target.value == "-1") return;
     if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
@@ -36,6 +47,8 @@ function BlogSearch(props) {
     }
   };
   useEffect(() => {
+    console.log(keyword);
+    console.log("option : " + option);
     let t = [];
     for (let i = 0; i < tagList.length; i++) {
       t.push(false);
@@ -43,6 +56,37 @@ function BlogSearch(props) {
     console.log(t);
     setIsTagChecked(t);
     console.log(isTagChecked);
+
+    if (option == '제목') {
+      axios.get(SERVER_URL + "/til-service/api/v1/boards/search/title/" + keyword + "?page=1")
+        .then((res) => {
+          console.log(res);
+          let pageCount = res.data.data.pageCount;
+          let totalCount = res.data.data.totalCount;
+
+          res.data.data.boards.map((board) => {
+            let tempSR;
+            let tempSRList = searchResult;
+            tempSR = {
+              id: board.id,
+              title: board.title,
+              detail: board.content,
+              date: board.createdDate,
+              open: board.open,
+              img: board.imageBytes,
+              imgtype: board.imageType.toString().split('/')[1],
+              like: board.recommend,
+              comment: board.commentCount
+            }
+            tempSRList.push(tempSR);
+            setSearchResult(tempSRList);
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+    }
+
   }, []);
   let tmpDetail =
     "글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~";
@@ -122,7 +166,72 @@ function BlogSearch(props) {
           </div>
           {isTagFull ? (<div class="text-sm font-ltest ml-2 mt-2 text-bluepurple">태그는 최대 3개까지 선택할 수 있습니다.</div>) : null}
         </div>
+
         <div class="mt-10 border rounded-lg">
+          {searchResult.map((item) => {
+            if (item.image == null) {
+              return (
+                <button
+                  className="Writing"
+                  class="flex border-b bg-white h-44 px-10 py-5 gap-5 text-left"
+                  value={item.id}
+                  onClick={(e) => {
+                    navigate('/blog/detail/' + e.currentTarget.value);
+                  }}
+                >
+                  <div class="w-[47rem]">
+                    <div class="text-sm flex gap-6 text-gray-400 font-ltest">
+                      <h>사용자명</h>
+                      <h>{item.date}</h>
+                    </div>
+                    <button class="py-1 text-blue-400 text-lg">
+                      {item.title}
+                    </button>
+                    <div class="font-ltest">{item.detail}</div>
+                  </div>
+                  <div class="w-grow">
+                    <div class=" w-32 h-28 mb-2">
+                      <img
+                        src={"data:image/" + item.imgtype + ";base64," + item.img}
+                        class="w-full z-full z-40"
+                      /></div>
+                    <div class="w-32 grid grid-cols-2 text-sm ">
+                      <div>🧡 {item.like}</div>
+                      <div>💬 {item.comment}</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  className="Writing"
+                  class="border-b bg-white h-48 px-10 py-5 gap-5 text-left"
+                  onClick={(e) => {
+                    navigate('/blog/detail/' + e.currentTarget.value);
+                  }}
+                >
+                  <div class="w-full h-28">
+                    <div class="text-sm flex gap-6 text-gray-400 font-ltest">
+                      <h>{"본인 닉네임"}</h>
+                      <h>{item.date}</h>
+                    </div>
+                    <button class="py-1 text-blue-400 text-lg">
+                      {item.title}
+                    </button>
+                    <div class="font-ltest">{item.detail}</div>
+                  </div>
+                  <div class="flex">
+                    <div class="w-[47rem]"></div>
+                    <div class="w-32 grid grid-cols-2 text-sm">
+                      <div>🧡 {item.like}</div>
+                      <div>💬 {item.comment}</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            }
+          })}
           <div
             className="Writing"
             class="flex border-b bg-white h-44 px-10 py-5 gap-5"

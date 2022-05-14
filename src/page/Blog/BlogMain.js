@@ -3,14 +3,55 @@ import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 
-
 function BlogMain() {
   const navigate = useNavigate();
   const tagList = ["JAVA", "Spring", "C++", "JavaScript", "C#", "C", "Python", "냠냠", "ㅁㄴㅇ", "울랄라", "언어1", "언어2"];
+  const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const weekList = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
   const [isTagChecked, setIsTagChecked] = useState([]);
   const [isTagFull, setIsTagFull] = useState(false);
   const [checkedTagList, setCheckedTagList] = useState([]);
   const [tmp, setTmp] = useState(false);
+  const [writingList, setWritingList] = useState([]);
+  const [searchOption, setSearchOption] = useState("");
+
+  function loadWritings() {
+    axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + 1)
+      .then((res) => {
+        console.log(res);
+        res.data.data.boards.map((writing) => {
+          let tmpWr;
+          let tmpWrList = writingList;
+          tmpWr = {
+            id: writing.id,
+            title: writing.title,
+            detail: writing.content,
+            date: writing.createdDate,
+            open: writing.open,
+            img: writing.imageBytes,
+            imgtype: writing.imageType.toString().split('/')[1],
+            like: writing.recommend,
+            comment: writing.commentCount
+          }
+          console.log("아이디는 " + tmpWr.id);
+          tmpWrList.push(tmpWr);
+          setWritingList(tmpWrList);
+          setTmp(!tmp);
+          console.log("tmpWR : ");
+          console.log(tmpWr);
+
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  useEffect(() => {
+    setSearchOption("제목");
+    loadWritings();
+  }, []);
+
   let tmpDetail =
     "글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~";
   const onTagButtonClickHandler = (e) => {
@@ -36,11 +77,15 @@ function BlogMain() {
     setTmp(!tmp);
   };
   const keyPressHandler = (e) => {
+    let keyword = e.currentTarget.value;
+    // console.log(searchOption);
+    // console.log(keyword);
     if (e.key === 'Enter') {
-      navigate('/blog/search');
+      navigate("/blog/search?keyword=" + keyword + "&option=" + searchOption);
     }
   };
   useEffect(() => {
+    setSearchOption("제목");
     let t = [];
     for (let i = 0; i < tagList.length; i++) {
       t.push(false);
@@ -59,8 +104,13 @@ function BlogMain() {
               <div class="self-center ml-2">🔍</div>
               <select
                 class="text-gray-400 text-lg appearance-none focus:outline-none bg-transparent"
+                value={searchOption}
+                defaultValue="제목"
+                onChange={(e) => setSearchOption(e.target.value)}
               >
-                <option value="제목" class="hover:bg-gray-100 dark:hover:bg-gray-600 text-center">
+                <option value="제목"
+                  class="hover:bg-gray-100 dark:hover:bg-gray-600 text-center"
+                >
                   제목
                 </option>
                 <option value="제목+내용" class="text-center">제목+내용</option>
@@ -140,17 +190,76 @@ function BlogMain() {
               오늘 학습한 내용 쓰러가기 📒
             </button>
           </div>
-          <div class="grid">
-            스트릭
-            <ul class="months"></ul>
-            <ul class="days"></ul>
-            <ul class="squares"></ul>
+          <div>
+            ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ
           </div>
-          <style>
-
-          </style>
         </div>
+
         <div class="mt-10 border rounded-lg">
+          {writingList.map((item) => {
+            if (item.image == null) {
+              return (
+                <button
+                  className="Writing"
+                  class="flex border-b bg-white h-44 px-10 py-5 gap-5 text-left"
+                  value={item.id}
+                  onClick={(e) => {
+                    navigate('/blog/detail/' + e.currentTarget.value);
+                  }}
+                >
+                  <div class="w-[47rem]">
+                    <div class="text-sm flex gap-6 text-gray-400 font-ltest">
+                      <h>사용자명</h>
+                      <h>{item.date}</h>
+                    </div>
+                    <button class="py-1 text-blue-400 text-lg">
+                      {item.title}
+                    </button>
+                    <div class="font-ltest">{item.detail}</div>
+                  </div>
+                  <div class="w-grow">
+                    <div class=" w-32 h-28 mb-2">
+                      <img
+                        src={"data:image/" + item.imgtype + ";base64," + item.img}
+                        class="w-full z-full z-40"
+                      /></div>
+                    <div class="w-32 grid grid-cols-2 text-sm ">
+                      <div>🧡 {item.like}</div>
+                      <div>💬 {item.comment}</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            } else {
+              return (
+                <button
+                  className="Writing"
+                  class="border-b bg-white h-48 px-10 py-5 gap-5 text-left"
+                  onClick={(e) => {
+                    navigate('/blog/detail/' + e.currentTarget.value);
+                  }}
+                >
+                  <div class="w-full h-28">
+                    <div class="text-sm flex gap-6 text-gray-400 font-ltest">
+                      <h>{"본인 닉네임"}</h>
+                      <h>{item.date}</h>
+                    </div>
+                    <button class="py-1 text-blue-400 text-lg">
+                      {item.title}
+                    </button>
+                    <div class="font-ltest">{item.detail}</div>
+                  </div>
+                  <div class="flex">
+                    <div class="w-[47rem]"></div>
+                    <div class="w-32 grid grid-cols-2 text-sm">
+                      <div>🧡 {item.like}</div>
+                      <div>💬 {item.comment}</div>
+                    </div>
+                  </div>
+                </button>
+              );
+            }
+          })}
           <div
             className="Writing"
             class="flex border-b bg-white h-44 px-10 py-5 gap-5"

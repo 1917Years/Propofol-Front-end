@@ -22,7 +22,6 @@ function Login(props) {
     await axios
       .post(SERVER_URL + "/user-service/auth/login", data) //나중에 경로 /user-service/ 추가하기
       .then((res) => {
-        //console.log("성공.");
         console.log(res);
         setLoginError(false);
         if (res.data.data.accessToken != null) {
@@ -57,7 +56,6 @@ function Login(props) {
           console.log(err.response.data);
         }
       });
-
   }
 
   const navigate = useNavigate();

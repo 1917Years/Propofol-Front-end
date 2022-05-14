@@ -27,6 +27,7 @@ import "tailwindcss/tailwind.css";
 import KakaoOauth from "./utils/oauth/KakaoOauth";
 import { setRefreshTokenToCookie, getRefreshToken, refreshJWT, removeJWT } from "./utils/auth";
 import BlogWr2 from "./page/Blog/BlogWr2";
+import BlogDetail from "./page/Blog/BlogDetail";
 
 axios.interceptors.response.use(
   function (response) {
@@ -35,6 +36,11 @@ axios.interceptors.response.use(
     return response;
   },
   async function (error) {
+    if (error == null) {
+      console.log(error.response);
+      console.log("시발");
+    }
+
     console.log(error.response);
     if (error.response.data.data == "Please RefreshToken.") {
       try {
@@ -107,6 +113,7 @@ axios.interceptors.response.use(
 function App() {
   //const cors = require('cors');
   // 요청받은 정보를 담아줄 변수 선언
+  let id, keyword, option;
   const [testStr, setTestStr] = useState("");
   // 변수 초기화
   function callback(str) {
@@ -137,6 +144,10 @@ function App() {
     return <KakaoOauth {...props}></KakaoOauth>;
   };
 
+  const Detail = (props) => {
+    return <BlogDetail {...props}></BlogDetail>
+  };
+
   return (
     <>
       <BrowserRouter>
@@ -154,6 +165,7 @@ function App() {
           <Route path="/blog/search" element={<BlogSearch />} />
           <Route path="/blog/writing" element={<BlogWr2 />} />
           <Route path="/blog/writing_prev" element={<BlogWriting />} />
+          <Route path="/blog/Detail/:id" element={<BlogDetail />} />
           <Route path="/oauth2/kakao/login" element={<KakOauth />} />
           <Route path="/portfolio/main" element={<PortfolioMain />} />
           <Route path="/portfolio/template/t1" element={<T1 />} />

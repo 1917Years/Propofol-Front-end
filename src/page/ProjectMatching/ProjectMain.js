@@ -222,10 +222,10 @@ function ProjectMain() {
 
           <div class="mt-10 text-2xl font-btest">나의 시간표</div>
           <div class="flex">
-            <div class="basis-1/2">
+            <div class="basis-3/4">
               <div class="mr-10 my-4 bg-gray-400 h-96">시간표</div>
             </div>
-            <div class="basis-1/2">
+            <div class="basis-1/4">
               <div class="grid grid-rows-2 h-full">
                 <button class="text-gray-600 rounded-lg border border-slate-300 w-full my-4 py-2">
                   새 프로젝트 모집하기
