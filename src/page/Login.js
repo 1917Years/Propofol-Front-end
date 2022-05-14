@@ -28,7 +28,9 @@ function Login(props) {
         if (res.data.data.accessToken != null) {
           const at = res.data.data.accessToken;
           axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+          console.log(res.data.data.refreshToken);
           setRefreshTokenToCookie(res.data.data.refreshToken);
+          console.log("refresh Token : ");
           console.log(getRefreshToken());
           moveToMain(at);
           console.log(at);

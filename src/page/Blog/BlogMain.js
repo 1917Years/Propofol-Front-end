@@ -1,5 +1,8 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
+import axios from "axios";
+import { SERVER_URL } from "../../utils/SRC";
+
 
 function BlogMain() {
   const navigate = useNavigate();
@@ -137,7 +140,15 @@ function BlogMain() {
               오늘 학습한 내용 쓰러가기 📒
             </button>
           </div>
-          <div class="bg-gray-400 grow">스트릭</div>
+          <div class="grid">
+            스트릭
+            <ul class="months"></ul>
+            <ul class="days"></ul>
+            <ul class="squares"></ul>
+          </div>
+          <style>
+
+          </style>
         </div>
         <div class="mt-10 border rounded-lg">
           <div

@@ -16,9 +16,15 @@ function BlogEditor() {
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(true);
   const [writingInfo, setWritingInfo] = useState({ "title": null, "detail": null });
+  const [baseUrlList, setBaseUrlList] = useState([]);
+  const [imgFileList, setImgFileList] = useState([]);
   const [imgList, setImgList] = useState([]);
+  const [imgUrlList, setImgUrlList] = useState([]);
+  const [imgNameList, setImgNameList] = useState([]);
+
   /* 커스텀 툴바 */
   const formData = new FormData();
+
   function imageHandler() {
     const input = document.createElement("input");
     input.setAttribute("type", "file");
@@ -27,21 +33,22 @@ function BlogEditor() {
     input.onchange = async () => {
       let fileReader = new FileReader();
       let imgsrc;
-      const file = input.files[0]; // 현재 커서 위치 저장 
-      formData.append('file', file);
-      /*
+      let tmpImgList = imgFileList;
+      const file = input.files[0];
+      imgFileList.push(file);
+      setImgFileList(tmpImgList);
+      //formData.append('file', file);
+      const range = quillRef.current.getEditor().getSelection();
       fileReader.readAsDataURL(file);
-      fileReader.onload = function (evt) {
+      fileReader.onload = function (evt) { //임시로 프론트에 이미지 띄워줌
+        let tmpBaseList = baseUrlList;
         imgsrc = evt.target.result;
-
-
+        tmpBaseList.push(imgsrc);
+        setBaseUrlList(tmpBaseList);
         console.log(file);
-        const range = quillRef.current.getEditor().getSelection(true);
         quillRef.current.getEditor().insertEmbed(range.index, "image", imgsrc);
       }
-      */
-      const range = quillRef.current.getEditor().getSelection();
-      //quillRef.current.getEditor().insertEmbed(range.index, "image", require(process.env.PUBLIC_URL + "C:/Users/Yujin/Propofol-Front-end/src/Component/lenna.png"));
+      /*
       try {
         const result = await axios.post(SERVER_URL + '/til-service/api/v1/boards/image', formData);
         console.log(result);
@@ -50,8 +57,13 @@ function BlogEditor() {
         console.log("유알엘 : " + NEW_IMG_URL);
         quillRef.current.getEditor().insertEmbed(range.index, "image", NEW_IMG_URL);
         quillRef.current.getEditor().setSelection(range.index + 1);
-      } catch (e) { quillRef.current.getEditor().deleteText(range.index, 1); }
+      } catch (e) {
+        quillRef.current.getEditor().deleteText(range.index, 1);
+      }
+      */
     };
+    console.log("폼데이터 : 시발 왜 안떠!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+    console.log(formData.get('file'));
   }
 
   const CustomTmpSave = () => {
@@ -98,28 +110,31 @@ function BlogEditor() {
     languages: ["javascript", "ruby", "python", "c", "c++", "java"],
   });
 
-  const modules = {
+
+  /*
+  const modules = useMemo(() => ({
     toolbar: {
-      /*
-              container: [
-                  ["bold", "italic", "underline", "strike", "blockquote"],
-                  [{ size: ["small", false, "large", "huge"] }, { color: [] }],
-                  [
-                      { list: "ordered" },
-                      { list: "bullet" },
-                      { indent: "-1" },
-                      { indent: "+1" },
-                      { align: [] },
-                  ],
-                  ["image", "video"],
-              ],
-              */
       container: "#toolbar",
       handlers: {
         image: imageHandler
       }
     },
+    syntax: {
+      highlight: (text) => hljs.highlightAuto(text).value,
+    },
+  }),
+    []
+  );
+*/
 
+
+  const modules = {
+    toolbar: {
+      container: "#toolbar",
+      handlers: {
+        image: imageHandler
+      }
+    },
     syntax: {
       highlight: (text) => hljs.highlightAuto(text).value,
     },
@@ -206,17 +221,75 @@ function BlogEditor() {
   const tmpSaveHandler = (e) => {
 
   };
-  const saveHandler = (e) => {
+  async function saveHandler() {
     //console.log(htmlContent);
-    console.log(formData);
-    let tmp = { "title": title, "content": htmlContent, "open": open };
-    setWritingInfo(tmp);
-    console.log(tmp);
-    console.log("이미지 리스트 : " + imgList);
-    axios
-      .post(SERVER_URL + "/til-service/api/v1/boards", tmp)
+    const formData_save = new FormData();
+    let htmlContent_after;
+    imgFileList.map((file) => {
+      formData.append('file', file);
+    })
+    //console.log("폼데이터 : 시발 왜 안떠");
+    //console.log(formData.get('file'));
+    await axios
+      .post(SERVER_URL + "/til-service/api/v1/boards/image", formData)
       .then((res) => {
-        //console.log("성공.");
+
+        console.log(res);
+
+        res.data.data.map((result) => {
+          let tmpUrlList = imgUrlList;
+          let tmpNameList = imgNameList;
+          let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+          let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+          console.log("유알엘 : " + IMG_URL);
+          console.log("이름 : " + imageName);
+          tmpUrlList.push(IMG_URL);
+          tmpNameList.push(imageName);
+
+          setImgUrlList(tmpUrlList);
+          setImgNameList(tmpNameList);
+        })
+
+        htmlContent_after = htmlContent;
+        for (let i = 0; i < imgUrlList.length; i++) {
+          htmlContent_after = htmlContent_after.toString().replace(baseUrlList[i], imgUrlList[i]);
+        }
+        console.log(htmlContent_after);
+
+        /*
+        const IMG_URL = result.data.data; //일케하면되니?
+        let NEW_IMG_URL = IMG_URL.toString().replace("http://localhost:8000", SERVER_URL);
+        console.log("유알엘 : " + NEW_IMG_URL);
+        quillRef.current.getEditor().insertEmbed(range.index, "image", NEW_IMG_URL);
+        quillRef.current.getEditor().setSelection(range.index + 1);
+        */
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response.data);
+        }
+      });
+    console.log("이미지 유알엘 리스트 : ");
+    console.log(imgUrlList);
+
+
+    formData_save.append('title', title);
+    formData_save.append('content', htmlContent_after);
+    formData_save.append('open', open);
+    imgNameList.map((fileName) => {
+      formData_save.append('fileName', fileName);
+      console.log("fileName = " + fileName);
+    })
+    //setWritingInfo(formData);
+    console.log(formData_save.get('title'));
+    console.log(formData_save.get('content'));
+    console.log(formData_save.get('open'));
+    console.log(formData_save.get('fileName'));
+    //console.log("이미지 리스트 : " + imgList);
+    await axios
+      .post(SERVER_URL + "/til-service/api/v1/boards", formData_save)
+      .then((res) => {
+        console.log("성공.");
         console.log(res);
       })
       .catch((err) => {
@@ -227,6 +300,7 @@ function BlogEditor() {
       });
 
     //console.log(writingInfo);
+
   };
   const onTitileInputHandler = (e) => {
     setTitle(e.target.value);

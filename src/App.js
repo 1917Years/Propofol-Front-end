@@ -28,35 +28,76 @@ import KakaoOauth from "./utils/oauth/KakaoOauth";
 import { setRefreshTokenToCookie, getRefreshToken, refreshJWT, removeJWT } from "./utils/auth";
 import BlogWr2 from "./page/Blog/BlogWr2";
 
-axios.interceptors.request.use(
+axios.interceptors.response.use(
   function (response) {
+    console.log("안녕?");
+    console.log(response);
     return response;
   },
   async function (error) {
+    console.log(error.response);
     if (error.response.data.data == "Please RefreshToken.") {
       try {
         const originalRequest = error.config;
-        refreshJWT();
+        const Data = await (await axios.get(SERVER_URL + "/user-service/auth/refresh", { headers: { "refresh-token": getRefreshToken() }, })).data.data;
+        console.log(Data);
+        const accessToken = Data.accessToken;
+        const refreshToken = Data.refreshToken;
+        console.log("access-token = " + accessToken);
+        //console.log("refresh-token = " + refreshToken);
+        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+        console.log("access-token = " + originalRequest.headers['Authorization']);
+        console.log(originalRequest);
+        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        setRefreshTokenToCookie(refreshToken);
         return await axios.request(originalRequest);
-        /*
-        const data = await client.get('auth/refreshtoken')
-        if (data) {
-          const { accessToken, refreshToken } = data.data
-          localStorage.removeItem('user')
-          localStorage.setItem('user', JSON.stringify(data.data, ['accessToken', 'refreshToken']))
-          originalRequest.headers['accessToken'] = accessToken;
-          originalRequest.headers['refreshToken'] = refreshToken;
-          return await client.request(originalRequest);
-          
-        }
-        */
       } catch (error) {
-        removeJWT();
-        /*
-        localStorage.removeItem('user');
         console.log(error);
-        */
       }
+      /*
+      axios
+        .get(SERVER_URL + "/user-service/auth/refresh",
+          {
+            headers: { "refresh-token": getRefreshToken() }, // 갱신을 위해 헤더에 refresh-token 첨부
+          })
+        .then((res) => {
+          const at = res.data.data.accessToken;
+          console.log("엑세스 토큰 : " + at);
+          originalRequest.headers['Authorization'] = at;
+          console.log("리프레쉬 토큰 : " + res.data.data.refreshToken);
+          //axios.defaults.headers.common['Authorization'] = null;
+          axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+          setRefreshTokenToCookie(res.data.data.refreshToken);
+          console.log(axios.defaults.headers.common['Authorization']);
+          console.log(originalRequest.headers['Authorization']);
+          return axios.request(originalRequest);
+          //return Promise.reject(error);
+        })
+        .catch((err) => {
+          console.log("에러!!!!!!!");
+          console.log(err);
+          removeJWT();
+        });
+        */
+      //refreshJWT(originalRequest);
+      //console.log("여기로는 왜 안오지..");
+      //console.log(accessToken);
+      //console.log(axios.defaults.headers.common['Authorization']);
+      //originalRequest.headers['Authorization'] = accessToken;
+      //return Promise.reject(error);
+      // return await axios.request(originalRequest);
+      /*
+      const data = await client.get('auth/refreshtoken')
+      if (data) {
+        const { accessToken, refreshToken } = data.data
+        localStorage.removeItem('user')
+        localStorage.setItem('user', JSON.stringify(data.data, ['accessToken', 'refreshToken']))
+        originalRequest.headers['accessToken'] = accessToken;
+        originalRequest.headers['refreshToken'] = refreshToken;
+        return await client.request(originalRequest);
+        
+      }
+      */
       return Promise.reject(error);
     }
     return Promise.reject(error);

@@ -100,14 +100,15 @@ function Mainpage(props) {
                     .get(SERVER_URL + "/user-service/api/v1/members")
                     .then((res) => {
                       console.log(res);
-                      navigate('/');
                     })
                     .catch((err) => {
                       if (err.response) {
-                        console.log(err.response.data.data);
-                        if (err.response.data.data == "Please RefreshToken.") {
-                          refreshJWT();
-                        }
+                        /*
+                                                console.log(err.response.data.data);
+                                                if (err.response.data.data == "Please RefreshToken.") {
+                                                  refreshJWT();
+                                                }
+                                                */
                       }
                     });
                 }}
