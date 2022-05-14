@@ -1,7 +1,7 @@
 import { React, useState } from "react";
 import Cookies from 'universal-cookie';
 import axios from "axios";
-import { SERVER_URL } from "../SRC";
+import { SERVER_URL } from "./SRC.js";
 
 const cookies = new Cookies();
 
@@ -18,14 +18,13 @@ export function getRefreshToken() {
     }
 }
 
-export function refreshJWT() {
+export function refreshJWT() { //백으로부터 갱신요청 받았을 시 호출
     axios
         .get(SERVER_URL + "/user-service/auth/refresh",
             {
                 headers: { "refresh-token": getRefreshToken() }, // 갱신을 위해 헤더에 refresh-token 첨부
             })
         .then((res) => {
-
             const at = res.data.data.accessToken;
             console.log("리프레쉬 토큰 : " + res.data.data.refreshToken);
             axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
@@ -33,7 +32,7 @@ export function refreshJWT() {
             // 이전 요청 다시 호출해야 함
         })
         .catch((err) => {
-
+            removeJWT();
         });
 
 }

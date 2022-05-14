@@ -3,7 +3,7 @@ import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
 import { useNavigate, Navigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
-import { setRefreshTokenToCookie, getRefreshToken } from "../utils/oauth/auth.js"
+import { setRefreshTokenToCookie, getRefreshToken } from "../utils/auth.js"
 
 const cookies = new Cookies();
 

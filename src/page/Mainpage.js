@@ -4,7 +4,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Link } from 'react-scroll';
 import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
-import { setRefreshTokenToCookie, getRefreshToken } from "../utils/oauth/auth.js"
+import { setRefreshTokenToCookie, getRefreshToken, refreshJWT } from "../utils/auth.js"
 
 function Mainpage(props) {
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ function Mainpage(props) {
                 회원가입
               </button>
               <button
-                class="bg-white z-40"
+                class="bg-white z-40 text-black font-test"
                 onClick={() => {
                   axios
                     .get(SERVER_URL + "/user-service/api/v1/members")
@@ -106,34 +106,14 @@ function Mainpage(props) {
                       if (err.response) {
                         console.log(err.response.data.data);
                         if (err.response.data.data == "Please RefreshToken.") {
-                          console.log("다시보내!!!!!!!!");
-
-                          axios
-                            .get(SERVER_URL + "/user-service/auth/refresh",
-                              {
-                                headers: { "refresh-token": getRefreshToken() },
-                              })
-                            .then((res) => {
-                              console.log(res);
-                              const at = res.data.data.accessToken;
-                              console.log("리프레쉬 토큰 : " + res.data.data.refreshToken);
-                              axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
-                              setRefreshTokenToCookie(res.data.data.refreshToken);
-
-                              //TODO 이전 요청 다시 호출
-
-                            })
-                            .catch((err) => {
-
-                            });
-
+                          refreshJWT();
                         }
                       }
                     });
                 }}
               >
-                버튼11111</button>
-
+                버튼11111
+              </button>
             </div>
           </div>
         </div>
