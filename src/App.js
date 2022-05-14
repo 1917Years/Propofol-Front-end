@@ -25,8 +25,43 @@ import { SERVER_URL } from "./utils/SRC";
 import { createRoot } from "react-dom/client";
 import "tailwindcss/tailwind.css";
 import KakaoOauth from "./utils/oauth/KakaoOauth";
-
+import { setRefreshTokenToCookie, getRefreshToken, refreshJWT, removeJWT } from "./utils/auth";
 import BlogWr2 from "./page/Blog/BlogWr2";
+
+axios.interceptors.request.use(
+  function (response) {
+    return response;
+  },
+  async function (error) {
+    if (error.response.data.data == "Please RefreshToken.") {
+      try {
+        const originalRequest = error.config;
+        refreshJWT();
+        return await axios.request(originalRequest);
+        /*
+        const data = await client.get('auth/refreshtoken')
+        if (data) {
+          const { accessToken, refreshToken } = data.data
+          localStorage.removeItem('user')
+          localStorage.setItem('user', JSON.stringify(data.data, ['accessToken', 'refreshToken']))
+          originalRequest.headers['accessToken'] = accessToken;
+          originalRequest.headers['refreshToken'] = refreshToken;
+          return await client.request(originalRequest);
+          
+        }
+        */
+      } catch (error) {
+        removeJWT();
+        /*
+        localStorage.removeItem('user');
+        console.log(error);
+        */
+      }
+      return Promise.reject(error);
+    }
+    return Promise.reject(error);
+  }
+);
 
 function App() {
   //const cors = require('cors');
