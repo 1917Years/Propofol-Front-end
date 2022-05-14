@@ -46,14 +46,23 @@ function BlogEditor() {
         const result = await axios.post(SERVER_URL + '/til-service/api/v1/boards/image', formData);
         console.log(result);
         const IMG_URL = result.data.data; //일케하면되니?
+<<<<<<< HEAD
         console.log("유알엘 : " + IMG_URL);
         quillRef.current.getEditor().insertEmbed(range.index, "image", process.env.PUBLIC_URL + IMG_URL); // require -> react에서 src로 이미지 불러올 때 생기는 오류 해결하기 위함
+=======
+        let NEW_IMG_URL = IMG_URL.toString().replace("http://localhost:8000", SERVER_URL); // 이거맞나? ㅇㅇ맞는듯
+        
+        console.log("유알엘 : " + NEW_IMG_URL); // 제어가 여기까진 오는데
+        quillRef.current.getEditor().insertEmbed(range.index, "image", NEW_IMG_URL); //
+        //quillRef.current.getEditor().insertEmbed(range.index, "image", require(IMG_URL)); // require -> react에서 src로 이미지 불러올 때 생기는 오류 해결하기 위함
+>>>>>>> 37ea6396ff01a39b98673f9d877a7762e3f8a336
         quillRef.current.getEditor().setSelection(range.index + 1);
+        console.log("여기까지 오나?"); //여기까진 안와
       } catch (e) { quillRef.current.getEditor().deleteText(range.index, 1); }
     };
   }
 
-  const CustomTmpSave = () => {
+  const CustomTmpSave = () => { 
     return (
       <button class="z-40 w-[5rem] rounded-[18px] bg-none border border-gray-400 text-gray-600 font-sbtest px-5 py-1 flex bg-white items-center gap-2">
         <div class="text-center">임시저장</div>
