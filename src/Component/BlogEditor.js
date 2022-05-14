@@ -47,7 +47,7 @@ function BlogEditor() {
         console.log(result);
         const IMG_URL = result.data.data; //일케하면되니?
         console.log("유알엘 : " + IMG_URL);
-        quillRef.current.getEditor().insertEmbed(range.index, "image", require(process.env.PUBLIC_URL + IMG_URL)); // require -> react에서 src로 이미지 불러올 때 생기는 오류 해결하기 위함
+        quillRef.current.getEditor().insertEmbed(range.index, "image", process.env.PUBLIC_URL + IMG_URL); // require -> react에서 src로 이미지 불러올 때 생기는 오류 해결하기 위함
         quillRef.current.getEditor().setSelection(range.index + 1);
       } catch (e) { quillRef.current.getEditor().deleteText(range.index, 1); }
     };
