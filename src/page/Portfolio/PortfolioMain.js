@@ -54,7 +54,7 @@ function PortfolioMain() {
   return (
     <div class="bg-white font-test">
       <div class="w-1/2 mt-10 mx-auto">
-        <section class="flex gap-5 items-center">
+        <section class="lg:flex gap-5 items-center">
           <div class="grow font-sbtest text-5xl">포트폴리오</div>
           <button class="px-5 py-2 bg-black rounded-xl text-white text-xl">
             템플릿 변경
@@ -83,7 +83,7 @@ function PortfolioMain() {
                   type="text"
                 />
               </div>
-              <div class="lg:flex justify-between w-full">
+              <div class="xl:flex justify-between w-full">
                 <div class="w-[40%]">
                   <div class="text-xl mt-4">핸드폰 번호</div>
                   <input
@@ -188,7 +188,7 @@ function PortfolioMain() {
                 )}
               </div>
               <div class="text-xl mt-4">수상 이력</div>
-              <div class="flex justify-between w-full">
+              <div class="xl:flex justify-between w-full">
                 <div class="w-[30%]">
                   <input
                     class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[10rem]"
@@ -203,7 +203,7 @@ function PortfolioMain() {
                     type="text"
                   />
                 </div>
-                <button class="w-[15%] mt-2 py-2 px-4 bg-black text-white text-lg font-ltest rounded-xl min-w-[5rem]">
+                <button class="w-[20rem] xl:w-[15%] mt-2 py-2 px-4 bg-black text-white text-lg font-ltest rounded-xl min-w-[5rem]">
                   추가하기
                 </button>
               </div>

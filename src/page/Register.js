@@ -33,7 +33,6 @@ function Register() {
   const [phoneInput, setPhoneInput] = useState("");
   const [phoneCheckInput, setPhoneCheckInput] = useState("");
   const [phoneCheckValid, setPhoneCheckValid] = useState(false); // 나중에 백이랑 통신 후 추가
-  const [devInput, setDevInput] = useState("");
   const [registerData, setRegisterData] = useState(null);
   /*메시지*/
   const [nickNameMsg, setNickNameMsg] = useState("");
@@ -42,15 +41,14 @@ function Register() {
   const [pwdCheckMsg, setPwdCheckMsg] = useState("");
   const [phoneMsg, setPhoneMsg] = useState("");
   const [phoneCheckMsg, setPhoneCheckMsg] = useState("");
-  const [deveMsg, setDevMsg] = useState("");
   const [errMsg, setErrMsg] = useState("");
   /*유효성*/
   const [nickNameVaild, setNickNameVaild] = useState(false);
+  const [nameVaild, setNameVaild] = useState(false);
   const [emailVaild, setEmailVaild] = useState(false);
   const [pwdVaild, setPwdVaild] = useState(false);
   const [pwdCheckVaild, setPwdCheckVaild] = useState(false);
   const [phoneVaild, setPhoneVaild] = useState(false);
-  const [devVaild, setDevVaild] = useState(false);
 
 
   function postRegister(data) {
@@ -61,8 +59,6 @@ function Register() {
         headers: { "Content-Type": "application/json" },
       })
       .then((res) => {
-        //localStorage.setItem("Authorization", JWT); //이런 식으로 JWT 부분에 받은 토큰 넣어주면 될 것 같은데? (post로 요청보낼 때)
-        //localStorage.getItem("Authorization"); // 이렇게 하면 받아와질 것 같은데 맞는지는 모름 ㅎㅎ;
         console.log("여기 찍힘?");
         console.log(res);
       })
@@ -84,10 +80,12 @@ function Register() {
       .then((res) => {
         console.log(res.data.result);
         setEmailVaild(true);
+        setEmailMsg("사용 가능한 이메일입니다.");
       })
       .catch((err) => {
         console.log(err.request);
         setEmailVaild(false);
+        setEmailMsg("이미 존재하는 이메일입니다. 다른 이메일을 입력해주세요.");
       });
   }
 
@@ -145,35 +143,21 @@ function Register() {
       setEmailMsg("올바르지 않은 이메일 형식입니다. 다시 입력해주세요.");
       setEmailVaild(false);
     } else {
-      console.log("왜안돼!!!!!!!!!!!!!!!!!!!!!!!!!1");
-
-      //console.log("asdas" + postEmail({ email: emailInput }));
       postEmail({ email: emailInput });
-      if (!emailVaild) {
-        setEmailMsg("이미 존재하는 이메일입니다. 다른 이메일을 입력해주세요.");
-      }
-      else {
-        setEmailMsg("사용 가능한 이메일입니다.");
-      }
-
-
     }
   };
   const onNickNameCheckHandler = (e) => {
     if (nickNameInput == "") {
       setNickNameMsg("닉네임을 입력해주세요.");
-      setEmailVaild(false);
     } else {
-      console.log("왜안돼!!!!!!!!!!!!!!!!!!!!!!!!!1");
-
-      if (postNickName({ nickname: nickNameInput }) == false)
+      if (postNickName({ nickname: nickNameInput }) == false) {
         setNickNameMsg("이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.");
+        setNickNameVaild(false);
+      }
       else {
         setNickNameMsg("사용 가능한 닉네임입니다.");
         setNickNameVaild(true);
       }
-
-
     }
   };
 
@@ -228,16 +212,13 @@ function Register() {
       setPhoneVaild(true);
     }
   };
-  const onDevInputHandler = (e) => {
-    //console.log(e.target.value);
-    setDevInput(e.target.value);
-    setDevVaild(true);
-  };
-  const onRegisterButtonHandler = (e) => {
+  const onRegisterButtonHandler = (t) => {
     let valid = false;
-    valid = emailVaild && pwdVaild && pwdCheckVaild && phoneVaild && devVaild;
+    valid = emailVaild && nickNameVaild && pwdVaild && pwdCheckVaild && phoneVaild;
     if (valid == true) {
       alert("우왕굿");
+      console.log(t);
+      postRegister(t);
     } else {
       alert("안돼임마");
     }
@@ -262,7 +243,6 @@ function Register() {
       setPwdCheckVaild(true);
       console.log(pwdCheckMsg);
     } else if (pwdCheckInput != "") {
-      //console.log("비번다르다!!!!!!!!!!!!!!!!!!!!");
       setPwdCheckMsg("비밀번호가 다릅니다. 다시 한 번 확인해주세요.");
       setPwdCheckVaild(false);
     }
@@ -392,8 +372,7 @@ function Register() {
               nickname: nickNameInput,
               phoneNumber: phoneInput,
             };
-            console.log(t);
-            postRegister(t);
+            onRegisterButtonHandler(t);
             //onLoginButtonHandler();
             //onRegisterButtonHandler();
             /*
