@@ -4,7 +4,8 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { Link } from 'react-scroll';
 import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
-import { setRefreshTokenToCookie, getRefreshToken, refreshJWT } from "../utils/auth.js"
+import { setRefreshTokenToCookie, getRefreshToken, refreshJWT, getAccessToken } from "../utils/auth.js"
+import Cookies from "universal-cookie";
 
 function Mainpage(props) {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ function Mainpage(props) {
     <div class="text-gray-800 antialiased z-1">
       <main>
         <div class="absolute w-[75%] h-full left-[12.5%] xl:border-l xl:border-r border-white opacity-50 z-10"></div>
-        <div class="pt-20" style={{ minHeight: "54rem" }}>
+        <div class="pt-20 bg-black" style={{ minHeight: "54rem" }}>
           <div
             class="bg-cover bg-center absolute top-0 w-full h-[58rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%]  "
             style={style}
@@ -103,12 +104,15 @@ function Mainpage(props) {
                     })
                     .catch((err) => {
                       if (err.response) {
+                        console.log(err.response);
+                        console.log(getAccessToken());
+                        console.log(getRefreshToken());
                         /*
                                                 console.log(err.response.data.data);
                                                 if (err.response.data.data == "Please RefreshToken.") {
                                                   refreshJWT();
                                                 }
-                                                */
+                        */
                       }
                     });
                 }}

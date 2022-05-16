@@ -3,6 +3,8 @@ import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 
+let tmpSt = [];
+
 function BlogMain() {
   const navigate = useNavigate();
   const tagList = ["JAVA", "Spring", "C++", "JavaScript", "C#", "C", "Python", "냠냠", "ㅁㄴㅇ", "울랄라", "언어1", "언어2"];
@@ -14,6 +16,19 @@ function BlogMain() {
   const [tmp, setTmp] = useState(false);
   const [writingList, setWritingList] = useState([]);
   const [searchOption, setSearchOption] = useState("");
+  const [tmpStreak, setTmpStreak] = useState([]);
+  const [streakUpdated, setStreakUpdated] = useState(false);
+
+  function loadStreak() {
+    console.log("스트릭~~");
+    axios.get(SERVER_URL + "/user-service/api/v1/members/streak")
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   function loadWritings() {
     axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + 1)
@@ -35,7 +50,7 @@ function BlogMain() {
           }
           console.log("아이디는 " + tmpWr.id);
           tmpWrList.push(tmpWr);
-          setWritingList(tmpWrList);
+          setWritingList([...tmpWrList]);
           setTmp(!tmp);
           console.log("tmpWR : ");
           console.log(tmpWr);
@@ -47,10 +62,6 @@ function BlogMain() {
       });
   }
 
-  useEffect(() => {
-    setSearchOption("제목");
-    loadWritings();
-  }, []);
 
   let tmpDetail =
     "글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~";
@@ -86,6 +97,19 @@ function BlogMain() {
   };
   useEffect(() => {
     setSearchOption("제목");
+    loadWritings();
+    loadStreak();
+    //
+    let temp = [];
+    let day = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    for (let i = 0; i < 365; i++) {
+      temp.push({ date: i, day: day[i % 7], working: Math.floor(Math.random() * 6) });
+    }
+    tmpSt = temp;
+    setTmpStreak([...temp, tmpStreak]);
+    setStreakUpdated(true);
+    setTmp(!tmp);
+    //
     let t = [];
     for (let i = 0; i < tagList.length; i++) {
       t.push(false);
@@ -175,14 +199,14 @@ function BlogMain() {
           </div>
           {isTagFull ? (<div class="absolute text-sm font-ltest ml-3 mt-2 text-bluepurple">태그는 최대 3개까지 선택할 수 있습니다.</div>) : null}
         </div>
-        <div class="flex gap-10 pt-6">
-          <div class="">
-            <div class="text-5xl font-btest text-bluepurple border-b border-slate-400 pb-6">
+        <div class="flex flex-col gap-10 pt-6">
+          <div class="flex gap-10 items-center pb-6">
+            <div class="grow text-5xl font-btest text-center text-bluepurple ">
               <a class="text-black">T</a>oday <a class="text-black">I</a>{" "}
               <a class="text-black">L</a>earned
             </div>
             <button
-              class="text-gray-600 rounded-lg border border-slate-300 w-full py-2 mt-10"
+              class="text-gray-600 rounded-lg border border-slate-300 w-1/2 h-full py-2 "
               onClick={() => {
                 navigate('/blog/writing');
               }}
@@ -190,9 +214,87 @@ function BlogMain() {
               오늘 학습한 내용 쓰러가기 📒
             </button>
           </div>
-          <div>
-            ㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇㅇ
-          </div>
+          <section className="Streak grow">
+            {(tmpStreak != []) ?
+              (
+                <div class="flex px-8 gap-3 items-start">
+                  <div clas="grid grid-rows-7 grid-flow-col gap-[0.1px] bg-red-300">
+                    {tmpStreak.slice(0, 7).map((item) => {
+                      if (item.day == "Mon") {
+                        return (
+                          <div class="font-ltest align-top text-gray-500 text-[11px] h-[12px] ">{item.day}</div>
+                        );
+                      }
+                      else if (item.day == "Wed") {
+                        return (
+                          <div class="font-ltest text-gray-500 text-[11px] h-[12px] mt-[2.75px] ">{item.day}</div>
+                        );
+                      }
+                      else if (item.day == "Fri") {
+                        return (
+                          <div class="font-ltest text-gray-500 text-[11px] h-[12px] mt-[2.75px] ">{item.day}</div>
+                        );
+                      }
+                      else if (item.day == "Sun") {
+                        return (
+                          <div class="font-ltest text-gray-500 text-[11px] h-[12px] mt-[2.75px] ">{item.day}</div>
+                        );
+                      }
+                      else {
+                        return (
+                          <div class="font-ltest text-gray-500 h-[12px] mt-[2.75px] "></div>
+                        );
+                      }
+                    })
+                    }
+                  </div>
+                  <div class="grow grid grid-rows-7 grid-flow-col gap-[0.1px]">
+                    {tmpStreak.map((item) => {
+                      if (item.working == 0) {
+                        return (
+                          <div class="bg-gray-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                          </div>
+                        )
+                      }
+                      else if (item.working == 1) {
+                        return (
+                          <div class="bg-indigo-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                          </div>
+                        )
+                      }
+                      else if (item.working == 2) {
+                        return (
+                          <div class="bg-indigo-300 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                          </div>
+                        )
+                      }
+                      else if (item.working == 3) {
+                        return (
+                          <div class="bg-[#8289D9] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                          </div>
+                        )
+                      }
+                      else if (item.working == 4) {
+                        return (
+                          <div class="bg-[#6369A6] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                          </div>
+                        )
+                      }
+                      else if (item.working == 5) {
+                        return (
+                          <div class="bg-[#54598C] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                          </div>
+                        )
+                      }
+                    })
+                    }
+                  </div>
+                </div>
+              )
+              :
+              (null)
+            }
+          </section>
         </div>
 
         <div class="mt-10 border rounded-lg">
@@ -207,7 +309,7 @@ function BlogMain() {
                     navigate('/blog/detail/' + e.currentTarget.value);
                   }}
                 >
-                  <div class="w-[47rem]">
+                  <div class="w-[45.5rem]">
                     <div class="text-sm flex gap-6 text-gray-400 font-ltest">
                       <h>사용자명</h>
                       <h>{item.date}</h>
@@ -221,7 +323,7 @@ function BlogMain() {
                     <div class=" w-32 h-28 mb-2">
                       <img
                         src={"data:image/" + item.imgtype + ";base64," + item.img}
-                        class="w-full z-full z-40"
+                        class="w-full z-full z-40 max-h-[7rem]"
                       /></div>
                     <div class="w-32 grid grid-cols-2 text-sm ">
                       <div>🧡 {item.like}</div>

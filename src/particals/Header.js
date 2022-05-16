@@ -3,7 +3,7 @@ import { SERVER_URL } from "../utils/SRC";
 import logo from "../assets/img/logo_tmp.png";
 import { useNavigate, Navigate } from "react-router-dom";
 
-function Header({}) {
+function Header({ }) {
   const navigate = useNavigate();
   return (
     <div>
@@ -39,6 +39,14 @@ function Header({}) {
           }}
         >
           플젝
+        </button>
+        <button
+          class="relative left-[40%]"
+          onClick={() => {
+            navigate("/mypage");
+          }}
+        >
+          MYPAGE
         </button>
       </div>
       <div class="h-14"></div>

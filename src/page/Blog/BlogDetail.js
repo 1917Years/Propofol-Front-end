@@ -12,65 +12,9 @@ function BlogDetail() {
     const [addReplyComment, setAddReplyComment] = useState(false);
     const [replyCommentInput, setReplyCommentInput] = useState("");
     const [commentList, setCommentList] = useState([]);
-    function loadComment() {
-        axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id + "/comments?page=1")
-            .then((res) => {
-                let tmpCmList = [];
-                res.data.data.comments.map((item) => {
-                    let tmpCm =
-                    {
-                        content: item.content,
-                        groupId: item.groupId,
-                        id: item.id,
-                        nickname: item.nickname,
-                        date: item.createdDate
-                    }
-                    tmpCmList.push(tmpCm);
-                })
-                setCommentList(tmpCmList);
-                console.log(commentList);
-                console.log("댓글임");
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    }
+    const [checkFollowing, setCheckFollowing] = useState(false);
 
-    function onCommentSaveHandler() {
-        console.log(commentInput);
-        axios.post(SERVER_URL + "/til-service/api/v1/boards/" + id + "/comment", { content: commentInput })
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    };
-
-    function onReplyCommentSaveHandler(gid) {
-        console.log(replyCommentInput);
-        axios.post(SERVER_URL + "/til-service/api/v1/boards/" + id + "/" + gid + "/comment", { content: replyCommentInput })
-            .then((res) => {
-                console.log(res);
-                loadComment();
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    };
-
-    function onRecommendHandler() {
-        axios.post(SERVER_URL + "/til-service/api/v1/boards/" + id + "/" + "recommend")
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err);
-            })
-    };
-
-    useEffect(() => {
+    function loadWritings() {
         axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id).
             then((res) => {
                 let tmpInfo, byteList = [], typeList = [];
@@ -102,6 +46,84 @@ function BlogDetail() {
                 console.log(err);
             })
         loadComment();
+    }
+
+    function loadComment() {
+        axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id + "/comments?page=1")
+            .then((res) => {
+                let tmpCmList = [];
+                res.data.data.comments.map((item) => {
+                    let tmpCm =
+                    {
+                        content: item.content,
+                        groupId: item.groupId,
+                        id: item.id,
+                        nickname: item.nickname,
+                        date: item.createdDate
+                    }
+                    tmpCmList.push(tmpCm);
+                })
+                setCommentList([...tmpCmList]);
+                console.log(commentList);
+                console.log("댓글임");
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+    function onCommentSaveHandler() {
+        //console.log(commentInput);
+        axios.post(SERVER_URL + "/til-service/api/v1/boards/" + id + "/comment", { content: commentInput })
+            .then((res) => {
+                console.log(res);
+                loadComment();
+                loadWritings();
+            })
+            .catch((err) => {
+                console.log("안녕하세요? 전 에러에요.");
+                console.log(err);
+            })
+    };
+
+    function onReplyCommentSaveHandler(gid) {
+        console.log(replyCommentInput);
+        axios.post(SERVER_URL + "/til-service/api/v1/boards/" + id + "/" + gid + "/comment", { content: replyCommentInput })
+            .then((res) => {
+                console.log(res);
+                loadComment();
+                loadWritings();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    };
+
+    function onRecommendHandler() {
+        axios.post(SERVER_URL + "/til-service/api/v1/boards/" + id + "/" + "recommend")
+            .then((res) => {
+                console.log(res);
+                loadWritings();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    };
+
+    function onFollowingHandler() {
+        axios.post(SERVER_URL + "/user-service/api/v1/members/following")
+            .then((res) => {
+                console.log(res);
+                loadWritings();
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    };
+
+    useEffect(() => {
+        loadWritings();
     }, []);
 
     return (
@@ -133,7 +155,14 @@ function BlogDetail() {
                             <div>댓글 </div>
                             <div>{writingInfo.commentCount}개</div>
                         </div>
+
                         <div class="flex w-full justify-end">
+                            <button class="flex gap-2 border border-lg text-lg px-3 py-2 mr-2"
+                                onClick={onFollowingHandler}
+                            >
+                                <div class="pr-1">👀</div>
+
+                            </button>
                             <button class="flex gap-2 border border-lg text-lg px-3 py-2 mr-2"
                                 onClick={onRecommendHandler}>
                                 <div class="border-r border-gray-200 pr-1">💕</div>

@@ -3,7 +3,7 @@ import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
 import { useNavigate, Navigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
-import { setRefreshTokenToCookie, getRefreshToken } from "../utils/auth.js"
+import { setRefreshTokenToCookie, setAccessTokenToCookie, getRefreshToken, getAccessToken } from "../utils/auth.js"
 
 const cookies = new Cookies();
 
@@ -25,14 +25,19 @@ function Login(props) {
         console.log(res);
         setLoginError(false);
         if (res.data.data.accessToken != null) {
-          const at = res.data.data.accessToken;
+          //const at = res.data.data.accessToken;
+          /*
           axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
+          */
+          setAccessTokenToCookie(res.data.data.accessToken);
+          console.log(axios.defaults.headers.common['Authorization']);
+          // console.log(getAccessToken());
           console.log(res.data.data.refreshToken);
           setRefreshTokenToCookie(res.data.data.refreshToken);
           console.log("refresh Token : ");
           console.log(getRefreshToken());
-          moveToMain(at);
-          console.log(at);
+          moveToMain(res.data.data.accessToken);
+          console.log(res.data.data.accessToken);
         }
       })
       .catch((err) => {

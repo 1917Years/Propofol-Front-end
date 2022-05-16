@@ -79,7 +79,8 @@ function BlogSearch(props) {
               comment: board.commentCount
             }
             tempSRList.push(tempSR);
-            setSearchResult(tempSRList);
+            setSearchResult([...tempSRList]);
+            setTmp(!tmp);
           });
         })
         .catch((err) => {
@@ -179,7 +180,7 @@ function BlogSearch(props) {
                     navigate('/blog/detail/' + e.currentTarget.value);
                   }}
                 >
-                  <div class="w-[47rem]">
+                  <div class="w-[45.5rem]">
                     <div class="text-sm flex gap-6 text-gray-400 font-ltest">
                       <h>사용자명</h>
                       <h>{item.date}</h>
@@ -193,7 +194,7 @@ function BlogSearch(props) {
                     <div class=" w-32 h-28 mb-2">
                       <img
                         src={"data:image/" + item.imgtype + ";base64," + item.img}
-                        class="w-full z-full z-40"
+                        class="w-full z-full z-40 max-h-[7rem] max-w-[8rem]"
                       /></div>
                     <div class="w-32 grid grid-cols-2 text-sm ">
                       <div>🧡 {item.like}</div>

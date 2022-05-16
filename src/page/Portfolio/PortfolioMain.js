@@ -83,7 +83,7 @@ function PortfolioMain() {
                   type="text"
                 />
               </div>
-              <div class="flex justify-between w-full">
+              <div class="lg:flex justify-between w-full">
                 <div class="w-[40%]">
                   <div class="text-xl mt-4">핸드폰 번호</div>
                   <input

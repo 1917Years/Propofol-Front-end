@@ -9,6 +9,20 @@ export function setRefreshTokenToCookie(refresh_token) {
     cookies.set('refresh_token', refresh_token, { sameSite: 'strict' });
 }
 
+export function setAccessTokenToCookie(access_token) {
+    cookies.set('access_token', access_token, { sameSite: 'strict' });
+    axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`;
+}
+
+export function getAccessToken() {
+    const access_token = cookies.get('access_token');
+    if (access_token) {
+        return access_token;
+    } else {
+        return "no access_token";
+    }
+}
+
 export function getRefreshToken() {
     const refresh_token = cookies.get('refresh_token');
     if (refresh_token) {

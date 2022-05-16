@@ -3,6 +3,7 @@ import { BrowserRouter as Router } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
+import MyPage from "./page/Mypage";
 import Mainpage from "./page/Mainpage";
 import Login from "./page/Login";
 import Register from "./page/Register";
@@ -25,7 +26,7 @@ import { SERVER_URL } from "./utils/SRC";
 import { createRoot } from "react-dom/client";
 import "tailwindcss/tailwind.css";
 import KakaoOauth from "./utils/oauth/KakaoOauth";
-import { setRefreshTokenToCookie, getRefreshToken, refreshJWT, removeJWT } from "./utils/auth";
+import { setRefreshTokenToCookie, setAccessTokenToCookie, getRefreshToken, getAccessToken, refreshJWT, removeJWT } from "./utils/auth";
 import BlogWr2 from "./page/Blog/BlogWr2";
 import BlogDetail from "./page/Blog/BlogDetail";
 
@@ -41,20 +42,30 @@ axios.interceptors.response.use(
       console.log("시발");
     }
 
-    console.log(error.response);
-    if (error.response.data.data == "Please RefreshToken.") {
+    console.log(error);
+    console.log("왜안돼!!!!");
+    if (error != null && error.response.data == "No Jwt Token") {
+      const originalRequest = error.config;
+      console.log("왜안돼!!!!!!!!!!!!!!!!!");
+      axios.defaults.headers.common['Authorization'] = `Bearer ${getAccessToken()}`;
+      return await axios.request(originalRequest);
+    }
+    if (error != null && error.response.data == "Please RefreshToken.") {
       try {
+        console.log("왜안!ㅇㄴㅁ!!!");
         const originalRequest = error.config;
         const Data = await (await axios.get(SERVER_URL + "/user-service/auth/refresh", { headers: { "refresh-token": getRefreshToken() }, })).data.data;
         console.log(Data);
         const accessToken = Data.accessToken;
         const refreshToken = Data.refreshToken;
         console.log("access-token = " + accessToken);
+        setAccessTokenToCookie(accessToken);
+        originalRequest.headers['Authorization'] = `Bearer ${getAccessToken()}`;
         //console.log("refresh-token = " + refreshToken);
-        originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+        //originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
         console.log("access-token = " + originalRequest.headers['Authorization']);
         console.log(originalRequest);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${getAccessToken()}`;
         setRefreshTokenToCookie(refreshToken);
         return await axios.request(originalRequest);
       } catch (error) {
@@ -155,6 +166,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Main />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/mypage" element={<MyPage />} />
           <Route path="/register" element={<Register />} />
           <Route path="/pm/add" element={<ProjectAdd />} />
           <Route path="/pm/main" element={<ProjectMain />} />
