@@ -233,50 +233,8 @@ function BlogSearch(props) {
               );
             }
           })}
-          <div
-            className="Writing"
-            class="flex border-b bg-white h-44 px-10 py-5 gap-5"
-          >
-            <div class="w-[47rem]">
-              <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                <h>사용자명</h>
-                <h>2022.04.11</h>
-              </div>
-              <button class="py-1 text-blue-400 text-lg">
-                제목제목제목제목제목
-              </button>
-              <div class="font-ltest">{tmpDetail}</div>
-            </div>
-            <div class="w-grow">
-              <div class="bg-gray-300 w-32 h-28 mb-2">사진</div>
-              <div class="w-32 grid grid-cols-2 text-sm ">
-                <div>🧡 10</div>
-                <div>💬 5</div>
-              </div>
-            </div>
-          </div>
-          <div
-            className="Writing"
-            class="border-b bg-white h-48 px-10 py-5 gap-5"
-          >
-            <div class="w-full h-28">
-              <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                <h>사용자명</h>
-                <h>2022.04.11</h>
-              </div>
-              <button class="py-1 text-blue-400 text-lg">
-                제목제목제목제목제목
-              </button>
-              <div class="font-ltest">{tmpDetail}</div>
-            </div>
-            <div class="flex">
-              <div class="w-[47rem]"></div>
-              <div class="w-32 grid grid-cols-2 text-sm">
-                <div>🧡 10</div>
-                <div>💬 5</div>
-              </div>
-            </div>
-          </div>
+
+
         </div>
         <div class="flex justify-center mt-5 gap-2 font-ltest">
           <button>{"<"}</button>

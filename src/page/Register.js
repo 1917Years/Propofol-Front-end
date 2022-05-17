@@ -98,11 +98,13 @@ function Register() {
       })
       .then((res) => {
         console.log(res.data.result);
-        return true;
+        setNickNameVaild(true);
+        setNickNameMsg("사용 가능한 닉네임입니다.");
       })
       .catch((err) => {
         console.log(err.request);
-        return false;
+        setNickNameVaild(false);
+        setNickNameMsg("이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.");
       });
   }
 
@@ -150,17 +152,9 @@ function Register() {
     if (nickNameInput == "") {
       setNickNameMsg("닉네임을 입력해주세요.");
     } else {
-      if (postNickName({ nickname: nickNameInput }) == false) {
-        setNickNameMsg("이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.");
-        setNickNameVaild(false);
-      }
-      else {
-        setNickNameMsg("사용 가능한 닉네임입니다.");
-        setNickNameVaild(true);
-      }
-    }
-  };
-
+      postNickName({ nickname: nickNameInput });
+    };
+  }
   const onPasswordInputHandler = (e) => {
     setPwdInput(e.target.value);
     if (e.target.value.length > 16) {
@@ -199,6 +193,7 @@ function Register() {
   const onPhoneInputHandler = (e) => {
     const regex = /^[0-9\b -]{0,13}$/;
     if (regex.test(e.target.value)) {
+      console.log(e.target.value);
       setPhoneInput(e.target.value);
     } else {
     }
@@ -276,9 +271,14 @@ function Register() {
               중복 확인
             </button>
           </div>
-          <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
-            {emailMsg}
-          </div>
+          {
+            emailMsg == "사용 가능한 이메일입니다." ?
+              (<div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-green-600 font-ltest mt-1 min-w-[20rem]">
+                {emailMsg}
+              </div>) : (<div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
+                {emailMsg}
+              </div>)
+          }
         </div>
         <div>
           <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
@@ -295,9 +295,13 @@ function Register() {
               중복 확인
             </button>
           </div>
-          <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
-            {nickNameMsg}
-          </div>
+          {
+            nickNameMsg == "사용 가능한 닉네임입니다." ? (<div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-green-600 font-ltest mt-1 min-w-[20rem]">
+              {nickNameMsg}
+            </div>) : (<div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
+              {nickNameMsg}
+            </div>)
+          }
         </div>
         <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
           <input

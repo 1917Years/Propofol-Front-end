@@ -41,8 +41,7 @@ axios.interceptors.response.use(
       console.log(error.response);
       console.log("시발");
     }
-
-    console.log(error);
+    console.log(error.response);
     console.log("왜안돼!!!!");
     if (error != null && error.response.data == "No Jwt Token") {
       const originalRequest = error.config;

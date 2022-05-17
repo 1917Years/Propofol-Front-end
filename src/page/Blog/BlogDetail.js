@@ -14,11 +14,13 @@ function BlogDetail() {
     const [commentList, setCommentList] = useState([]);
     const [checkFollowing, setCheckFollowing] = useState(false);
 
-    function loadWritings() {
-        axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id).
+    async function loadWritings() {
+        let tmpInfo;
+        await axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id).
             then((res) => {
-                let tmpInfo, byteList = [], typeList = [];
+                let byteList = [], typeList = [];
                 const writing = res.data.data;
+                console.log("게시글 조회ㅇㅇㅇㅇㅇ");
                 console.log(res);
                 writing.images.map((imgbyte) => {
                     byteList.push(imgbyte);
@@ -45,7 +47,9 @@ function BlogDetail() {
             .catch((err) => {
                 console.log(err);
             })
+
         loadComment();
+        await loadFollowing(tmpInfo.nickname);
     }
 
     function loadComment() {
@@ -72,6 +76,35 @@ function BlogDetail() {
                 console.log(err);
             })
     }
+
+    function loadFollowing(nickname) {
+        // console.log("글쓴 사람의 닉네임을 알려주세요");
+        // console.log(nickname);
+
+        const t = {
+            followingNickname: nickname
+        };
+
+        console.log("왜이래/??");
+        console.log(JSON.stringify(t));
+
+        axios.post(SERVER_URL + "/user-service/api/v1/members/checkFollowing", JSON.stringify(t), {
+            headers: { "Content-Type": "application/json" },
+        })
+            .then((res) => {
+                if (res.data.data == true) {
+                    setCheckFollowing(true);
+                }
+                else {
+                    setCheckFollowing(false);
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
+
 
     function onCommentSaveHandler() {
         //console.log(commentInput);
@@ -111,9 +144,16 @@ function BlogDetail() {
             })
     };
 
-    function onFollowingHandler() {
-        axios.post(SERVER_URL + "/user-service/api/v1/members/following")
+    function onFollowingHandler(data) {
+        axios.post(SERVER_URL + "/user-service/api/v1/members/following", data)
             .then((res) => {
+                console.log("팔로우할랭");
+                if (res.data.data == "ok") {
+                    setCheckFollowing(true);
+                }
+                else {
+                    setCheckFollowing(false);
+                }
                 console.log(res);
                 loadWritings();
             })
@@ -158,17 +198,28 @@ function BlogDetail() {
 
                         <div class="flex w-full justify-end">
                             <button class="flex gap-2 border border-lg text-lg px-3 py-2 mr-2"
-                                onClick={onFollowingHandler}
-                            >
-                                <div class="pr-1">👀</div>
-
-                            </button>
-                            <button class="flex gap-2 border border-lg text-lg px-3 py-2 mr-2"
                                 onClick={onRecommendHandler}>
                                 <div class="border-r border-gray-200 pr-1">💕</div>
                                 <div class="text-gray-500 font-ltest pl-1"> {writingInfo.like}</div>
 
                             </button>
+                            <button class=
+                                {checkFollowing == true ? "flex gap-2 border border-lg text-lg px-3 py-2 mr-2 text-indigo-400" : "flex gap-2 border border-lg text-lg px-3 py-2 mr-2"}
+                                onClick={() => {
+                                    console.log("tttt조회");
+                                    console.log(writingInfo.like);
+                                    console.log(writingInfo.nickname);
+                                    const t = {
+                                        followingNickname: writingInfo.nickname
+                                    };
+                                    // console.log(t);
+                                    onFollowingHandler(t);
+                                }}
+                            >
+                                <div class="pr-1">{checkFollowing == true ? "✔ Following" : "👀"}</div>
+
+                            </button>
+
                         </div>
                         <button
                             class="text-center bg-gray-700 text-lg text-white w-[10%] min-w-[7rem] p-2"

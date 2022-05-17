@@ -6,6 +6,7 @@ import profileImage from "../assets/img/profile.jpg";
 
 function MyPage() {
     const [userInfo, setUserInfo] = useState([]);
+    const [checkProfile, setCheckProfile] = useState(false);
 
     const [nickNameInput, setNickNameInput] = useState("");
     const [pwdInput, setPwdInput] = useState("");
@@ -25,6 +26,8 @@ function MyPage() {
     const [pwdCheckVaild, setPwdCheckVaild] = useState(false);
     const [phoneVaild, setPhoneVaild] = useState(false);
 
+    const [profileImg, setProfileImg] = useState();
+    const [profileType, setProfileType] = useState();
 
     function updateInfo(data) {
         console.log("확인");
@@ -45,19 +48,21 @@ function MyPage() {
     }
 
     function postNickName(data) {
+        console.log(data);
+        console.log(JSON.stringify(data));
         axios
             .post(SERVER_URL + "/user-service/auth/nickname", JSON.stringify(data), {
                 headers: { "Content-Type": "application/json" },
             })
             .then((res) => {
-                console.log("안녕");
                 console.log(res.data.result);
-                return true;
+                setNickNameVaild(true);
+                setNickNameMsg("사용 가능한 닉네임입니다.");
             })
             .catch((err) => {
-                console.log("여기일까?");
-                console.log(err);
-                return false;
+                console.log(err.request);
+                setNickNameVaild(false);
+                setNickNameMsg("이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.");
             });
     }
 
@@ -70,13 +75,9 @@ function MyPage() {
         if (nickNameInput == "") {
             setNickNameMsg("닉네임을 입력해주세요.");
         } else {
-            if (postNickName({ nickname: nickNameInput }) == false)
-                setNickNameMsg("이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요.");
-            else {
-                setNickNameMsg("사용 가능한 닉네임입니다.");
-            }
-        }
-    };
+            postNickName({ nickname: nickNameInput });
+        };
+    }
 
     const onPasswordInputHandler = (e) => {
         setPwdInput(e.target.value);
@@ -139,14 +140,18 @@ function MyPage() {
 
     const onProfileInputHandler = (e) => {
         const formData = new FormData();
-        formData.append('file', e.target.files[0]);
+        formData.append('profile', e.target.files[0]);
         // console.log(e.target.files[0]);
 
         axios
             .post(SERVER_URL + "/user-service/api/v1/members/profile", formData)
             .then((res) => {
-                console.log("여기 찍힘?");
-                console.log(res);
+                console.log("프로필 이미지 확인ㅇㅇㅇ");
+                console.log(res.data.data);
+                setProfileType(res.data.data.profileType);
+                setProfileImg(res.data.data.profileBytes);
+                console.log(profileType)
+                console.log(profileImg);
             })
             .catch((err) => {
                 console.log(err);
@@ -183,7 +188,18 @@ function MyPage() {
             .then((res) => {
                 console.log("프로필 이미지 조회");
                 console.log(res.data.data);
-
+                if (res.data.data.profileType == null) {
+                    console.log("프로필 없삼");
+                    setCheckProfile(false);
+                }
+                else {
+                    console.log("이미 프로필 이미지 있삼");
+                    setProfileType(res.data.data.profileType);
+                    setProfileImg(res.data.data.profileBytes);
+                    console.log(profileType);
+                    console.log(profileType);
+                    setCheckProfile(true);
+                }
             })
             .catch((err) => {
                 console.log(err);
@@ -191,6 +207,21 @@ function MyPage() {
             });
 
     }, []);
+
+    useEffect(() => {
+        // 폰넘버에 하이폰 자동으로 넣어주는 코드
+        if (phoneInput.length === 10) {
+            setPhoneInput(phoneInput.replace(/(\d{3})(\d{3})(\d{4})/, "$1-$2-$3"));
+        }
+        if (phoneInput.length === 13) {
+            setPhoneInput(
+                phoneInput
+                    .replace(/-/g, "")
+                    .replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3")
+            );
+        }
+    }, [phoneInput]);
+
     return (
         <div class="w-full font-test">
 
@@ -207,8 +238,9 @@ function MyPage() {
                         class="hidden"
                         onChange={onProfileInputHandler}
                     />
+
                     <img
-                        src={profileImage}
+                        src={checkProfile == false ? profileImage : "data:image/" + profileType + ";base64," + profileImg}
                         class="w-36 h-36 rounded-full drop-shadow-md"
                         alt="profile"
                     />
