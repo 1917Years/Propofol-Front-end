@@ -19,7 +19,7 @@ function Header({ }) {
         <button
           class="relative left-[10%]"
           onClick={() => {
-            navigate("/blog/main");
+            navigate("/blog/main/1");
           }}
         >
           블로그

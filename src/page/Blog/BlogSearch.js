@@ -19,6 +19,7 @@ function BlogSearch(props) {
   const keyword = searchParams.get('keyword');
   const option = searchParams.get('option');
 
+
   const onTagButtonClickHandler = (e) => {
     if (e.target.value == "-1") return;
     if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
@@ -57,6 +58,7 @@ function BlogSearch(props) {
     setIsTagChecked(t);
     console.log(isTagChecked);
 
+
     if (option == '제목') {
       axios.get(SERVER_URL + "/til-service/api/v1/boards/search/title/" + keyword + "?page=1")
         .then((res) => {
@@ -67,17 +69,24 @@ function BlogSearch(props) {
           res.data.data.boards.map((board) => {
             let tempSR;
             let tempSRList = searchResult;
+            let tmpImgType = null;
+            if (board.imgtype != null) {
+              tmpImgType = board.imageType.toString().split('/')[1];
+            }
             tempSR = {
               id: board.id,
               title: board.title,
               detail: board.content,
               date: board.createdDate,
+              nickname: board.nickname,
               open: board.open,
               img: board.imageBytes,
-              imgtype: board.imageType.toString().split('/')[1],
+              imgtype: tmpImgType,
               like: board.recommend,
               comment: board.commentCount
             }
+            tempSR.date = tempSR.date.substring(0, 10) + "   " + tempSR.date.substring(11, 16);
+
             tempSRList.push(tempSR);
             setSearchResult([...tempSRList]);
             setTmp(!tmp);
@@ -170,7 +179,7 @@ function BlogSearch(props) {
 
         <div class="mt-10 border rounded-lg">
           {searchResult.map((item) => {
-            if (item.image == null) {
+            if (item.image != null) {
               return (
                 <button
                   className="Writing"
@@ -182,7 +191,7 @@ function BlogSearch(props) {
                 >
                   <div class="w-[45.5rem]">
                     <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                      <h>사용자명</h>
+                      <h>{item.nickname}</h>
                       <h>{item.date}</h>
                     </div>
                     <button class="py-1 text-blue-400 text-lg">
@@ -207,14 +216,15 @@ function BlogSearch(props) {
               return (
                 <button
                   className="Writing"
-                  class="border-b bg-white h-48 px-10 py-5 gap-5 text-left"
+                  class="border bg-white h-48 px-10 py-5 gap-5 text-left"
+                  value={item.id}
                   onClick={(e) => {
                     navigate('/blog/detail/' + e.currentTarget.value);
                   }}
                 >
-                  <div class="w-full h-28">
+                  <div class="w-[45.5rem] h-28">
                     <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                      <h>{"본인 닉네임"}</h>
+                      <h>{item.nickname}</h>
                       <h>{item.date}</h>
                     </div>
                     <button class="py-1 text-blue-400 text-lg">

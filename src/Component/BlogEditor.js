@@ -8,10 +8,11 @@ import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css";
 //import EditorToolbar, { modules, formats } from "./EditorToolbar";
 
-
 //dangerouslySetInnerHTML 나중에 추가하기
-function BlogEditor() {
+function BlogEditor(props) {
   const [htmlContent, setHtmlContent] = useState("");
+  let prevTitle = "";
+  let prevContent = "";
   const quillRef = useRef();
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(true);
@@ -21,9 +22,12 @@ function BlogEditor() {
   const [imgList, setImgList] = useState([]);
   const [imgUrlList, setImgUrlList] = useState([]);
   const [imgNameList, setImgNameList] = useState([]);
-
+  const [codeInput, setCodeInput] = useState("");
+  const [language, setLanguage] = useState("");
   /* 커스텀 툴바 */
   const formData = new FormData();
+
+  const navigate = useNavigate();
 
   function imageHandler() {
     const input = document.createElement("input");
@@ -47,6 +51,12 @@ function BlogEditor() {
         setBaseUrlList(tmpBaseList);
         console.log(file);
         quillRef.current.getEditor().insertEmbed(range.index, "image", imgsrc);
+        //
+        console.log("헤위~");
+        console.log(quillRef);
+        let quill = quillRef.current?.getEditor();
+        quill?.clipboard.dangerouslyPasteHTML(5, '&nbsp;<b>World</b>');
+        //
       }
       /*
       try {
@@ -66,6 +76,27 @@ function BlogEditor() {
     console.log(formData.get('file'));
   }
 
+  useState(() => {
+    console.log("로드 결과는~");
+    console.log(props.loadWritingInfo);
+    if (props.isModify && (props.loadWritingInfo != null)) {
+      console.log("하이루");
+      console.log(props.loadWritingInfo.detail);
+      prevTitle = props.loadWritingInfo.title;
+      prevContent = props.loadWritingInfo.detail;
+      /*
+      console.log(quillRef);
+      const range = quillRef.current?.getEditor().getSelection()?.index;
+      let quill = quillRef.current?.getEditor();
+      quill?.clipboard.dangerouslyPasteHTML(5, '&nbsp;<b>World</b>');
+      */
+    }
+  }, [])
+
+  useState(() => {
+    console.log("prevCon은");
+    console.log(prevContent);
+  }, [prevContent])
   const CustomTmpSave = () => {
     return (
       <button class="z-40 w-[5rem] rounded-[18px] bg-none border border-gray-400 text-gray-600 font-sbtest px-5 py-1 flex bg-white items-center gap-2">
@@ -127,8 +158,17 @@ function BlogEditor() {
   );
 */
 
+  useEffect(() => {
+    console.log(codeInput);
+    console.log(language);
+  }, [codeInput, language])
 
   const modules = {
+    clipboard: {
+      matchers: [
+
+      ]
+    },
     toolbar: {
       container: "#toolbar",
       handlers: {
@@ -136,7 +176,16 @@ function BlogEditor() {
       }
     },
     syntax: {
-      highlight: (text) => hljs.highlightAuto(text).value,
+      //onChange: (text) => setCodeInput(text),
+      //attach: (text) => setCodeInput(text),
+      //initTimer: (text) => setCodeInput(text),
+      value: (text) => hljs.highlightAuto(text).language,
+      highlight: (text) => {
+        setCodeInput(text);
+        setLanguage(hljs.highlightAuto(text).language);
+        return (hljs.highlightAuto(text).value);
+      }
+      //language: (text) => hljs.highlightAuto(text).language
     },
   };
 
@@ -208,15 +257,17 @@ function BlogEditor() {
           <button className="ql-code-block" />
           <button className="ql-clean" />
         </span>
-        <span className="ql-formats mt-1">
-          <button className="ql-undo"></button>
-          <button className="ql-redo"></button>
-        </span>
       </div>
     );
   }
 
   /* 커스텀 툴바 */
+
+  async function modifyHandler() {
+    const formData_save = new FormData();
+    let htmlContent_after;
+    let tmpcode, tmpcode_after;
+  }
 
   const tmpSaveHandler = (e) => {
 
@@ -225,56 +276,80 @@ function BlogEditor() {
     //console.log(htmlContent);
     const formData_save = new FormData();
     let htmlContent_after;
+    let tmpcode, tmpcode_after;
+    //
+    let start = htmlContent.indexOf("<pre class=\"ql-syntax\"");
+    let end = htmlContent.indexOf(">", start);
+    let endend = htmlContent.indexOf("</pre>", end);
+    tmpcode = htmlContent.slice(end + 1, endend);
+    console.log("저는 코드에용");
+    console.log(tmpcode);
+    tmpcode_after = tmpcode.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
+      const entityMap = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': "'",
+      };
+      return entityMap[s];
+    });
+    console.log("저는 후처리 코드에용");
+    console.log(tmpcode_after);
+    //
+    console.log("언어는 " + language);
     imgFileList.map((file) => {
       formData.append('file', file);
     })
     //console.log("폼데이터 : 시발 왜 안떠");
     //console.log(formData.get('file'));
-    await axios
-      .post(SERVER_URL + "/til-service/api/v1/boards/image", formData)
-      .then((res) => {
+    if (imgFileList.length != 0) {
+      await axios
+        .post(SERVER_URL + "/til-service/api/v1/boards/image", formData)
+        .then((res) => {
+          console.log(res);
+          res.data.data.map((result) => {
+            let tmpUrlList = imgUrlList;
+            let tmpNameList = imgNameList;
+            let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+            let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+            console.log("유알엘 : " + IMG_URL);
+            console.log("이름 : " + imageName);
+            tmpUrlList.push(IMG_URL);
+            tmpNameList.push(imageName);
+            setImgUrlList(tmpUrlList);
+            setImgNameList(tmpNameList);
+          })
 
-        console.log(res);
+          htmlContent_after = htmlContent;
+          for (let i = 0; i < imgUrlList.length; i++) {
+            htmlContent_after = htmlContent_after.toString().replace(baseUrlList[i], imgUrlList[i]);
+          }
+          formData_save.append('content', htmlContent_after);
+          console.log(htmlContent_after);
 
-        res.data.data.map((result) => {
-          let tmpUrlList = imgUrlList;
-          let tmpNameList = imgNameList;
-          let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
-          let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
-          console.log("유알엘 : " + IMG_URL);
-          console.log("이름 : " + imageName);
-          tmpUrlList.push(IMG_URL);
-          tmpNameList.push(imageName);
-
-          setImgUrlList(tmpUrlList);
-          setImgNameList(tmpNameList);
+          /*
+          const IMG_URL = result.data.data; //일케하면되니?
+          let NEW_IMG_URL = IMG_URL.toString().replace("http://localhost:8000", SERVER_URL);
+          console.log("유알엘 : " + NEW_IMG_URL);
+          quillRef.current.getEditor().insertEmbed(range.index, "image", NEW_IMG_URL);
+          quillRef.current.getEditor().setSelection(range.index + 1);
+          */
         })
-
-        htmlContent_after = htmlContent;
-        for (let i = 0; i < imgUrlList.length; i++) {
-          htmlContent_after = htmlContent_after.toString().replace(baseUrlList[i], imgUrlList[i]);
-        }
-        console.log(htmlContent_after);
-
-        /*
-        const IMG_URL = result.data.data; //일케하면되니?
-        let NEW_IMG_URL = IMG_URL.toString().replace("http://localhost:8000", SERVER_URL);
-        console.log("유알엘 : " + NEW_IMG_URL);
-        quillRef.current.getEditor().insertEmbed(range.index, "image", NEW_IMG_URL);
-        quillRef.current.getEditor().setSelection(range.index + 1);
-        */
-      })
-      .catch((err) => {
-        if (err.response) {
-          console.log(err.response.data);
-        }
-      });
-    console.log("이미지 유알엘 리스트 : ");
-    console.log(imgUrlList);
-
-
+        .catch((err) => {
+          if (err.response) {
+            console.log(err.response.data);
+          }
+        });
+      console.log("이미지 유알엘 리스트 : ");
+      console.log(imgUrlList);
+    }
+    else {
+      console.log("이미지 리스트가 없어용~");
+      console.log(htmlContent);
+      formData_save.append('content', htmlContent);
+    }
     formData_save.append('title', title);
-    formData_save.append('content', htmlContent_after);
     formData_save.append('open', open);
     imgNameList.map((fileName) => {
       formData_save.append('fileName', fileName);
@@ -319,10 +394,12 @@ function BlogEditor() {
       <div class="relative bg-white w-[66rem] inset-x-1/2 transform -translate-x-1/2 border-r border-l px-[6rem]">
         <input
           class="focus:outline-0 mt-12 border-b rounded-sm w-full border-slate-300 pt-3 pb-8 px-5 text-3xl font-sbtest"
+          defaultValue={prevTitle}
           placeholder="제목"
           onChange={onTitileInputHandler}
         />
         <ReactQuill
+          defaultValue={prevContent}
           ref={quillRef}
           onChange={onHtmlChangeHandler}
           modules={modules}
@@ -352,7 +429,10 @@ function BlogEditor() {
         </button>
         <button
           class="rounded-[18px] bg-gray-700 text-white font-sbtest px-6 py-2 mr-6"
-          onClick={saveHandler}
+          onClick={() => {
+            saveHandler()
+            //navigate("/blog/main/1");
+          }}
         >
           작성하기
         </button>

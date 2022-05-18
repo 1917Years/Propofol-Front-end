@@ -2,9 +2,11 @@ import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
+import profileImage from "../../assets/img/profile.jpg";
 
 
 function BlogDetail() {
+    const navigate = useNavigate();
     const id = useParams().id;
     const [tmp, setTmp] = useState(false);
     const [writingInfo, setWritingInfo] = useState({});
@@ -13,6 +15,7 @@ function BlogDetail() {
     const [replyCommentInput, setReplyCommentInput] = useState("");
     const [commentList, setCommentList] = useState([]);
     const [checkFollowing, setCheckFollowing] = useState(false);
+    const [checkProfile, setCheckProfile] = useState(false);
 
     async function loadWritings() {
         let tmpInfo;
@@ -38,8 +41,21 @@ function BlogDetail() {
                     imgtype: typeList,
                     like: writing.recommend,
                     nickname: writing.nickname,
-                    commentCount: writing.commentCount
+                    commentCount: writing.commentCount,
+                    profileBytes: writing.profileBytes,
+                    profileType: writing.profileType
                 }
+                tmpInfo.date = tmpInfo.date.substring(0, 10) + "   " + tmpInfo.date.substring(11, 16);
+
+                if (tmpInfo.profileType == null) {
+                    console.log("프로필 이미지 x");
+                    setCheckProfile(false);
+                }
+                else {
+                    console.log("프로필 이미지 o");
+                    setCheckProfile(true);
+                }
+
                 setWritingInfo(tmpInfo);
                 console.log("tmpInfo는");
                 console.log(tmpInfo);
@@ -56,17 +72,30 @@ function BlogDetail() {
         axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id + "/comments?page=1")
             .then((res) => {
                 let tmpCmList = [];
+                let tmpCm;
                 res.data.data.comments.map((item) => {
-                    let tmpCm =
+                    tmpCm =
                     {
                         content: item.content,
                         groupId: item.groupId,
                         id: item.id,
                         nickname: item.nickname,
-                        date: item.createdDate
+                        date: item.createdDate,
+                        imgBytes: item.profileBytes,
+                        imgType: item.profileType
+                    }
+
+                    if (tmpCm.imgType == null) {
+                        console.log("프로필 이미지 x");
+                        setCheckProfile(false);
+                    }
+                    else {
+                        console.log("프로필 이미지 o");
+                        setCheckProfile(true);
                     }
                     tmpCmList.push(tmpCm);
                 })
+                tmpCm.date = tmpCm.date.substring(0, 10) + "   " + tmpCm.date.substring(11, 16);
                 setCommentList([...tmpCmList]);
                 console.log(commentList);
                 console.log("댓글임");
@@ -78,8 +107,6 @@ function BlogDetail() {
     }
 
     function loadFollowing(nickname) {
-        // console.log("글쓴 사람의 닉네임을 알려주세요");
-        // console.log(nickname);
 
         const t = {
             followingNickname: nickname
@@ -162,6 +189,17 @@ function BlogDetail() {
             })
     };
 
+    function onPostDeleteHandler() {
+        axios.delete(SERVER_URL + "/til-service/api/v1/boards/" + id)
+            .then((res) => {
+                console.log("게시글 삭제");
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err);
+            })
+    }
+
     useEffect(() => {
         loadWritings();
     }, []);
@@ -171,14 +209,30 @@ function BlogDetail() {
             <div class="relative w-[60rem] h-full inset-x-1/2 transform -translate-x-1/2 ">
                 <div class="mt-12 border-b rounded-sm w-full border-slate-300 pt-3 pb-4 px-5 mb-10 text-3xl font-sbtest">
                     {writingInfo.title}
-                    <div class="flex mb-4 mt-8 gap-3">
-                        <div class="w-14 h-14 rounded-full bg-black"></div>
-                        <div>
+                    <div class="flex mb-4 mt-8 gap-4">
+                        <img
+                            src={checkProfile == false ? profileImage : "data:image/" + writingInfo.profileType + ";base64," + writingInfo.profileBytes}
+                            class="w-24 h-14 rounded-full drop-shadow-md"
+                        />
+
+                        <div class="w-1/2">
                             <div class="text-xl font-sbtest text-gray-700">{writingInfo.nickname}</div>
                             <div class="text-base font-ltest text-gray-400">{writingInfo.date}</div>
                         </div>
+                        <div class="flex w-full gap-2 justify-end">
+                            <button
+                                class="pt-3 text-base flex border border-lg font-ltest px-5"
+                                onClick={() => {
+                                    navigate("/blog/writing?No=" + id);
+                                }}
+                            >수정</button>
+                            <button
+                                onClick={() => onPostDeleteHandler()}
+                                class="pt-3 text-base flex border border-lg font-ltest px-5">삭제</button>
+                        </div>
                     </div>
                 </div>
+
                 <div class="focus:outline-0 mt-3 rounded-sm w-full py-3 px-5 border-b border-gray-300 mb-5 h-fit">
 
                     <div dangerouslySetInnerHTML={{ __html: writingInfo.detail }}></div>
@@ -238,7 +292,11 @@ function BlogDetail() {
                                 {item.groupId == item.id ? (
                                     <>
                                         <div class="flex items-center gap-4 mt-5">
-                                            <div class="w-12 h-12 bg-black rounded-full"></div>
+                                            <img
+                                                src={checkProfile == false ? profileImage : "data:image/" + item.imgType + ";base64," + item.imgBytes}
+                                                class="w-12 h-12 rounded-full drop-shadow-md"
+                                                alt="profile"
+                                            />
                                             <div class="flex flex-col justify-between">
                                                 <div class="text-xl text-gray-600">{item.nickname}</div>
                                                 <div class="text-md text-gray-400 font-ltest">{item.date}</div>

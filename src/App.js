@@ -172,7 +172,7 @@ function App() {
           <Route path="/pm/list" element={<ProjectList />} />
           <Route path="/pm/detail" element={<ProjectDetail />} />
           <Route path="/pm/search" element={<ProjectSearch />} />
-          <Route path="/blog/main" element={<BlogMain />} />
+          <Route path="/blog/main/:page" element={<BlogMain />} />
           <Route path="/blog/search" element={<BlogSearch />} />
           <Route path="/blog/writing" element={<BlogWr2 />} />
           <Route path="/blog/writing_prev" element={<BlogWriting />} />

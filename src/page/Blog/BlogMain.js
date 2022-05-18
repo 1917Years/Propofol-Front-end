@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 import { leafYear, dateToNumber, numberToDate } from "../../utils/date";
@@ -8,6 +8,8 @@ let tmpSt = [];
 
 function BlogMain() {
   const navigate = useNavigate();
+  const page = useParams().page;
+
   const tagList = ["JAVA", "Spring", "C++", "JavaScript", "C#", "C", "Python", "냠냠", "ㅁㄴㅇ", "울랄라", "언어1", "언어2"];
   const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   const weekList = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -23,7 +25,10 @@ function BlogMain() {
   const [tmpWorkingSUm, setTmpWorkingSum] = useState(0);
   const [workingSum, setWorkingSum] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
-  const [currentPage, setCurrentPage] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [maxPageCount, setMaxPageCount] = useState(1);
+  const [pageList, setPageList] = useState([]);
+  const [checkNoPost, setCheckNoPost] = useState(false);
 
   let isLeafYear;
 
@@ -81,17 +86,74 @@ function BlogMain() {
   }
 
   useEffect(() => {
+    console.log("저는 페이지입니다.");
+    console.log(page);
+    loadWritings(page);
+
+    axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + currentPage)
+      .then((res) => {
+        let tmpPageCount = res.data.data.totalPageCount;
+        setMaxPageCount(tmpPageCount);
+        console.log("페이지 카운트 최대 몇?");
+        console.log(tmpPageCount);
+        let max = tmpPageCount;
+        let tmpPgList = [];
+        for (let i = 1; i <= max; i++) {
+          tmpPgList.push(i);
+        }
+        setPageList([...tmpPgList]);
+        console.log("페이지 리스트를 보여주시겠어요?");
+        console.log(pageList);
+      })
+      .catch((err) => {
+      })
+  }, [page])
+
+  useEffect(() => {
     console.log("지금부터 스트릭을 출력해보겠습니다~~");
     console.log(streak);
   }, [streak]);
 
-  function loadWritings() {
-    axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + 1)
+  function loadWritings(currentPage) {
+    console.log("현재 페이지를 알려주세요");
+    console.log(currentPage)
+    axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + currentPage)
       .then((res) => {
+        console.log("저는 글을 로딩하고 있어요");
         console.log(res);
+
+        let tmpPageCount;
+        if (res.data.data.totalCount == 0)
+          setCheckNoPost(true);
+        else
+          setCheckNoPost(false);
+
+        tmpPageCount = res.data.data.totalPageCount;
+        // if (res.data.data.totalPageCount > 1)
+        //   tmpPageCount = res.data.data.totalPageCount;
+        // else
+        //   tmpPageCount = 1;
+        setMaxPageCount(tmpPageCount);
+        console.log("페이지 카운트 최대 몇?");
+        console.log(tmpPageCount);
+        //
+
+        // let tmpPgList = pageList;
+        // for (let i = 1; i <= tmpPageCount; i++) {
+        //   tmpPgList.push(i);
+        // }
+        // setPageList([...tmpPgList]);
+        // console.log("페이지 리스트를 보여주시겠어요?");
+        // console.log(pageList);
+
+        //
+        let tmpWrList = [];
         res.data.data.boards.map((writing) => {
+          let tmpimgtype = null;
+          if (writing.imgtype != null) {
+            tmpimgtype = writing.imageType.toString().split('/')[1];
+          }
           let tmpWr;
-          let tmpWrList = writingList;
           tmpWr = {
             id: writing.id,
             title: writing.title,
@@ -99,10 +161,12 @@ function BlogMain() {
             date: writing.createdDate,
             open: writing.open,
             img: writing.imageBytes,
-            imgtype: writing.imageType.toString().split('/')[1],
+            imgtype: tmpimgtype,
             like: writing.recommend,
             comment: writing.commentCount
           }
+          tmpWr.date = tmpWr.date.substring(0, 10) + "   " + tmpWr.date.substring(11, 16);
+
           console.log("아이디는 " + tmpWr.id);
           tmpWrList.push(tmpWr);
           setWritingList([...tmpWrList]);
@@ -117,9 +181,34 @@ function BlogMain() {
       });
   }
 
+  const onCurrentPageHandler = (page) => {
+    console.log("현재 페이지를 알려주겠니?");
+    console.log(page);
+    navigate("/blog/main/" + page);
+  }
 
-  let tmpDetail =
-    "글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~";
+  const onPreviousPageHandler = () => {
+    var iPage = parseInt(page);
+    var previousPage = iPage - 1;
+    if (previousPage == 0)
+      navigate("/blog/main/" + page);
+    else
+      navigate("/blog/main/" + previousPage);
+  }
+
+  const onNextPageHandler = () => {
+    var iPage = parseInt(page);
+    var nextPage = iPage + 1;
+    console.log("뭐야");
+    console.log(nextPage);
+    console.log(maxPageCount);
+    if (nextPage > maxPageCount)
+      navigate("/blog/main/" + page);
+    else
+      navigate("/blog/main/" + nextPage);
+
+  }
+
   const onTagButtonClickHandler = (e) => {
     if (e.target.value == "-1") return;
     if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
@@ -163,9 +252,9 @@ function BlogMain() {
         console.log("뭐야 ㅅㅄㅄ");
       });
 
-
     setSearchOption("제목");
-    loadWritings();
+    // setCurrentPage(page);
+    // loadWritings(currentPage);
     loadStreak();
     //
     let temp = [];
@@ -188,6 +277,7 @@ function BlogMain() {
     console.log(t);
     setIsTagChecked(t);
     console.log(isTagChecked);
+    //
   }, []);
 
   return (
@@ -332,39 +422,66 @@ function BlogMain() {
                           if (item.working == 0) {
                             return (
                               <div class="">
-                                <div class="bg-gray-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                                <div class="group bg-gray-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                                  <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
+                                  before:before-bubble after:after-bubble">
+                                    {item.date}일에, {item.working}번 공부를 했어요.
+                                  </div>
                                 </div>
-                                <div class="absolute w-36 bg-white border border-gray-300 rounded-lg p-2 text-gray-600 text-sm font-ltest">안녕? 난 말풍선이야!</div>
                               </div>
                             )
                           }
                           else if (item.working == 1) {
                             return (
-                              <div class="bg-indigo-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                              <div class="group bg-indigo-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                  {item.date}일에, {item.working}번 공부를 했어요.
+                                </div>
                               </div>
                             )
                           }
                           else if (item.working == 2) {
                             return (
-                              <div class="bg-indigo-300 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                              <div class="group bg-indigo-300 w-[12px] h-[12px] rounded-sm border border-gray-300">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                  {item.date}일에, {item.working}번 공부를 했어요.
+                                </div>
                               </div>
                             )
                           }
                           else if (item.working == 3) {
                             return (
-                              <div class="bg-[#8289D9] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                              <div class="group bg-[#8289D9] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-300 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
+                                3
+
+                                after:translate-y-[22px] after:-translate-x-[12.57rem] after:border
+                                after:border-t-[12px] after:border-t-gray-500
+                                after:border-r-[12px] after:border-r-transparent
+                                after:border-l-[0px] after:border-l-transparent
+                                after:border-b-[0px] after:border-b-transparent
+                                after:absolute after:z-10
+                                ">
+                                  {item.date}일에, {item.working}번 공부를 했어요.
+                                </div>
                               </div>
                             )
                           }
                           else if (item.working == 4) {
                             return (
-                              <div class="bg-[#6369A6] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                              <div class="group bg-[#6369A6] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                  {item.date}일에, {item.working}번 공부를 했어요.
+                                </div>
                               </div>
                             )
                           }
-                          else if (item.working == 5) {
+                          else if (item.working >= 5) {
                             return (
-                              <div class="bg-[#54598C] w-[12px] h-[12px] rounded-sm border border-gray-300">
+                              <div class={"group bg-[#54598C] w-[12px] h-[12px] rounded-sm border border-gray-300"}>
+                                <div class="group-hover:block absolute hidden rounded-xl p-2 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                  {item.date}일에, {item.working}번 공부를 했어요.
+                                </div>
                               </div>
                             )
                           }
@@ -382,12 +499,18 @@ function BlogMain() {
         </div>
 
         <div class="mt-10 border rounded-lg">
+          {
+            <div class="flex justify-center">
+              <div class={checkNoPost == true ? "my-10 m-auto text-center"
+                : "hidden"}>{checkNoPost == true ? "아직 아무 글도 작성하지 않았어요 😥" : ""}</div>
+            </div>
+          }
           {writingList.map((item) => {
-            if (item.image == null) {
+            if (item.img != null) {
               return (
                 <button
                   className="Writing"
-                  class="flex border-b bg-white h-44 px-10 py-5 gap-5 text-left"
+                  class="flex border bg-white h-44 px-10 py-5 gap-5 text-left"
                   value={item.id}
                   onClick={(e) => {
                     navigate('/blog/detail/' + e.currentTarget.value);
@@ -395,7 +518,7 @@ function BlogMain() {
                 >
                   <div class="w-[45.5rem]">
                     <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                      <h>사용자명</h>
+                      <h>나</h>
                       <h>{item.date}</h>
                     </div>
                     <button class="py-1 text-blue-400 text-lg">
@@ -420,14 +543,15 @@ function BlogMain() {
               return (
                 <button
                   className="Writing"
-                  class="border-b bg-white h-48 px-10 py-5 gap-5 text-left"
+                  class="border bg-white h-48 px-10 py-5 gap-5 text-left"
+                  value={item.id}
                   onClick={(e) => {
                     navigate('/blog/detail/' + e.currentTarget.value);
                   }}
                 >
-                  <div class="w-full h-28">
+                  <div class="w-[45.5rem] h-28">
                     <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                      <h>{"본인 닉네임"}</h>
+                      <h>나</h>
                       <h>{item.date}</h>
                     </div>
                     <button class="py-1 text-blue-400 text-lg">
@@ -451,52 +575,38 @@ function BlogMain() {
           <nav class="my-6">
             <ul class="inline-flex items-center -space-x-px">
               <li>
-                <a href="#" class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <span class="sr-only">Previous</span>
+                <button
+                  onClick={() => { onPreviousPageHandler() }}
+                  class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                </a>
+                </button>
               </li>
+
+              {
+                pageList.map((page) => {
+                  return (
+                    <li>
+                      <button
+                        onClick={() => { onCurrentPageHandler(page) }}
+                        class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >{page}</button>
+                    </li>
+                  );
+                })
+              }
+
               <li>
-                <a href="#" class="z-10 py-2 px-3 leading-tight text-blue-600 bg-blue-50 border border-blue-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">1</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">2</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">3</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">4</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">5</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">6</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">7</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">8</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">9</a>
-              </li>
-              <li>
-                <a href="#" class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">10</a>
-              </li>
-              <li>
-                <a href="#" class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <span class="sr-only">Next</span>
+                <button
+                  onClick={() => { onNextPageHandler() }}
+                  class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                   <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                </a>
+                </button>
               </li>
             </ul>
           </nav>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 }
 
