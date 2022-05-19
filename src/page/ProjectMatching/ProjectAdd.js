@@ -1,5 +1,9 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+let tmpSkillList = [];
 
 function ProjectAdd() {
     const navigate = useNavigate();
@@ -23,8 +27,29 @@ function ProjectAdd() {
     const [checkedTagList, setCheckedTagList] = useState([]);
     const [tmp, setTmp] = useState(false);
 
+    const [skillsAdd, setSkillsAdd] = useState(false);
+    const [skillInput, setSkillInput] = useState("");
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+    const [recruit, setRecruit] = useState("");
+
     let tmpDetail =
         "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
+
+    const onSkillInputHandler = (event) => {
+        let tmpSkill = skillInput;
+        tmpSkillList.push(tmpSkill);
+        console.log(tmpSkill);
+        setSkillsAdd(false);
+    };
+
+
+    const onKeyPress = (event) => {
+        if (event.key === "Enter") {
+            onSkillInputHandler(event);
+        }
+    };
+
     const onTagButtonClickHandler = (e) => {
         if (e.target.value == "-1") return;
         if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
@@ -46,11 +71,27 @@ function ProjectAdd() {
         console.log(checkedTagList);
         setTmp(!tmp);
     };
+
     const keyPressHandler = (e) => {
         if (e.key === "Enter") {
             navigate("/blog/search");
         }
     };
+    const onFileButtonHandler = (e) => {
+        const myInput = document.getElementById("input-file");
+        myInput.click();
+    };
+
+    const onFileInputHandler = (e) => {
+        const formData = new FormData();
+        // formData.append('profile', e.target.files[0]);
+        // console.log(e.target.files[0]);
+
+        // 나중에 이미지 추가하는 axios 추가해주기
+
+
+    }
+
     useEffect(() => {
         let t = [];
         for (let i = 0; i < tagList.length; i++) {
@@ -161,11 +202,86 @@ function ProjectAdd() {
                             class="w-full py-2 px-3 border bg-gray-50 focus:outline-0 text-lg font-ltest"
                             placeholder="제목"
                         />
-
                     </div>
 
+                    <div class="flex items-center gap-5 mt-2">
+                        {tmpSkillList.map((item) => {
+                            return (
+                                <div class="w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl text-center bg-gray-50 text-lg font-test min-w-[8rem]">
+                                    {item}
+                                </div>
+                            );
+                        })}
+                        {skillsAdd ? (
+                            <div>
+                                <input
+                                    class="text-center w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-white focus:outline-0 text-lg font-test min-w-[8rem]"
+                                    placeholder="입력"
+                                    onKeyPress={(e) => onKeyPress(e)}
+                                    onChange={(e) => setSkillInput(e.currentTarget.value)}
+                                />
+                            </div>
+                        ) : (
+                            <button
+                                class="text-center w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-test min-w-[8rem]"
+                                onClick={() => {
+                                    setSkillsAdd(true);
+                                }}
+                            >
+                                +
+                            </button>
+                        )}
+                    </div>
+                    <div class="mt-6 px-4 border rounded-lg border-gray-300"></div>
+                    <div class="flex gap-2">
+                        <div class="mt-4 w-1/3 py-4 border rounded-lg border-gray-300">
+                            <DatePicker
+                                selected={startDate}
+                                dateFormat="yyyy년 MM월 dd일"
+                                onChange={date => setStartDate(date)}
+                                shouldCloseOnSelect={false}
+                                placeholderText="시작 날짜" />
+                        </div>
+                        <div class="mt-4 w-1/3 py-4 border rounded-lg border-gray-300">
+                            <DatePicker
+                                selected={endDate}
+                                dateFormat="yyyy년 MM월 dd일"
+                                minDate={startDate}
+                                onChange={date => setEndDate(date)}
+                                shouldCloseOnSelect={false}
+                                placeholderText="종료 날짜" />
+                        </div>
+                        <div class="mt-4 w-1/3 py-4 border rounded-lg border-gray-300">
+                            <input
+                                placeholder="모집 인원"
+                                onChange={(e) => setRecruit(e.currentTarget.value)}
+                            />
+                        </div>
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button
+                            onClick={onFileButtonHandler}
+                        >
+                            <input
+                                type="file"
+                                accept="image/*"
+                                id="input-file"
+                                class="hidden"
+                                onChange={onFileInputHandler}
+                            />
+                            + 첨부파일
+                        </button>
+                    </div>
+                    <div class="w-full mt-6 py-2 px-4 border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
+                        <textarea
+                            class="w-full mt-5 focus:outline-0 resize-none bg-inherit pb-3 min-h-[30rem] "
+                            placeholder="내용"
 
-
+                        />
+                    </div>
+                    <div class="mt-4 flex justify-end">
+                        <button class="bg-gray-600 text-white border rounded-lg px-4 py-2">등록하기</button>
+                    </div>
                 </div>
             </div>
         </div>

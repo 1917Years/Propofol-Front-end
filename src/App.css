@@ -152,8 +152,15 @@
 .quill {
   padding-left: 2px;
   padding-right: 2px;
-  margin-top: 3rem;
-  height: 80vh;
+  height: fit-content;
+}
+
+.ql-container.ql-bubble {
+  width: 54rem;
+  left: 50%;
+  height: 100%;
+  transform: translate(-50%);
+  border: 0px none rgb(255, 255, 255) !important;
 }
 
 .ql-container.ql-snow {

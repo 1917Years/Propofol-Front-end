@@ -167,7 +167,8 @@ function ProjectMain() {
                   <div class="px-2 bg-green-300 text-black">모집중</div>
                   <h>팀장명</h>
                 </div>
-                <button class="mt-1 py-1 text-black text-xl">
+                <button class="mt-1 py-1 text-black text-xl"
+                  onClick={() => navigate("/pm/detail")}>
                   개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
                 </button>
                 <div class="font-ltest">{tmpDetail}</div>
@@ -227,10 +228,14 @@ function ProjectMain() {
             </div>
             <div class="basis-1/4">
               <div class="grid grid-rows-2 h-full">
-                <button class="text-gray-600 rounded-lg border border-slate-300 w-full my-4 py-2">
+                <button
+                  onClick={() => navigate("/pm/add")}
+                  class="text-gray-600 rounded-lg border border-slate-300 w-full my-4 py-2">
                   새 프로젝트 모집하기
                 </button>
-                <button class=" text-gray-600 rounded-lg border border-slate-300 w-full my-4 py-2">
+                <button
+                  onClick={() => navigate("/pm/list")}
+                  class=" text-gray-600 rounded-lg border border-slate-300 w-full my-4 py-2">
                   내 프로젝트 보기
                 </button>
               </div>

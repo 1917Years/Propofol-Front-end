@@ -159,7 +159,8 @@ function ProjectDetail() {
               <div class="text-2xl font-btest">
                 개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
               </div>
-              <div class="ml-4 w-fit px-3 bg-green-300 text-black">모집중</div>
+              <div class="ml-4 w-fit px-3 bg-green-300 text-black align-middle"> 모집중
+              </div>
             </div>
             <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
 
@@ -215,7 +216,7 @@ function ProjectDetail() {
                     UI를 제공하는 것을 목표로 삼아 멋진 디자인을 만드는 프론트엔드
                     디자이너가 되기 위해 오늘도 달리는 중입니다. :D</div>
                 </div>
-                <button class="ml-6 mt-4 font-ltest text-sm"> 팀장의 포트폴리오 확인하기 ></button>
+                <button class="ml-6 mt-4 font-ltest text-sm"> 팀장의 포트폴리오 확인하기 {">"}</button>
                 <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
                 <button class="mt-4 border text-md rounded-lg w-full py-2">지원하기</button>
                 <div class="mt-6 text-lg font-btest">현재 참여 중인 팀원</div>

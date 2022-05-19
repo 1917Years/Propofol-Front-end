@@ -1,6 +1,9 @@
 import { React, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Navigate } from "react-router-dom";
+import { SERVER_URL } from "../../utils/SRC";
+import profileImage from "../../assets/img/profile.jpg";
+
 
 let tmpSkillList = [];
 let tmpWorkList = [];
@@ -23,6 +26,12 @@ function PortfolioMain() {
   const [prjSkillsAdd, setPrjSkillsAdd] = useState(false);
   const [prjDetailInput, setPrjDetailInput] = useState("");
   const [projectAdd, setProjectAdd] = useState(false);
+
+  const [userInfo, setUserInfo] = useState([]);
+  const [checkProfile, setCheckProfile] = useState(false);
+  const [profileImg, setProfileImg] = useState();
+  const [profileType, setProfileType] = useState();
+
 
   const onWorkInputHandler = () => {
     let tmpWork = { name: workNameInput, detail: workDetailInput };
@@ -51,6 +60,79 @@ function PortfolioMain() {
     }
   };
 
+  const onProfileButtonHandler = (e) => {
+    const myInput = document.getElementById("input-file");
+    myInput.click();
+  };
+
+  const onProfileInputHandler = (e) => {
+    const formData = new FormData();
+    formData.append('profile', e.target.files[0]);
+    // console.log(e.target.files[0]);
+
+    axios
+      .post(SERVER_URL + "/user-service/api/v1/members/profile", formData)
+      .then((res) => {
+        console.log("프로필 이미지 확인ㅇㅇㅇ");
+        console.log(res.data.data);
+        setProfileType(res.data.data.profileType);
+        setProfileImg(res.data.data.profileBytes);
+        console.log(profileType)
+        console.log(profileImg);
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log("뭐야 ㅅㅄㅄ");
+        console.log(err.request);
+      });
+
+    console.log("여기 찍힘???");
+
+
+  }
+
+  useEffect(() => {
+    axios
+      .get(SERVER_URL + "/user-service/api/v1/members")
+      .then((res) => {
+        console.log("여기 찍힘?");
+        let tmpCm = {
+          email: res.data.data.email,
+          phone: res.data.data.phoneNumber,
+          username: res.data.data.username
+        }
+        setUserInfo(tmpCm);
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log("뭐야 ㅅㅄㅄ");
+      });
+
+    axios
+      .get(SERVER_URL + "/user-service/api/v1/members/profile")
+      .then((res) => {
+        console.log("프로필 이미지 조회");
+        console.log(res.data.data);
+        if (res.data.data.profileType == null) {
+          console.log("프로필 없삼");
+          setCheckProfile(false);
+        }
+        else {
+          console.log("이미 프로필 이미지 있삼");
+          setProfileType(res.data.data.profileType);
+          setProfileImg(res.data.data.profileBytes);
+          console.log(profileType);
+          console.log(profileType);
+          setCheckProfile(true);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log("오류가 나버림");
+      });
+
+  }, []);
+
   return (
     <div class="bg-white font-test">
       <div class="w-1/2 mt-10 mx-auto">
@@ -68,37 +150,83 @@ function PortfolioMain() {
             <div class="text-2xl">사용자 정보</div>
             <div class="w-[95%] mx-auto mt-4 px-5">
               <div>
+                <div class="text-xl mt-4">프로필 이미지</div>
+                <button
+                  className="ProfileImage"
+                  class="mx-auto mt-4 w-36 h-36 rounded-full"
+                  onClick={onProfileButtonHandler}
+                >
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="input-file"
+                    class="hidden"
+                    onChange={onProfileInputHandler}
+                  />
+
+                  <img
+                    src={checkProfile == false ? profileImage : "data:image/" + profileType + ";base64," + profileImg}
+                    class="w-36 h-36 rounded-full drop-shadow-md"
+                    alt="profile"
+                  />
+                </button>
+              </div>
+              <div>
                 <div class="text-xl mt-4">이름</div>
                 <input
+                  class="w-[40%] mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-200 focus:outline-0 text-lg font-ltest min-w-[20rem]"
+                  placeholder={userInfo.username}
+                  type="text"
+                  disabled
+                />
+              </div>
+              <div class="w-[40%]">
+                <div class="text-xl mt-4">핸드폰 번호</div>
+                <input
+                  class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-200 focus:outline-0 text-lg font-ltest min-w-[20rem]"
+                  placeholder={userInfo.phone}
+                  type="text"
+                  disabled
+                />
+              </div>
+              <div class="w-[40%]">
+                <div class="text-xl mt-4">이메일</div>
+                <input
+                  class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-200 focus:outline-0 text-lg font-ltest min-w-[20rem] "
+                  placeholder={userInfo.email}
+                  type="text"
+                  disabled
+                />
+              </div>
+
+              <div>
+                <div class="text-xl mt-4">직무</div>
+                <input
                   class="w-[40%] mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                  placeholder="이름"
+                  placeholder="간단한 직무명을 입력해주세요."
                   type="text"
                 />
               </div>
+
               <div>
                 <div class="text-xl mt-4">깃허브 주소</div>
                 <input
                   class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                  placeholder="깃허브 주소"
+                  placeholder="https://github.com/userId"
                   type="text"
                 />
               </div>
-              <div class="xl:flex justify-between w-full">
-                <div class="w-[40%]">
-                  <div class="text-xl mt-4">핸드폰 번호</div>
-                  <input
-                    class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                    placeholder="핸드폰 번호"
-                    type="text"
+
+              <div>
+                <div class="text-xl mt-4">한줄소개</div>
+                <div class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 text-lg font-ltest min-w-[20rem] ">
+
+                  <textarea
+                    class="w-full mt-5 focus:outline-0 resize-none bg-inherit pb-3 min-h-[10rem] "
+                    placeholder="자기소개를 입력해주세요."
+
                   />
-                </div>
-                <div class="w-[40%]">
-                  <div class="text-xl mt-4">이메일</div>
-                  <input
-                    class="w-full mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem] "
-                    placeholder="이메일"
-                    type="text"
-                  />
+
                 </div>
               </div>
             </div>
@@ -122,7 +250,7 @@ function PortfolioMain() {
                     <div>
                       <input
                         class="w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-white focus:outline-0 text-lg font-ltest min-w-[8rem]"
-                        placeholder="입력"
+                        placeholder="내 스킬정보(til에서 만들어짐)"
                         onKeyPress={(e) => onKeyPress(e)}
                         onChange={(e) => setSkillInput(e.currentTarget.value)}
                       />
@@ -138,6 +266,9 @@ function PortfolioMain() {
                     </button>
                   )}
                 </div>
+                <button class="w-[20rem] xl:w-[15%] mt-2 py-2 px-4 bg-black text-white text-lg font-ltest rounded-xl min-w-[5rem]">
+                  추가하기
+                </button>
               </div>
               <div>
                 <div class="text-xl mt-4">경력</div>
@@ -167,6 +298,30 @@ function PortfolioMain() {
                         setWorkDetailInput(e.currentTarget.value)
                       }
                     />
+                    <div class="font-ltest text-lg text-gray-400 border-b border-gray-300 pb-4">
+                      경력 기간
+                      <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
+                        <div
+                          class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0"
+                        >
+                          <input
+                            class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                            placeholder="시작 일자"
+
+                          />
+                        </div>
+                        <div>~</div>
+                        <div
+                          class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                        >
+                          <input
+                            class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                            placeholder="종료 일자"
+
+                          />
+                        </div>
+                      </div>
+                    </div>
                     <div class="w-full flex justify-end">
                       <button
                         class="w-[15%] ml-full py-1 px-4 bg-inherit text-gray-500 text-lg font-test rounded-xl min-w-[5rem]"
@@ -361,7 +516,6 @@ function PortfolioMain() {
                             onChange={(e) => { setPrjDev(e.target.value); }}
                           />
                         </div>
-
                         <div class="mr-3 font-test text-xl">
                           <div class="border-b border-gray-400 w-full px-1 pb-2">
                             사용 기술

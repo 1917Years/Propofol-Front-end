@@ -10,6 +10,7 @@ import Register from "./page/Register";
 import ProjectAdd from "./page/ProjectMatching/ProjectAdd";
 import ProjectMain from "./page/ProjectMatching/ProjectMain";
 import ProjectList from "./page/ProjectMatching/ProjectList";
+import ProjectMyList from "./page/ProjectMatching/ProjectMyList";
 import ProjectDetail from "./page/ProjectMatching/ProjectDetail";
 import ProjectSearch from "./page/ProjectMatching/ProjectSearch";
 import BlogMain from "./page/Blog/BlogMain";
@@ -33,7 +34,7 @@ import BlogDetail from "./page/Blog/BlogDetail";
 axios.interceptors.response.use(
   function (response) {
     console.log("안녕?");
-    console.log(response);
+    //console.log(response);
     return response;
   },
   async function (error) {
@@ -41,15 +42,15 @@ axios.interceptors.response.use(
       console.log(error.response);
       console.log("시발");
     }
-    console.log(error.response);
+    console.log(error);
     console.log("왜안돼!!!!");
-    if (error != null && error.response.data == "No Jwt Token") {
+    if (error != null && error != undefined && error.response.data.data == "No Jwt Token") {
       const originalRequest = error.config;
       console.log("왜안돼!!!!!!!!!!!!!!!!!");
       axios.defaults.headers.common['Authorization'] = `Bearer ${getAccessToken()}`;
       return await axios.request(originalRequest);
     }
-    if (error != null && error.response.data == "Please RefreshToken.") {
+    if (error != null && error != undefined && error.response.data.data == "Please RefreshToken.") {
       try {
         console.log("왜안!ㅇㄴㅁ!!!");
         const originalRequest = error.config;
@@ -169,6 +170,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/pm/add" element={<ProjectAdd />} />
           <Route path="/pm/main" element={<ProjectMain />} />
+          <Route path="/pm/myproject" element={<ProjectMyList />} />
           <Route path="/pm/list" element={<ProjectList />} />
           <Route path="/pm/detail" element={<ProjectDetail />} />
           <Route path="/pm/search" element={<ProjectSearch />} />

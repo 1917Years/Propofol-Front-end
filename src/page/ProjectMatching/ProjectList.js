@@ -166,9 +166,11 @@ function ProjectList() {
 
                                 <div class="text-sm text-gray-400 flex items-center font-ltest">
                                     <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                                    <button class="ml-auto">> 수정하기</button>
+                                    <button class="ml-auto">{">"} 수정하기</button>
                                 </div>
-                                <button class="mt-1 py-1 text-black text-xl">
+                                <button
+                                    onClick={() => navigate("/pm/myproject")}
+                                    class="mt-1 py-1 text-black text-xl">
                                     개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
                                 </button>
                                 <div class="font-ltest">{tmpDetail}</div>
@@ -224,7 +226,7 @@ function ProjectList() {
                         <div class="text-2xl font-btest">
                             유진님이 참여 중인 프로젝트예요.
                         </div>
-                        <button class="ml-auto text-lg mr-2">> 신청 목록</button>
+                        <button class="ml-auto text-lg mr-2">{">"} 신청 목록</button>
                     </div>
 
                     <div class="mt-4 border rounded-lg">

@@ -385,7 +385,6 @@ function BlogMain() {
               {(streak != []) ?
                 (
                   <div>
-                    <div class="flex text-sm text-gray-500 font-ltest">하이</div>
                     <div class="flex px-8 gap-3 items-start">
                       <div class="h-full grid grid-rows-7 grid-flow-col gap-[0px]">
                         {streak.slice(0, 7).map((item) => {
@@ -454,7 +453,7 @@ function BlogMain() {
                               <div class="group bg-[#8289D9] w-[12px] h-[12px] rounded-sm border border-gray-300">
                                 <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-300 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
                                 3
-
+                                before:before-bubble
                                 after:translate-y-[22px] after:-translate-x-[12.57rem] after:border
                                 after:border-t-[12px] after:border-t-gray-500
                                 after:border-r-[12px] after:border-r-transparent
@@ -479,7 +478,7 @@ function BlogMain() {
                           else if (item.working >= 5) {
                             return (
                               <div class={"group bg-[#54598C] w-[12px] h-[12px] rounded-sm border border-gray-300"}>
-                                <div class="group-hover:block absolute hidden rounded-xl p-2 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
                                   {item.date}일에, {item.working}번 공부를 했어요.
                                 </div>
                               </div>
@@ -557,7 +556,7 @@ function BlogMain() {
                     <button class="py-1 text-blue-400 text-lg">
                       {item.title}
                     </button>
-                    <div class="font-ltest">{item.detail}</div>
+                    <div class="font-ltest">{item.detail.slice(0, 300)}</div>
                   </div>
                   <div class="flex">
                     <div class="w-[47rem]"></div>

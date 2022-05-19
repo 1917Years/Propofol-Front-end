@@ -1,13 +1,20 @@
 import axios from "axios";
+import ReactQuill, { Quill } from "react-quill";
+import hljs from "highlight.js";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
 import profileImage from "../../assets/img/profile.jpg";
-
+import 'react-quill/dist/quill.bubble.css';
 
 function BlogDetail() {
+    let tmpWrInfo;
     const navigate = useNavigate();
     const id = useParams().id;
+    const [compileResultList, setCompileResultList] = useState([]);
+    const [codeList, setCodeList] = useState([]);
+    const [detailList, setDetailList] = useState([]);
+    const [detailAfter, setDetailAfter] = useState("");
     const [tmp, setTmp] = useState(false);
     const [writingInfo, setWritingInfo] = useState({});
     const [commentInput, setCommentInput] = useState("");
@@ -17,10 +24,133 @@ function BlogDetail() {
     const [checkFollowing, setCheckFollowing] = useState(false);
     const [checkProfile, setCheckProfile] = useState(false);
 
+    function postCode(index) {
+        console.log("버튼이 눌렸다!");
+        console.log(index);
+        console.log(codeList[index]);
+        axios.post(SERVER_URL + "/til-service/api/v1/boards/code/" + id, {
+            type: "python",
+            code: codeList[index]
+        })
+            .then((res) => {
+                let tmplist = compileResultList;
+                tmplist[index] = { mes: res.data.data, err: false };
+                setCompileResultList([...tmplist]);
+                console.log(res);
+                console.log(tmplist[index]);
+            })
+            .catch((err) => {
+                console.log(err.response); // data.data.message : '컴파일 실패'
+                if (err.response.data.message == "컴파일 실패") {
+                    console.log("ㅎㅇ");
+                    let tmplist = compileResultList;
+                    tmplist[index] = { mes: err.response.data.data, err: true };
+                    setCompileResultList([...tmplist]);
+                    console.log(tmplist[index]);
+                }
+            });
+
+    }
+
+    function loadCode() {
+        let tmpcodelist = [];
+        let start = 0;
+        let startend = 0;
+        let end = 0;
+        let k = 0;
+        let tmpdetaillist = [];
+        let division = 0;
+        let prev_end = 0;
+        let d = 0;
+        let tmplist = [];
+        tmpdetaillist.push({ detail: tmpWrInfo.detail, index: 0 }); // tmpdetailliet[0] = 원본;
+        while (tmpWrInfo.detail.indexOf("<pre", end) != -1) {
+            let tmpcode, tmpcode_after, tmpdetail_before;
+            start = tmpWrInfo.detail.indexOf("<pre", end);
+            startend = tmpWrInfo.detail.indexOf(">", start);
+            end = tmpWrInfo.detail.indexOf("</pre>", startend);
+            tmpcode = tmpWrInfo.detail.slice(startend + 1, end);
+            tmpcode_after = tmpcode.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
+                const entityMap = {
+                    '&amp;': '&',
+                    '&lt;': '<',
+                    '&gt;': '>',
+                    '&quot;': '"',
+                    '&#39;': "'",
+                };
+                return entityMap[s];
+            });
+            tmpdetail_before = tmpdetaillist.pop().detail; // 잘라 줄 친구
+            let tmpd_left = tmpdetail_before.slice(0, end + 6 - prev_end);
+            let tmpd_right = tmpdetail_before.slice(end + 6 - prev_end);
+            tmpdetaillist.push({ detail: tmpd_left, index: k });
+            tmpdetaillist.push({ detail: tmpd_right, index: k + 1 });
+            division = end + 6;
+            //tmpWrInfo.detail = [tmpWrInfo.detail.slice(0, end + 6) + "<button class=\"ql-text cursor-pointer\" type=\"button \">컴파일</button>" + tmpWrInfo.detail.slice(end + 6)].join('');
+            tmpcodelist.push(tmpcode_after);
+            console.log("저는 코드에용");
+            console.log(tmpcodelist[k]);
+            console.log(tmpWrInfo.detail);
+            prev_end = end + 6;
+            tmplist.push({ mes: "", err: false });
+            k++;
+        }
+        console.log("지금부터 tmpdetaillist를 출력하겠습니다~~~~~~~~!");
+        tmpdetaillist.map((item) => {
+            console.log(item);
+        })
+        setCompileResultList([...tmplist]);
+        setCodeList([...tmpcodelist]);
+        setDetailList([...tmpdetaillist]);
+        setDetailAfter(tmpWrInfo.detail);
+    }
+
+    async function loadImage() {
+        let tmpimgsrc = [];
+        let tmpimgsrctype = [];
+        let tmploadbyte = [];
+        let start = 0;
+        let end = 0;
+        let k = 0;
+
+        setDetailAfter(tmpWrInfo.detail);
+        while (tmpWrInfo.detail.indexOf("<img src=\"http://", end) != -1) {
+            start = tmpWrInfo.detail.indexOf("<img src=\"http://");
+            end = tmpWrInfo.detail.indexOf(">", start);
+            tmpimgsrc.push(tmpWrInfo.detail.slice(start + 10, end - 1));
+            tmpimgsrctype.push(tmpimgsrc[k].slice(-3));
+            console.log("저는 이미지소스에용");
+            console.log(start);
+            console.log(end);
+            console.log(tmpimgsrc[k]);
+            console.log(tmpimgsrctype[k]);
+            k++;
+        }
+        for (let i = 0; i < tmpimgsrc.length; i++) {
+            await axios.get(tmpimgsrc[i])
+                .then((res) => {
+                    console.log("이미지 바이트를 가져왔어요~");
+                    console.log(res);
+                    tmploadbyte.push("data:image/" + tmpimgsrctype[i] + ";base64," + res.data);
+                    console.log(tmploadbyte[i]);
+                })
+                .catch((err) => {
+                    console.log("이미지 바이트를 가져오려고 했는데 에러가 났네요~");
+                    console.log(err);
+                });
+        }
+        for (let i = 0; i < tmpimgsrc.length; i++) {
+            tmpWrInfo.detail = tmpWrInfo.detail.replace(tmpimgsrc[i], tmploadbyte[i]);
+        }
+        setDetailAfter(tmpWrInfo.detail);
+        console.log("달라진 디테일은~");
+        console.log(detailAfter);
+    }
+
     async function loadWritings() {
-        let tmpInfo;
+
         await axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id).
-            then((res) => {
+            then(async (res) => {
                 let byteList = [], typeList = [];
                 const writing = res.data.data;
                 console.log("게시글 조회ㅇㅇㅇㅇㅇ");
@@ -31,7 +161,7 @@ function BlogDetail() {
                 writing.imageTypes.map((imgtype) => {
                     typeList.push(imgtype.toString().split('/')[1]);
                 })
-                tmpInfo =
+                tmpWrInfo =
                 {
                     title: writing.title,
                     detail: writing.content,
@@ -45,9 +175,16 @@ function BlogDetail() {
                     profileBytes: writing.profileBytes,
                     profileType: writing.profileType
                 }
-                tmpInfo.date = tmpInfo.date.substring(0, 10) + "   " + tmpInfo.date.substring(11, 16);
+                tmpWrInfo.date = tmpWrInfo.date.substring(0, 10) + "   " + tmpWrInfo.date.substring(11, 16);
+                //주소로 axios 후 변환
+                //let detail_after;
+                loadCode();
+                loadImage();
+                //src={"data:image/" + item.imgtype + ";base64," + item.img}
+                //detail_after = tmpInfo.detail.replace(baseUrlList[i], imgUrlList[i]);
 
-                if (tmpInfo.profileType == null) {
+                //
+                if (tmpWrInfo.profileType == null) {
                     console.log("프로필 이미지 x");
                     setCheckProfile(false);
                 }
@@ -56,16 +193,16 @@ function BlogDetail() {
                     setCheckProfile(true);
                 }
 
-                setWritingInfo(tmpInfo);
-                console.log("tmpInfo는");
-                console.log(tmpInfo);
+                setWritingInfo(tmpWrInfo);
+                console.log("tmpWrInfo는");
+                console.log(tmpWrInfo);
             })
             .catch((err) => {
                 console.log(err);
             })
 
         loadComment();
-        await loadFollowing(tmpInfo.nickname);
+        await loadFollowing(tmpWrInfo.nickname);
     }
 
     function loadComment() {
@@ -200,6 +337,19 @@ function BlogDetail() {
             })
     }
 
+    const modules = {
+        toolbar: {
+            container: []
+        },
+        syntax: {
+            value: (text) => hljs.highlightAuto(text).language,
+            highlight: (text) => {
+                return (hljs.highlightAuto(text).value);
+            }
+        },
+    };
+
+
     useEffect(() => {
         loadWritings();
     }, []);
@@ -234,8 +384,56 @@ function BlogDetail() {
                 </div>
 
                 <div class="focus:outline-0 mt-3 rounded-sm w-full py-3 px-5 border-b border-gray-300 mb-5 h-fit">
+                    {detailList.slice(0, detailList.length - 1).map((item) => {
+                        return (
+                            <div class="w-[54rem]">
 
-                    <div dangerouslySetInnerHTML={{ __html: writingInfo.detail }}></div>
+                                <ReactQuill
+                                    value={item.detail}
+                                    readOnly={true}
+                                    modules={modules}
+                                    theme={"bubble"}
+                                />
+                                <button
+                                    class="ml-2"
+                                    value={item.index}
+                                    onClick={(e) => { postCode(e.target.value) }}
+                                >
+                                    컴파일하기
+                                </button>
+                                <div>
+                                    <div>컴파일 결과</div>
+                                    {compileResultList[item.index].err ?
+                                        (
+                                            <div class="ml-2 bg-gray-50 text-red-500">
+                                                <div>컴파일 에러!</div>
+                                                {compileResultList[item.index].mes}
+                                            </div>
+                                        ) :
+                                        (
+                                            <div class="ml-2 bg-gray-50 text-green-500">
+                                                {compileResultList[item.index].mes}
+                                            </div>
+                                        )}
+
+                                </div>
+                            </div>
+                        );
+                    })
+                    }
+                    {detailList.slice(detailList.length - 1).map((item) => {
+                        return (
+                            <>
+                                <ReactQuill
+                                    value={item.detail}
+                                    readOnly={true}
+                                    modules={modules}
+                                    theme={"bubble"}
+                                />
+                            </>
+                        );
+                    })
+                    }
                 </div>
 
                 <div class="flex flex-col gap-5 pb-5 border-b border-gray-300">

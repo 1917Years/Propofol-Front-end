@@ -10,9 +10,12 @@ import "highlight.js/styles/vs2015.css";
 
 //dangerouslySetInnerHTML 나중에 추가하기
 function BlogEditor(props) {
+  const [detailAfter, setDetailAfter] = useState("");
   const [htmlContent, setHtmlContent] = useState("");
   let prevTitle = "";
   let prevContent = "";
+  let imgByteList = [];
+  let imgByteTypeList = [];
   const quillRef = useRef();
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(true);
@@ -24,8 +27,10 @@ function BlogEditor(props) {
   const [imgNameList, setImgNameList] = useState([]);
   const [codeInput, setCodeInput] = useState("");
   const [language, setLanguage] = useState("");
-  /* 커스텀 툴바 */
+  /* */
   const formData = new FormData();
+  const formData_Image = new FormData();
+  const formData_Save = new FormData();
 
   const navigate = useNavigate();
 
@@ -41,7 +46,6 @@ function BlogEditor(props) {
       const file = input.files[0];
       imgFileList.push(file);
       setImgFileList(tmpImgList);
-      //formData.append('file', file);
       const range = quillRef.current.getEditor().getSelection();
       fileReader.readAsDataURL(file);
       fileReader.onload = function (evt) { //임시로 프론트에 이미지 띄워줌
@@ -51,26 +55,7 @@ function BlogEditor(props) {
         setBaseUrlList(tmpBaseList);
         console.log(file);
         quillRef.current.getEditor().insertEmbed(range.index, "image", imgsrc);
-        //
-        console.log("헤위~");
-        console.log(quillRef);
-        let quill = quillRef.current?.getEditor();
-        quill?.clipboard.dangerouslyPasteHTML(5, '&nbsp;<b>World</b>');
-        //
       }
-      /*
-      try {
-        const result = await axios.post(SERVER_URL + '/til-service/api/v1/boards/image', formData);
-        console.log(result);
-        const IMG_URL = result.data.data; //일케하면되니?
-        let NEW_IMG_URL = IMG_URL.toString().replace("http://localhost:8000", SERVER_URL);
-        console.log("유알엘 : " + NEW_IMG_URL);
-        quillRef.current.getEditor().insertEmbed(range.index, "image", NEW_IMG_URL);
-        quillRef.current.getEditor().setSelection(range.index + 1);
-      } catch (e) {
-        quillRef.current.getEditor().deleteText(range.index, 1);
-      }
-      */
     };
     console.log("폼데이터 : 시발 왜 안떠!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
     console.log(formData.get('file'));
@@ -84,6 +69,9 @@ function BlogEditor(props) {
       console.log(props.loadWritingInfo.detail);
       prevTitle = props.loadWritingInfo.title;
       prevContent = props.loadWritingInfo.detail;
+      //setTitle(props.loadWritingInfo.title);
+      //setHtmlContent(props.loadWritingInfo.detail);
+      //setHtmlContent(prevContent);
       /*
       console.log(quillRef);
       const range = quillRef.current?.getEditor().getSelection()?.index;
@@ -96,6 +84,9 @@ function BlogEditor(props) {
   useState(() => {
     console.log("prevCon은");
     console.log(prevContent);
+    //setTitle("z");
+    //setHtmlContent(props.loadWritingInfo.detail);
+    loadImage(prevContent);
   }, [prevContent])
   const CustomTmpSave = () => {
     return (
@@ -163,12 +154,9 @@ function BlogEditor(props) {
     console.log(language);
   }, [codeInput, language])
 
-  const modules = {
-    clipboard: {
-      matchers: [
 
-      ]
-    },
+
+  const modules = {
     toolbar: {
       container: "#toolbar",
       handlers: {
@@ -262,50 +250,148 @@ function BlogEditor(props) {
   }
 
   /* 커스텀 툴바 */
+  async function loadImage(tmpInfo) {
+    let tmpimgsrc = [];
+    let tmpimgsrctype = [];
+    let tmploadbyte = [];
+    let start = 0;
+    let end = 0;
+    let k = 0;
+    while (tmpInfo.detail.indexOf("<img src=\"http://", end) != -1) {
+      start = tmpInfo.detail.indexOf("<img src=\"http://");
+      end = tmpInfo.detail.indexOf(">", start);
+      tmpimgsrc.push(tmpInfo.detail.slice(start + 10, end - 1));
+      tmpimgsrctype.push(tmpimgsrc[k].slice(-3));
+      console.log("저는 이미지소스에용");
+      console.log(start);
+      console.log(end);
+      console.log(tmpimgsrc[k]);
+      console.log(tmpimgsrctype[k]);
+      k++;
+    }
+    for (let i = 0; i < tmpimgsrc.length; i++) {
+      await axios.get(tmpimgsrc[i])
+        .then((res) => {
+          console.log("이미지 바이트를 가져왔어요~");
+          console.log(res);
+          tmploadbyte.push("data:image/" + tmpimgsrctype[i] + ";base64," + res.data);
+          console.log(tmploadbyte[i]);
+        })
+        .catch((err) => {
+          console.log("이미지 바이트를 가져오려고 했는데 에러가 났네요~");
+          console.log(err);
+        });
+    }
 
-  async function modifyHandler() {
-    const formData_save = new FormData();
-    let htmlContent_after;
-    let tmpcode, tmpcode_after;
+    for (let i = 0; i < tmpimgsrc.length; i++) {
+      setDetailAfter(tmpInfo.detail.replace(tmpimgsrc[i], tmploadbyte[i]));
+    }
+    console.log("달라진 디테일은~");
+    console.log(detailAfter);
+  };
+
+  function findImage() {
+    let start = 0;
+    let end = 0;
+    let k = 0;
+    while (htmlContent.indexOf("<img src=\"data:image/", end) != -1) {
+      start = htmlContent.indexOf("<img src=\"data:image/", end);
+      end = htmlContent.indexOf(">", start);
+      imgByteList.push(htmlContent.slice(start + 10, end - 1));
+      imgByteTypeList.push(imgByteList[k].slice(11, imgByteList[k].indexOf(";", 11)));
+      console.log(k + "번째고 저는 이미지바이트에용");
+      console.log(start);
+      console.log(end);
+      console.log(imgByteList[k]);
+      console.log(imgByteTypeList[k]);
+      k++;
+    }
   }
 
-  const tmpSaveHandler = (e) => {
+  function makeImageFileStruct() { //파일 구조체 만듦
+    let fileName = [];
+    console.log("하이!!!!");
+    console.log(imgByteList.length);
+    for (let i = 0; i < imgByteList.length; i++) {
+      fileName.push(Math.random().toString(36).substring(2, 11));
+      //formData_Save.append('fileName', fileName[i]);
+      //postWriting();
+    }
+    for (let i = 0; i < imgByteList.length; i++) {
+      let imgB = imgByteList[i].replace("data:image/" + imgByteTypeList[i] + ";base64,", "");
+      console.log(imgB);
+      let bstr = atob(imgB);
+      console.log(bstr);
+      let n = bstr.length;
+      let u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      console.log("파일 구조체 만드는중~!");
+      console.log(u8arr);
+      let file = new File([u8arr], fileName[i] + "." + imgByteTypeList[i], { type: 'image/' + imgByteTypeList[i], lastModified: new Date() });
+      console.log(imgB);
+      console.log(file);
+      formData_Image.append('file', file);
+      console.log(formData_Image.get('file'));
+    }
+  }
 
-  };
-  async function saveHandler() {
-    //console.log(htmlContent);
-    const formData_save = new FormData();
+  async function postImage() {
+    //base64 형태의 img src를 파일로 보내고, 그 파일의 주소를 받아와 src 교체
+    //교체 된 html은 formData_Save에 'content' 키값으로 저장됨.
     let htmlContent_after;
-    let tmpcode, tmpcode_after;
+    await axios
+      .post(SERVER_URL + "/til-service/api/v1/boards/image", formData_Image)
+      .then((res) => {
+        console.log(res);
+        res.data.data.map((result) => {
+          let tmpUrlList = imgUrlList;
+          let tmpNameList = imgNameList;
+          let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+          let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+          console.log("유알엘 : " + IMG_URL);
+          console.log("이름 : " + imageName);
+          tmpUrlList.push(IMG_URL);
+          tmpNameList.push(imageName);
+          setImgUrlList(tmpUrlList);
+          setImgNameList(tmpNameList);
+        })
+        htmlContent_after = htmlContent;
+        for (let i = 0; i < imgUrlList.length; i++) {
+          htmlContent_after = htmlContent_after.toString().replace(imgByteList[i], imgUrlList[i]);
+        }
+        console.log("content..추가했다...");
+        formData_Save.append('content', htmlContent_after);
+        console.log(htmlContent_after);
+      })
+      .catch((err) => {
+        if (err.response) {
+          console.log(err.response.data);
+        }
+      });
+    console.log("이미지 유알엘 리스트 : ");
+    console.log(imgUrlList);
     //
-    let start = htmlContent.indexOf("<pre class=\"ql-syntax\"");
-    let end = htmlContent.indexOf(">", start);
-    let endend = htmlContent.indexOf("</pre>", end);
-    tmpcode = htmlContent.slice(end + 1, endend);
-    console.log("저는 코드에용");
-    console.log(tmpcode);
-    tmpcode_after = tmpcode.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
-      const entityMap = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': "'",
-      };
-      return entityMap[s];
-    });
-    console.log("저는 후처리 코드에용");
-    console.log(tmpcode_after);
-    //
-    console.log("언어는 " + language);
-    imgFileList.map((file) => {
-      formData.append('file', file);
-    })
-    //console.log("폼데이터 : 시발 왜 안떠");
-    //console.log(formData.get('file'));
-    if (imgFileList.length != 0) {
+
+
+  }
+
+  function postWriting() {
+    console.log(formData_Save.get('content'));
+
+
+  }
+
+  async function saveHandler() {
+    console.log("세이브핸들러입니다~안녕하세요~~!");
+    console.log(htmlContent);
+    await findImage();
+    await makeImageFileStruct();
+    if (imgByteList.length != 0) {
+      let htmlContent_after;
       await axios
-        .post(SERVER_URL + "/til-service/api/v1/boards/image", formData)
+        .post(SERVER_URL + "/til-service/api/v1/boards/image", formData_Image)
         .then((res) => {
           console.log(res);
           res.data.data.map((result) => {
@@ -320,21 +406,17 @@ function BlogEditor(props) {
             setImgUrlList(tmpUrlList);
             setImgNameList(tmpNameList);
           })
-
+          imgNameList.map((fileName) => {
+            formData_Save.append('fileName', fileName);
+            console.log("fileName = " + fileName);
+          })
           htmlContent_after = htmlContent;
           for (let i = 0; i < imgUrlList.length; i++) {
-            htmlContent_after = htmlContent_after.toString().replace(baseUrlList[i], imgUrlList[i]);
+            htmlContent_after = htmlContent_after.toString().replace(imgByteList[i], imgUrlList[i]);
           }
-          formData_save.append('content', htmlContent_after);
+          console.log("content..추가했다...");
+          formData_Save.append('content', htmlContent_after);
           console.log(htmlContent_after);
-
-          /*
-          const IMG_URL = result.data.data; //일케하면되니?
-          let NEW_IMG_URL = IMG_URL.toString().replace("http://localhost:8000", SERVER_URL);
-          console.log("유알엘 : " + NEW_IMG_URL);
-          quillRef.current.getEditor().insertEmbed(range.index, "image", NEW_IMG_URL);
-          quillRef.current.getEditor().setSelection(range.index + 1);
-          */
         })
         .catch((err) => {
           if (err.response) {
@@ -343,26 +425,19 @@ function BlogEditor(props) {
         });
       console.log("이미지 유알엘 리스트 : ");
       console.log(imgUrlList);
+      formData_Save.append('title', title);
+      formData_Save.append('open', open);
+
     }
-    else {
+    else { //이미지가 없을 시, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
       console.log("이미지 리스트가 없어용~");
       console.log(htmlContent);
-      formData_save.append('content', htmlContent);
+      formData_Save.append('content', htmlContent);
+      formData_Save.append('title', title);
+      formData_Save.append('open', open);
     }
-    formData_save.append('title', title);
-    formData_save.append('open', open);
-    imgNameList.map((fileName) => {
-      formData_save.append('fileName', fileName);
-      console.log("fileName = " + fileName);
-    })
-    //setWritingInfo(formData);
-    console.log(formData_save.get('title'));
-    console.log(formData_save.get('content'));
-    console.log(formData_save.get('open'));
-    console.log(formData_save.get('fileName'));
-    //console.log("이미지 리스트 : " + imgList);
     await axios
-      .post(SERVER_URL + "/til-service/api/v1/boards", formData_save)
+      .post(SERVER_URL + "/til-service/api/v1/boards", formData_Save)
       .then((res) => {
         console.log("성공.");
         console.log(res);
@@ -374,9 +449,193 @@ function BlogEditor(props) {
         }
       });
 
-    //console.log(writingInfo);
+
+
+
+
+    /*
+   let start = htmlContent.indexOf("<pre class=\"ql-syntax\"");
+   let end = htmlContent.indexOf(">", start);
+   let endend = htmlContent.indexOf("</pre>", end);
+   tmpcode = htmlContent.slice(end + 1, endend);
+   console.log("저는 코드에용");
+   console.log(tmpcode);
+   tmpcode_after = tmpcode.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
+     const entityMap = {
+       '&amp;': '&',
+       '&lt;': '<',
+       '&gt;': '>',
+       '&quot;': '"',
+       '&#39;': "'",
+     };
+     return entityMap[s];
+   });
+   console.log("저는 후처리 코드에용");
+   console.log(tmpcode_after);
+   
+   console.log("언어는 " + language);
+   */
+    /*
+      const formData_save = new FormData();
+      let htmlContent_after;
+      let tmpcode, tmpcode_after;
+     
+      imgFileList.map((file) => {
+        formData.append('file', file);
+      })
+      if (imgFileList.length != 0) {
+        console.log(formData.get('file'));
+        await axios
+          .post(SERVER_URL + "/til-service/api/v1/boards/image", formData)
+          .then((res) => {
+            console.log(res);
+            res.data.data.map((result) => {
+              let tmpUrlList = imgUrlList;
+              let tmpNameList = imgNameList;
+              let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+              let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+              console.log("유알엘 : " + IMG_URL);
+              console.log("이름 : " + imageName);
+              tmpUrlList.push(IMG_URL);
+              tmpNameList.push(imageName);
+              setImgUrlList(tmpUrlList);
+              setImgNameList(tmpNameList);
+            })
+   
+            htmlContent_after = htmlContent;
+            for (let i = 0; i < imgUrlList.length; i++) {
+              htmlContent_after = htmlContent_after.toString().replace(baseUrlList[i], imgUrlList[i]);
+            }
+            formData_save.append('content', htmlContent_after);
+            console.log("이미지 리스트가 있어용~");
+            console.log(htmlContent_after);
+          })
+          .catch((err) => {
+            if (err.response) {
+              console.log(err.response.data);
+            }
+          });
+        console.log("이미지 유알엘 리스트 : ");
+        console.log(imgUrlList);
+      }
+      else {
+        console.log("이미지 리스트가 없어용~");
+        console.log(htmlContent);
+        formData_save.append('content', htmlContent);
+      }
+      formData_save.append('title', title);
+      formData_save.append('open', open);
+      imgNameList.map((fileName) => {
+        formData_save.append('fileName', fileName);
+        console.log("fileName = " + fileName);
+      })
+      console.log(formData_save.get('title'));
+      console.log(formData_save.get('content'));
+      console.log(formData_save.get('open'));
+      console.log(formData_save.get('fileName'));
+      await axios
+        .post(SERVER_URL + "/til-service/api/v1/boards", formData_save)
+        .then((res) => {
+          console.log("성공.");
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log("실패.");
+          if (err.response) {
+            console.log(err.response.data);
+          }
+        });
+        */
 
   };
+
+  useEffect(() => {
+    console.log("타이틀은 " + title);
+  }, [title])
+
+  async function modifyHandler() {
+    console.log("모디파이핸들러입니다!! 안녕하세요><");
+    console.log(htmlContent);
+
+    console.log(title);
+    console.log(open);
+
+    await findImage();
+    await makeImageFileStruct();
+    formData_Save.append('open', open);
+    if (title == "") { formData_Save.append('title', props.loadWritingInfo.title); }
+    else { formData_Save.append('title', title); }
+    if (htmlContent == "") {
+      console.log("내용수정이 없었네용~ prevContent는 " + props.loadWritingInfo.detail);
+      formData_Save.append('content', props.loadWritingInfo.detail);
+    }
+    else if (imgByteList.length != 0) {
+      let htmlContent_after;
+      formData_Image.append('boardId', props.boardId);
+      await axios
+        .post(SERVER_URL + "/til-service/api/v1/boards/image", formData_Image)
+        .then((res) => {
+          console.log(res);
+          res.data.data.map((result) => {
+            let tmpUrlList = imgUrlList;
+            let tmpNameList = imgNameList;
+            let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+            let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+            console.log("유알엘 : " + IMG_URL);
+            console.log("이름 : " + imageName);
+            tmpUrlList.push(IMG_URL);
+            tmpNameList.push(imageName);
+            setImgUrlList(tmpUrlList);
+            setImgNameList(tmpNameList);
+          })
+          imgNameList.map((fileName) => {
+            formData_Save.append('fileName', fileName);
+            console.log("fileName = " + fileName);
+          })
+          htmlContent_after = htmlContent;
+          for (let i = 0; i < imgUrlList.length; i++) {
+            htmlContent_after = htmlContent_after.toString().replace(imgByteList[i], imgUrlList[i]);
+          }
+          console.log("content..추가했다...");
+          formData_Save.append('content', htmlContent_after);
+          console.log(htmlContent_after);
+        })
+        .catch((err) => {
+          if (err.response) {
+            console.log(err.response.data);
+          }
+        });
+      console.log("이미지 유알엘 리스트 : ");
+      console.log(imgUrlList);
+      console.log("open은");
+      console.log(props.loadWritingInfo.open);
+
+
+    }
+    else { //이미지가 없을 시, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
+      console.log("이미지 리스트가 없어용~");
+      console.log(htmlContent);
+      formData_Save.append('content', htmlContent);
+    }
+    await axios
+      .post(SERVER_URL + "/til-service/api/v1/boards/" + props.boardId, formData_Save)
+      .then((res) => {
+        console.log("성공.");
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log("실패.");
+        if (err.response) {
+          console.log(err.response.data);
+        }
+      });
+
+  }
+
+  const tmpSaveHandler = (e) => {
+
+  };
+
   const onTitileInputHandler = (e) => {
     setTitle(e.target.value);
   }
@@ -409,7 +668,6 @@ function BlogEditor(props) {
       </div>
       <div class="w-full h-16 "></div>
       <div class="fixed w-full h-16 bottom-0 bg-gray-100 border-b border border-gray-300 z-50 flex justify-end items-center gap-5 px-2">
-
         <div class="flex items-center gap-2">
           <input
             type="checkbox"
@@ -427,15 +685,25 @@ function BlogEditor(props) {
           <div class="h-3/5 w-1 border-l border-gray-400"></div>
           <div class="text-center text-gray-600 font-ltest">0</div>
         </button>
-        <button
-          class="rounded-[18px] bg-gray-700 text-white font-sbtest px-6 py-2 mr-6"
-          onClick={() => {
-            saveHandler()
-            //navigate("/blog/main/1");
-          }}
-        >
-          작성하기
-        </button>
+        {props.isModify ? (
+          <button
+            class="rounded-[18px] bg-gray-700 text-white font-sbtest px-6 py-2 mr-6"
+            onClick={() => {
+              modifyHandler()
+              //navigate("/blog/main/1");
+            }}
+          >
+            수정하기
+          </button>) : (<button
+            class="rounded-[18px] bg-gray-700 text-white font-sbtest px-6 py-2 mr-6"
+            onClick={() => {
+              saveHandler()
+              //navigate("/blog/main/1");
+            }}
+          >
+            작성하기
+          </button>)}
+
       </div>
     </div>
   );
