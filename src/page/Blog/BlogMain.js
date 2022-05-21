@@ -117,17 +117,15 @@ function BlogMain() {
   function loadWritings(currentPage) {
     console.log("현재 페이지를 알려주세요");
     console.log(currentPage)
-    axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + currentPage)
+    axios.get(SERVER_URL + "/til-service/api/v1/boards/myBoards?page=" + currentPage)
       .then((res) => {
         console.log("저는 글을 로딩하고 있어요");
         console.log(res);
-
         let tmpPageCount;
         if (res.data.data.totalCount == 0)
           setCheckNoPost(true);
         else
           setCheckNoPost(false);
-
         tmpPageCount = res.data.data.totalPageCount;
         // if (res.data.data.totalPageCount > 1)
         //   tmpPageCount = res.data.data.totalPageCount;
@@ -163,7 +161,8 @@ function BlogMain() {
             img: writing.imageBytes,
             imgtype: tmpimgtype,
             like: writing.recommend,
-            comment: writing.commentCount
+            comment: writing.commentCount,
+            tag: writing.tags == null ? [] : writing.tags,
           }
           tmpWr.date = tmpWr.date.substring(0, 10) + "   " + tmpWr.date.substring(11, 16);
 
@@ -423,7 +422,12 @@ function BlogMain() {
                               <div class="">
                                 <div class="group bg-gray-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
                                   <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
-                                  before:before-bubble after:after-bubble">
+                                 before:translate-y-[22px] before:-translate-x-[0rem] after:border
+                                before:border-t-[12px] before:border-t-white
+                                before:border-r-[12px] before:border-r-transparent
+                                before:border-l-[0px] before:border-l-transparent
+                                before:border-b-[0px] before:border-b-transparent
+                                before:absolute before:z-20">
                                     {item.date}일에, {item.working}번 공부를 했어요.
                                   </div>
                                 </div>
@@ -433,7 +437,14 @@ function BlogMain() {
                           else if (item.working == 1) {
                             return (
                               <div class="group bg-indigo-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
+                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
+                                before:border-t-[12px] before:border-t-white
+                                before:border-r-[12px] before:border-r-transparent
+                                before:border-l-[0px] before:border-l-transparent
+                                before:border-b-[0px] before:border-b-transparent
+                                before:absolute before:z-20
+                                ">
                                   {item.date}일에, {item.working}번 공부를 했어요.
                                 </div>
                               </div>
@@ -442,7 +453,14 @@ function BlogMain() {
                           else if (item.working == 2) {
                             return (
                               <div class="group bg-indigo-300 w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
+                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
+                                before:border-t-[12px] before:border-t-white
+                                before:border-r-[12px] before:border-r-transparent
+                                before:border-l-[0px] before:border-l-transparent
+                                before:border-b-[0px] before:border-b-transparent
+                                before:absolute before:z-20
+                                ">
                                   {item.date}일에, {item.working}번 공부를 했어요.
                                 </div>
                               </div>
@@ -453,13 +471,12 @@ function BlogMain() {
                               <div class="group bg-[#8289D9] w-[12px] h-[12px] rounded-sm border border-gray-300">
                                 <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-300 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
                                 3
-                                before:before-bubble
-                                after:translate-y-[22px] after:-translate-x-[12.57rem] after:border
-                                after:border-t-[12px] after:border-t-gray-500
-                                after:border-r-[12px] after:border-r-transparent
-                                after:border-l-[0px] after:border-l-transparent
-                                after:border-b-[0px] after:border-b-transparent
-                                after:absolute after:z-10
+                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
+                                before:border-t-[12px] before:border-t-white
+                                before:border-r-[12px] before:border-r-transparent
+                                before:border-l-[0px] before:border-l-transparent
+                                before:border-b-[0px] before:border-b-transparent
+                                before:absolute before:z-20
                                 ">
                                   {item.date}일에, {item.working}번 공부를 했어요.
                                 </div>
@@ -469,7 +486,14 @@ function BlogMain() {
                           else if (item.working == 4) {
                             return (
                               <div class="group bg-[#6369A6] w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
+                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
+                                before:border-t-[12px] before:border-t-white
+                                before:border-r-[12px] before:border-r-transparent
+                                before:border-l-[0px] before:border-l-transparent
+                                before:border-b-[0px] before:border-b-transparent
+                                before:absolute before:z-20
+                                ">
                                   {item.date}일에, {item.working}번 공부를 했어요.
                                 </div>
                               </div>
@@ -478,7 +502,14 @@ function BlogMain() {
                           else if (item.working >= 5) {
                             return (
                               <div class={"group bg-[#54598C] w-[12px] h-[12px] rounded-sm border border-gray-300"}>
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40">
+                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
+                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
+                                before:border-t-[12px] before:border-t-white
+                                before:border-r-[12px] before:border-r-transparent
+                                before:border-l-[0px] before:border-l-transparent
+                                before:border-b-[0px] before:border-b-transparent
+                                before:absolute before:z-20
+                                ">
                                   {item.date}일에, {item.working}번 공부를 했어요.
                                 </div>
                               </div>
@@ -509,28 +540,40 @@ function BlogMain() {
               return (
                 <button
                   className="Writing"
-                  class="flex border bg-white h-44 px-10 py-5 gap-5 text-left"
+                  class="flex border bg-white h-48 px-10 py-5 gap-5 text-left"
                   value={item.id}
                   onClick={(e) => {
                     navigate('/blog/detail/' + e.currentTarget.value);
                   }}
                 >
-                  <div class="w-[45.5rem]">
-                    <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                      <h>나</h>
-                      <h>{item.date}</h>
+                  <div class="w-[45.5rem] h-36 flex flex-col justify-between">
+                    <div class="">
+                      <div class="text-sm flex gap-6 text-gray-400 font-ltest">
+                        <h>나</h>
+                        <h>{item.date}</h>
+                      </div>
+                      <button class="py-1 text-blue-400 text-lg">
+                        {item.title}
+                      </button>
+                      <div class="font-ltest">{item.detail.slice(0, 300)}</div>
                     </div>
-                    <button class="py-1 text-blue-400 text-lg">
-                      {item.title}
-                    </button>
-                    <div class="font-ltest">{item.detail}</div>
+                    <div class="flex">
+                      {item.tag.map((item) => {
+                        return (
+                          <div class="bg-indigo-50 text-sm border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
+                            {item.name}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                   <div class="w-grow">
-                    <div class=" w-32 h-28 mb-2">
+                    <div class=" w-32 h-32 mb-2">
                       <img
                         src={"data:image/" + item.imgtype + ";base64," + item.img}
-                        class="w-full z-full z-40 max-h-[7rem]"
-                      /></div>
+                        class="w-full z-full z-40 min-h-[8rem] max-h-[8rem]"
+                      />
+                    </div>
                     <div class="w-32 grid grid-cols-2 text-sm ">
                       <div>🧡 {item.like}</div>
                       <div>💬 {item.comment}</div>
@@ -548,15 +591,26 @@ function BlogMain() {
                     navigate('/blog/detail/' + e.currentTarget.value);
                   }}
                 >
-                  <div class="w-[45.5rem] h-28">
-                    <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                      <h>나</h>
-                      <h>{item.date}</h>
+                  <div class="w-[45.5rem] h-36 flex flex-col justify-between">
+                    <div class="">
+                      <div class="text-sm flex gap-6 text-gray-400 font-ltest">
+                        <h>나</h>
+                        <h>{item.date}</h>
+                      </div>
+                      <button class="py-1 text-blue-400 text-lg">
+                        {item.title}
+                      </button>
+                      <div class="font-ltest">{item.detail.slice(0, 300)}</div>
                     </div>
-                    <button class="py-1 text-blue-400 text-lg">
-                      {item.title}
-                    </button>
-                    <div class="font-ltest">{item.detail.slice(0, 300)}</div>
+                    <div class="flex gap-2">
+                      {item.tag.map((item) => {
+                        return (
+                          <div class="bg-indigo-50 text-sm border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
+                            {item.name}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                   <div class="flex">
                     <div class="w-[47rem]"></div>

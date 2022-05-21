@@ -16,7 +16,20 @@ function BlogDetail() {
     const [detailList, setDetailList] = useState([]);
     const [detailAfter, setDetailAfter] = useState("");
     const [tmp, setTmp] = useState(false);
-    const [writingInfo, setWritingInfo] = useState({});
+    const [writingInfo, setWritingInfo] = useState({
+        title: "",
+        detail: "",
+        date: "",
+        open: false,
+        img: [],
+        imgtype: [],
+        like: 0,
+        nickname: "",
+        commentCount: 0,
+        profileBytes: "",
+        profileType: "",
+        tag: [{ name: "", id: 0 }],
+    });
     const [commentInput, setCommentInput] = useState("");
     const [addReplyComment, setAddReplyComment] = useState(false);
     const [replyCommentInput, setReplyCommentInput] = useState("");
@@ -144,11 +157,10 @@ function BlogDetail() {
         }
         setDetailAfter(tmpWrInfo.detail);
         console.log("달라진 디테일은~");
-        console.log(detailAfter);
+        console.log(tmpWrInfo.detail);
     }
 
     async function loadWritings() {
-
         await axios.get(SERVER_URL + "/til-service/api/v1/boards/" + id).
             then(async (res) => {
                 let byteList = [], typeList = [];
@@ -173,13 +185,14 @@ function BlogDetail() {
                     nickname: writing.nickname,
                     commentCount: writing.commentCount,
                     profileBytes: writing.profileBytes,
-                    profileType: writing.profileType
+                    profileType: writing.profileType,
+                    tag: writing.tags,
                 }
                 tmpWrInfo.date = tmpWrInfo.date.substring(0, 10) + "   " + tmpWrInfo.date.substring(11, 16);
                 //주소로 axios 후 변환
                 //let detail_after;
-                loadCode();
-                loadImage();
+                await loadImage();
+                await loadCode();
                 //src={"data:image/" + item.imgtype + ";base64," + item.img}
                 //detail_after = tmpInfo.detail.replace(baseUrlList[i], imgUrlList[i]);
 
@@ -375,10 +388,14 @@ function BlogDetail() {
                                 onClick={() => {
                                     navigate("/blog/writing?No=" + id);
                                 }}
-                            >수정</button>
+                            >
+                                수정
+                            </button>
                             <button
                                 onClick={() => onPostDeleteHandler()}
-                                class="pt-3 text-base flex border border-lg font-ltest px-5">삭제</button>
+                                class="pt-3 text-base flex border border-lg font-ltest px-5">
+                                삭제
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -387,7 +404,6 @@ function BlogDetail() {
                     {detailList.slice(0, detailList.length - 1).map((item) => {
                         return (
                             <div class="w-[54rem]">
-
                                 <ReactQuill
                                     value={item.detail}
                                     readOnly={true}
@@ -434,6 +450,18 @@ function BlogDetail() {
                         );
                     })
                     }
+                    <div class="mt-10 flex gap-2 items-center">
+                        <div>
+                            #
+                        </div>
+                        {writingInfo.tag.map((item) => {
+                            return (
+                                <div class="border border-indigo-300 bg-indigo-50 text-indigo-400 px-2 py-1 rounded-lg">
+                                    {item.name}
+                                </div>
+                            )
+                        })}
+                    </div>
                 </div>
 
                 <div class="flex flex-col gap-5 pb-5 border-b border-gray-300">

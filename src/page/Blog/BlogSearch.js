@@ -83,7 +83,8 @@ function BlogSearch(props) {
               img: board.imageBytes,
               imgtype: tmpImgType,
               like: board.recommend,
-              comment: board.commentCount
+              comment: board.commentCount,
+              tag: board.tags,
             }
             tempSR.date = tempSR.date.substring(0, 10) + "   " + tempSR.date.substring(11, 16);
 
@@ -197,7 +198,16 @@ function BlogSearch(props) {
                     <button class="py-1 text-blue-400 text-lg">
                       {item.title}
                     </button>
-                    <div class="font-ltest">{item.detail}</div>
+                    <div class="font-ltest">{item.detail.slice(0, 300)}</div>
+                    <div class="flex">
+                      {item.tag.map((item) => {
+                        return (
+                          <div class="bg-indigo-50 border border-indigo-300 text-indigo-300 rounded-lg p-2">
+                            {item.tagName}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                   <div class="w-grow">
                     <div class=" w-32 h-28 mb-2">
@@ -230,7 +240,16 @@ function BlogSearch(props) {
                     <button class="py-1 text-blue-400 text-lg">
                       {item.title}
                     </button>
-                    <div class="font-ltest">{item.detail}</div>
+                    <div class="font-ltest">{item.detail.slice(0, 300)}</div>
+                    <div class="flex">
+                      {item.tag.map((item) => {
+                        return (
+                          <div class="bg-indigo-50 border border-indigo-300 text-indigo-300 rounded-lg p-2">
+                            {item.tagName}
+                          </div>
+                        )
+                      })}
+                    </div>
                   </div>
                   <div class="flex">
                     <div class="w-[47rem]"></div>

@@ -1,7 +1,11 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
+import { SERVER_URL } from "../../utils/SRC";
+import { TagModal, ScheduleModal } from "../../Component/Modal";
 import "react-datepicker/dist/react-datepicker.css";
+import { connect } from "react-redux";
+import axios from "axios";
 
 let tmpSkillList = [];
 
@@ -22,9 +26,12 @@ function ProjectAdd() {
         "언어2",
     ];
     const [isTC, setIsTC] = useState(false);
+    const [title, setTitle] = useState("");
+    const [content, setContent] = useState("");
     const [isTagChecked, setIsTagChecked] = useState([]);
     const [isTagFull, setIsTagFull] = useState(false);
     const [checkedTagList, setCheckedTagList] = useState([]);
+    const formData = new FormData();
     const [tmp, setTmp] = useState(false);
 
     const [skillsAdd, setSkillsAdd] = useState(false);
@@ -33,8 +40,35 @@ function ProjectAdd() {
     const [endDate, setEndDate] = useState(null);
     const [recruit, setRecruit] = useState("");
 
+    const [showTagMoadl, setShowTagModal] = useState(false);
+    const [selectedTagList, setSelectedTagList] = useState([]);
+
+    const [showScheduleModal, setShowScheduleModal] = useState(false);
+
     let tmpDetail =
         "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
+
+    function saveHandler() {
+        let data = {
+            title: title,
+            content: content,
+            startDate: startDate,
+            endDate: endDate,
+            recruit: recruit,
+            file: formData,
+            tags: selectedTagList
+        }
+        console.log(formData.get('file'));
+        console.log("플젝을 저장해볼까나~");
+        console.log(data);
+        axios.post(SERVER_URL + "/matching-service/api/v1/matchings", data)
+            .then((res) => {
+
+            })
+            .catch((err) => {
+
+            })
+    }
 
     const onSkillInputHandler = (event) => {
         let tmpSkill = skillInput;
@@ -83,10 +117,8 @@ function ProjectAdd() {
     };
 
     const onFileInputHandler = (e) => {
-        const formData = new FormData();
-        // formData.append('profile', e.target.files[0]);
-        // console.log(e.target.files[0]);
-
+        formData.append('file', e.target.files[0]);
+        console.log(e.target.files[0]);
         // 나중에 이미지 추가하는 axios 추가해주기
 
 
@@ -103,6 +135,16 @@ function ProjectAdd() {
     }, []);
     return (
         <div class="bg-white w-full font-test">
+            {showTagMoadl ?
+                (<TagModal
+                    setShowTagModal={setShowTagModal}
+                    selectedTagList={selectedTagList}
+                    setSelectedTagList={setSelectedTagList}
+                />)
+                :
+                (null)
+            }
+            {showScheduleModal ? (<ScheduleModal />) : (null)}
             <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
                 <div class="relative my-10">
                     <div class="flex ">
@@ -110,15 +152,30 @@ function ProjectAdd() {
                             <div class="flex gap-2 content-center bg-gray-50 rounded-lg border border-slate-300 px-2 py-2 ">
                                 <div class="self-center ml-2">🔍</div>
                                 <select class="text-gray-400 text-lg appearance-none focus:outline-none bg-transparent">
-                                    <option
-                                        value="제목"
+                                    <input
+                                        placeholder="제목"
                                         class="hover:bg-gray-100 dark:hover:bg-gray-600 text-center"
-                                    >
-                                        제목
-                                    </option>
+                                        onChange={(e) => {
+                                            console.log(e.target.value);
+                                            setTitle(e.target.value);
+                                        }}
+                                    />
                                 </select>
                                 <div class="h-6 my-auto border-l border-gray-300 z-10"></div>
-                                {tagList.map((tag, index) => {
+                                <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
+                                    <div>{ }</div>
+                                    <button
+                                        class="ml-2"
+                                        name=""
+                                        value=""
+                                        onClick={onTagButtonClickHandler}
+                                    >
+                                        x
+                                    </button>
+                                </div>
+                                {
+                                /*
+                                tagList.map((tag, index) => {
                                     if (isTagChecked[index]) {
                                         return (
                                             <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
@@ -134,7 +191,8 @@ function ProjectAdd() {
                                             </div>
                                         );
                                     }
-                                })}
+                                })
+                            */}
                                 <input
                                     class="bg-gray-50 grow focus:outline-0 text-gray-500 ml-2"
                                     type="text"
@@ -201,64 +259,60 @@ function ProjectAdd() {
                         <input
                             class="w-full py-2 px-3 border bg-gray-50 focus:outline-0 text-lg font-ltest"
                             placeholder="제목"
+                            onChange={(e) => { setTitle(e.target.value) }}
                         />
                     </div>
-
                     <div class="flex items-center gap-5 mt-2">
-                        {tmpSkillList.map((item) => {
+                        {selectedTagList.map((item) => {
                             return (
-                                <div class="w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl text-center bg-gray-50 text-lg font-test min-w-[8rem]">
-                                    {item}
+                                <div class="w-1/6 mt-2 py-2 px-4 border border-indigo-300 text-indigo-400 rounded-xl text-center bg-indigo-50 text-lg font-test min-w-[8rem]">
+                                    {item.name}
                                 </div>
                             );
                         })}
-                        {skillsAdd ? (
-                            <div>
-                                <input
-                                    class="text-center w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-white focus:outline-0 text-lg font-test min-w-[8rem]"
-                                    placeholder="입력"
-                                    onKeyPress={(e) => onKeyPress(e)}
-                                    onChange={(e) => setSkillInput(e.currentTarget.value)}
-                                />
-                            </div>
-                        ) : (
-                            <button
-                                class="text-center w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-test min-w-[8rem]"
-                                onClick={() => {
-                                    setSkillsAdd(true);
-                                }}
-                            >
-                                +
-                            </button>
-                        )}
+                        <button
+                            class="text-center w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-test min-w-[8rem]"
+                            onClick={() => {
+                                setShowTagModal(true);
+                            }}
+                        >
+                            +
+                        </button>
                     </div>
                     <div class="mt-6 px-4 border rounded-lg border-gray-300"></div>
                     <div class="flex gap-2">
-                        <div class="mt-4 w-1/3 py-4 border rounded-lg border-gray-300">
+                        <div class="mt-4 w-1/3 border rounded-lg border-gray-300">
                             <DatePicker
                                 selected={startDate}
-                                dateFormat="yyyy년 MM월 dd일"
+                                dateFormat="yyyy-MM-dd"
                                 onChange={date => setStartDate(date)}
                                 shouldCloseOnSelect={false}
                                 placeholderText="시작 날짜" />
                         </div>
-                        <div class="mt-4 w-1/3 py-4 border rounded-lg border-gray-300">
+                        <div class="mt-4 w-1/3 border rounded-lg border-gray-300">
                             <DatePicker
                                 selected={endDate}
-                                dateFormat="yyyy년 MM월 dd일"
+                                dateFormat="yyyy-MM-dd"
                                 minDate={startDate}
                                 onChange={date => setEndDate(date)}
                                 shouldCloseOnSelect={false}
                                 placeholderText="종료 날짜" />
                         </div>
-                        <div class="mt-4 w-1/3 py-4 border rounded-lg border-gray-300">
+                        <div class="mt-4 w-1/3 py-2 px-2 border rounded-lg border-gray-300">
                             <input
+                                class="focus:outline-0"
                                 placeholder="모집 인원"
                                 onChange={(e) => setRecruit(e.currentTarget.value)}
                             />
                         </div>
                     </div>
                     <div class="mt-4 flex justify-end">
+                        <button
+                            class=""
+                            onClick={() => {
+                                setShowScheduleModal(true);
+                            }}
+                        >시간표 수정</button>
                         <button
                             onClick={onFileButtonHandler}
                         >
@@ -272,15 +326,18 @@ function ProjectAdd() {
                             + 첨부파일
                         </button>
                     </div>
-                    <div class="w-full mt-6 py-2 px-4 border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
+                    <div class="w-full mt-6 py-2 px-8 border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
                         <textarea
                             class="w-full mt-5 focus:outline-0 resize-none bg-inherit pb-3 min-h-[30rem] "
                             placeholder="내용"
-
+                            onChange={(e) => { setContent(e.target.value) }}
                         />
                     </div>
                     <div class="mt-4 flex justify-end">
-                        <button class="bg-gray-600 text-white border rounded-lg px-4 py-2">등록하기</button>
+                        <button
+                            class="bg-gray-600 text-white border rounded-lg px-4 py-2"
+                            onClick={() => { saveHandler() }}
+                        >등록하기</button>
                     </div>
                 </div>
             </div>

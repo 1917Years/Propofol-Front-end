@@ -1,5 +1,8 @@
+import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
+import { ScheduleModal } from "../../Component/Modal";
+import { SERVER_URL } from "../../utils/SRC";
 
 function ProjectMain() {
   const navigate = useNavigate();
@@ -17,12 +20,52 @@ function ProjectMain() {
     "언어1",
     "언어2",
   ];
+  const day = ["월", "화", "수", "목", "금", "토", "일"];
+  let timeTable = []; // day:요일 , time : [0~24 리스트]
+  const [scheduleList, setScheduleList] = useState([]);
+  const [timeList, setTimeList] = useState([]);
   const [isTC, setIsTC] = useState(false);
   const [isTagChecked, setIsTagChecked] = useState([]);
   const [isTagFull, setIsTagFull] = useState(false);
   const [checkedTagList, setCheckedTagList] = useState([]);
   const [tmp, setTmp] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  function makeTimeTalbe() {
+    day.map((item) => {
+      let tmpTimeT = { day: item, time: [] };
+      for (let i = 0; i <= 24; i = i + 2) {
+        tmpTimeT.time.push(i);
+      }
+      timeTable.push(tmpTimeT);
+    })
+  }
+  function fillTimeTable(time, day) {
 
+  }
+  function deleteSchedule(id) {
+    axios.delete(SERVER_URL + "/user-service/api/v1/timetables/" + id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
+  function loadSchedule() {
+    axios.get(SERVER_URL + "/user-service/api/v1/timetables")
+      .then((res) => {
+        console.log(res);
+        let tmpScheduleList = [];
+        res.data.data.timeTables.map((item) => {
+          tmpScheduleList.push(item);
+        })
+        setScheduleList([...tmpScheduleList]);
+        //deleteSchedule(res.data.data.timeTables[0].id);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
   let tmpDetail =
     "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
   const onTagButtonClickHandler = (e) => {
@@ -52,6 +95,8 @@ function ProjectMain() {
     }
   };
   useEffect(() => {
+    loadSchedule();
+    makeTimeTalbe();
     let t = [];
     for (let i = 0; i < tagList.length; i++) {
       t.push(false);
@@ -62,6 +107,12 @@ function ProjectMain() {
   }, []);
   return (
     <div class="bg-white w-full font-test">
+      {showScheduleModal ?
+        (<ScheduleModal
+          setShowScheduleModal={setShowScheduleModal}
+        />)
+        :
+        (null)}
       <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
         <div class="relative my-10">
           <div class="flex ">
@@ -222,9 +273,21 @@ function ProjectMain() {
           </div>
 
           <div class="mt-10 text-2xl font-btest">나의 시간표</div>
-          <div class="flex">
+          <div class="flex ">
             <div class="basis-3/4">
-              <div class="mr-10 my-4 bg-gray-400 h-96">시간표</div>
+              <div class="mr-10 my-4 border border-gray-400 h-[70rem] flex flex-col justify-between p-2">
+                <div class="w-full h-full bg-indigo-50 grid grid-cols-7">
+                  <div class={"bg-indigo-500 relative h-[" + "10" + "em] top-[" + "10" + "%] "}></div>
+                </div>
+                <button
+                  class="self-end"
+                  onClick={() => {
+                    setShowScheduleModal(true);
+                  }}
+                >
+                  {">"}일정 추가하기
+                </button>
+              </div>
             </div>
             <div class="basis-1/4">
               <div class="grid grid-rows-2 h-full">

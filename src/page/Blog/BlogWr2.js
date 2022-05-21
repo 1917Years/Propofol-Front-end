@@ -83,7 +83,8 @@ function BlogWr2(props) {
                     img: byteList,
                     imgtype: typeList,
                     like: writing.recommend,
-                    commentCount: writing.commentCount
+                    commentCount: writing.commentCount,
+                    tag: writing.tags,
                 }
                 //wrInfo = tmpInfo;
 
@@ -113,7 +114,7 @@ function BlogWr2(props) {
     }, [])
     if (writingNo != null) {
         return (
-            <div>
+            <div class="bg-white w-full  min-h-[80rem] ">
                 {loadingComplete ? (
                     <div class="bg-white w-full h-screen font-test" >
                         <BlogEditor
@@ -132,7 +133,7 @@ function BlogWr2(props) {
     }
     else {
         return (
-            <div class="bg-white w-full h-screen font-test">
+            <div class="bg-white w-full min-h-[80rem] font-test">
                 <BlogEditor
                     isModify={false}
                     loadWritingInfo={wrInfo}
