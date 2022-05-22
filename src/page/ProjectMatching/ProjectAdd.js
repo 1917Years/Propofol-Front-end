@@ -2,7 +2,7 @@ import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { SERVER_URL } from "../../utils/SRC";
-import { TagModal, ScheduleModal } from "../../Component/Modal";
+import { TagModal, TeamScheduleModal } from "../../Component/Modal";
 import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -43,18 +43,52 @@ function ProjectAdd() {
     const [showTagMoadl, setShowTagModal] = useState(false);
     const [selectedTagList, setSelectedTagList] = useState([]);
 
-    const [showScheduleModal, setShowScheduleModal] = useState(false);
+    const [imageFileList, setImageFileList] = useState([]);
 
+    const [showTeamScheduleModal, setShowTeamScheduleModal] = useState(false);
+    const [teamScheduleList, setTeamScheduleList] = useState([]);
+    const [schedule, setSchedule] = useState({});
+    const [selectedWeek, setSelectedWeek] = useState("");
+    const [startTime, setStartTime] = useState("");
+    const [endTime, setEndTime] = useState("");
     let tmpDetail =
         "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
 
-    function saveHandler() {
+    async function saveHandler() {
         let tmpTagIdList = [];
         selectedTagList.map((item) => {
             tmpTagIdList.push(item.id);
         })
         const formData_Save = new FormData();
         const formData_Image = new FormData();
+        imageFileList.map((item) => {
+            formData.append('file', item);
+        })
+        console.log(formData.getAll('file'));
+
+        await axios.post(SERVER_URL + "/matching-service/api/v1/matchings/images", formData)
+            .then((res) => {
+                console.log(res);
+                let tmpUrlList = [];
+                let tmpNameList = [];
+                res.data.data.map((result) => {
+                    let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+                    let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+                    //console.log("유알엘 : " + IMG_URL);
+                    //console.log("이름 : " + imageName);
+                    tmpUrlList.push(IMG_URL);
+                    tmpNameList.push(imageName);
+                })
+                tmpNameList.map((fileName) => { //formData_Save에 파일 이름(백에 저장된 이름) 저장
+                    formData_Save.append('fileName', fileName);
+                    console.log("fileName = " + fileName);
+                })
+
+            })
+            .catch((err) => {
+                console.log(err.response);
+            })
+
         /*
         let data = {
             title: title,
@@ -65,31 +99,62 @@ function ProjectAdd() {
             file: formData,
             tags: tmpTagIdList
         }*/
-        formData_Image.append('file', formData);
+        //formData_Image.append('file', formData);
+        let sd_m, sd_d, ed_m, ed_d;
+        if (startDate.getMonth() < 10) {
+            sd_m = "0" + (startDate.getMonth() + 1);
+        }
+        else {
+            sd_m = startDate.getMonth();
+        }
+        if (startDate.getDate() < 10) {
+            sd_d = "0" + startDate.getDate();
+        }
+        else {
+            sd_d = startDate.getDay();
+        }
+        if (endDate.getMonth() < 10) {
+            ed_m = "0" + (endDate.getMonth() + 1);
+        }
+        else {
+            ed_m = endDate.getMonth();
+        }
+        if (endDate.getDate() < 10) {
+            ed_d = "0" + endDate.getDate();
+        }
+        else {
+            ed_d = endDate.getDate();
+        }
+        console.log(startDate.getFullYear() + "-" + sd_m + "-" + sd_d);
+        console.log(endDate.getFullYear() + "-" + ed_m + "-" + ed_d);
         formData_Save.append('title', title);
         formData_Save.append('content', content);
-        formData_Save.append('startDate', startDate);
-        formData_Save.append('endDate', endDate);
+        formData_Save.append('startDate', startDate.getFullYear() + "-" + sd_m + "-" + sd_d);
+        formData_Save.append('endDate', endDate.getFullYear() + "-" + ed_m + "-" + ed_d);
         formData_Save.append('recruit', recruit);
         formData_Save.append('tagId', tmpTagIdList);
+        teamScheduleList.map((item) => {
+            formData_Save.append('startTime', item.startTime);
+            formData_Save.append('endTime', item.endTime);
+            formData_Save.append('week', item.week);
+        })
+        console.log(formData_Save.getAll('startTime'));
+        console.log(formData_Save.getAll('endTime'));
+        console.log(formData_Save.getAll('week'));
         console.log(formData.get('file'));
         console.log("플젝을 저장해볼까나~");
-        axios.post(SERVER_URL + "/matching-service/api/v1/matchings/images", formData_Image)
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err.response);
-            })
         //console.log(data);
         //console.log(data.title.type());
-        axios.post(SERVER_URL + "/matching-service/api/v1/matchings", formData_Save)
+
+        await axios.post(SERVER_URL + "/matching-service/api/v1/matchings", formData_Save)
             .then((res) => {
                 console.log(res);
             })
             .catch((err) => {
                 console.log(err.response);
             })
+
+
     }
 
     const onSkillInputHandler = (event) => {
@@ -139,11 +204,12 @@ function ProjectAdd() {
     };
 
     const onFileInputHandler = (e) => {
-        formData.append('file', e.target.files[0]);
+        let tmpImageList = imageFileList;
+        tmpImageList.push(e.target.files[0]);
+        setImageFileList(tmpImageList);
+        //formData.append('file', e.target.files[0]);
         console.log(e.target.files[0]);
-        // 나중에 이미지 추가하는 axios 추가해주기
-
-
+        //console.log(formData.get('file'));
     }
 
     useEffect(() => {
@@ -166,7 +232,13 @@ function ProjectAdd() {
                 :
                 (null)
             }
-            {showScheduleModal ? (<ScheduleModal />) : (null)}
+            {showTeamScheduleModal ?
+                (<TeamScheduleModal
+                    setShowTeamScheduleModal={setShowTeamScheduleModal}
+                    setTeamScheduleList={setTeamScheduleList}
+                />)
+                :
+                (null)}
             <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
                 <div class="relative my-10">
                     <div class="flex ">
@@ -328,13 +400,13 @@ function ProjectAdd() {
                             />
                         </div>
                     </div>
-                    <div class="mt-4 flex justify-end">
+                    <div class="mt-4 flex justify-end gap-10">
                         <button
                             class=""
                             onClick={() => {
-                                setShowScheduleModal(true);
+                                setShowTeamScheduleModal(true);
                             }}
-                        >시간표 수정</button>
+                        >팀 시간표 생성</button>
                         <button
                             onClick={onFileButtonHandler}
                         >

@@ -555,9 +555,9 @@ function BlogMain() {
                       <button class="py-1 text-blue-400 text-lg">
                         {item.title}
                       </button>
-                      <div class="font-ltest">{item.detail.slice(0, 300)}</div>
+                      <div class="font-ltest">{item.detail.slice(0, 150) + "..."}</div>
                     </div>
-                    <div class="flex">
+                    <div class="flex gap-2">
                       {item.tag.map((item) => {
                         return (
                           <div class="bg-indigo-50 text-sm border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
@@ -600,7 +600,7 @@ function BlogMain() {
                       <button class="py-1 text-blue-400 text-lg">
                         {item.title}
                       </button>
-                      <div class="font-ltest">{item.detail.slice(0, 300)}</div>
+                      <div class="font-ltest">{item.detail.slice(0, 150) + "..."}</div>
                     </div>
                     <div class="flex gap-2">
                       {item.tag.map((item) => {

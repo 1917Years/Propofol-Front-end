@@ -1,5 +1,8 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
+import axios from "axios";
+import { SERVER_URL } from "../../utils/SRC";
+
 
 function ProjectList() {
     const navigate = useNavigate();
@@ -21,6 +24,7 @@ function ProjectList() {
     const [isTagChecked, setIsTagChecked] = useState([]);
     const [isTagFull, setIsTagFull] = useState(false);
     const [checkedTagList, setCheckedTagList] = useState([]);
+    const [projectList, setProjectList] = useState([]);
     const [tmp, setTmp] = useState(false);
 
     let tmpDetail =
@@ -51,12 +55,41 @@ function ProjectList() {
             navigate("/blog/search");
         }
     };
+
+    function loadProject() {
+        axios.get(SERVER_URL + "/matching-service/api/v1/matchings/page?",
+            {
+                params: {
+                    page: 1
+                }
+            })
+            .then((res) => {
+                let tmpProjectList = [];
+                console.log(res);
+                res.data.data.boards.map((item) => {
+                    tmpProjectList.push(item);
+                })
+                tmpProjectList.map((item) => {
+                    console.log(item);
+                })
+                setProjectList([...tmpProjectList]);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            })
+    }
+
+    useEffect(() => {
+        console.log(projectList);
+    }, [projectList])
+
     useEffect(() => {
         let t = [];
         for (let i = 0; i < tagList.length; i++) {
             t.push(false);
         }
         console.log(t);
+        loadProject();
         setIsTagChecked(t);
         console.log(isTagChecked);
     }, []);
@@ -64,7 +97,7 @@ function ProjectList() {
         <div class="bg-white w-full font-test">
             <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
                 <div class="relative my-10">
-                    <div class="flex ">
+                    <div class="flex">
                         <div class="h-12 w-1/2">
                             <div class="flex gap-2 content-center bg-gray-50 rounded-lg border border-slate-300 px-2 py-2 ">
                                 <div class="self-center ml-2">🔍</div>
@@ -156,41 +189,102 @@ function ProjectList() {
                     <div class="mt-4 text-2xl font-btest">
                         유진님이 모집 중인 프로젝트예요.
                     </div>
-
                     <div class="mt-4 border rounded-lg">
-                        <div
-                            className="Writing"
-                            class="flex border-b bg-white h-54 px-10 py-5 gap-5"
-                        >
-                            <div class="w-[47rem]">
+                        {projectList.map((item) => {
+                            if (item.image != null) {
+                                return (
+                                    <div
+                                        className="Writing"
+                                        class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                                    >
+                                        <div class="w-[47rem]">
+                                            <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                                {item.status == "ACTIVE" ? (
+                                                    <>
+                                                        <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                                                        <button class="ml-auto">{">"} 수정하기</button>
+                                                    </>
+                                                )
+                                                    :
+                                                    (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+                                                }
+                                            </div>
+                                            <button
+                                                onClick={() => navigate("/pm/myproject/" + item.id)}
+                                                class="mt-1 py-1 text-black text-xl">
+                                                {item.title}
+                                            </button>
+                                            <div class="font-ltest min-h-[45px]">{item.content}</div>
+                                            <div class="flex gap-2">
+                                                {item.tagInfos.map((tags) => {
+                                                    return (
+                                                        <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                            {tags.name}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
+                                        </div>
+                                        <div class="w-grow">
+                                            <div class="w-32 h-32 mb-2">
+                                                <img
+                                                    src={"data:image/" + item.imgType + ";base64," + item.image}
+                                                    class="w-full z-full z-40 min-h-[32px] max-h-[32px]"
+                                                />
+                                            </div>
+                                            <div class="w-32 grid grid-rows-2 text-sm ">
+                                                <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            else {
+                                return (
+                                    <div
+                                        className="Writing"
+                                        class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                                    >
+                                        <div class="w-[47rem]">
+                                            <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                                {item.status == "ACTIVE" ? (
+                                                    <>
+                                                        <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                                                        <button class="ml-auto">{">"} 수정하기</button>
+                                                    </>
+                                                )
+                                                    :
+                                                    (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+                                                }
+                                            </div>
+                                            <button
+                                                onClick={() => navigate("/pm/myproject/" + item.id)}
+                                                class="mt-1 py-1 text-black text-xl">
+                                                {item.title}
+                                            </button>
+                                            <div class="font-ltest min-h-[45px]">{item.content}</div>
+                                            <div class="flex gap-2">
+                                                {item.tagInfos.map((tags) => {
+                                                    return (
+                                                        <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                            {tags.name}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
+                                        </div>
+                                        <div class="w-grow">
+                                            <div class="w-32 grid grid-rows-2 text-sm ">
+                                                <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        })}
 
-                                <div class="text-sm text-gray-400 flex items-center font-ltest">
-                                    <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                                    <button class="ml-auto">{">"} 수정하기</button>
-                                </div>
-                                <button
-                                    onClick={() => navigate("/pm/myproject")}
-                                    class="mt-1 py-1 text-black text-xl">
-                                    개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
-                                </button>
-                                <div class="font-ltest">{tmpDetail}</div>
-                                <div class="flex gap-2">
-                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
-                                        #Spring
-                                    </div>
-                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
-                                        #JavaScript
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="w-grow">
-                                <div class="bg-gray-300 w-32 h-28 mb-2">사진</div>
-                                <div class="w-32 grid grid-rows-2 text-sm ">
-                                    <div>마감 날짜: 5월 12일</div>
-                                    <div>참여 인원: 2/4</div>
-                                </div>
-                            </div>
-                        </div>
                         <div
                             className="Writing"
                             class="flex border-b bg-white h-54 px-10 py-5 gap-5"

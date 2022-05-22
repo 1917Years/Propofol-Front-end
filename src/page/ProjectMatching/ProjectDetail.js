@@ -1,6 +1,8 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import profileImage from "../../assets/img/profile.jpg";
+import axios from "axios";
+import { SERVER_URL } from "../../utils/SRC";
 
 function ProjectDetail() {
   const navigate = useNavigate();
@@ -57,6 +59,7 @@ function ProjectDetail() {
     for (let i = 0; i < tagList.length; i++) {
       t.push(false);
     }
+
     console.log(t);
     setIsTagChecked(t);
     console.log(isTagChecked);

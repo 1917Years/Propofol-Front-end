@@ -179,6 +179,7 @@ function ProjectMain() {
       {showScheduleModal ?
         (<ScheduleModal
           setShowScheduleModal={setShowScheduleModal}
+          isMain={true}
           loadSchedule={loadSchedule}
           postSchedule={postSchedule}
           setSelectedWeek={setSelectedWeek}
@@ -356,7 +357,7 @@ function ProjectMain() {
           <div class="mt-10 text-2xl font-btest">나의 시간표</div>
           <div class="flex ">
             <div class="basis-3/4">
-              <div class="mr-10 my-4 border border-gray-400 h-[100rem] flex flex-col justify-between p-2 text-center">
+              <div class="mr-10 my-4 border border-gray-400 h-[50rem] flex flex-col justify-between p-2 text-center">
                 <div class="w-full h-fit bg-indigo-50 grid grid-cols-8 pb-5">
                   <div>시간</div>
                   {day.map((item) => {

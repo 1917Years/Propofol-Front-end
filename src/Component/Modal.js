@@ -2,6 +2,7 @@ import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../utils/SRC";
+import { fillScheduleStyleList, TimeList } from "./Schedule";
 
 export function ScheduleDetailModal(props) { // props -> setShowScheduleDetailModal, selectedSchedule, deleteSchedule
     const day = ["월", "화", "수", "목", "금", "토", "일"];
@@ -17,7 +18,6 @@ export function ScheduleDetailModal(props) { // props -> setShowScheduleDetailMo
                     >x
                     </button>
                 </div>
-
 
                 <div class="w-full mt-10 px-10 flex flex-col">
                     <div class="w-full flex gap-16">
@@ -77,6 +77,194 @@ export function ScheduleDetailModal(props) { // props -> setShowScheduleDetailMo
             </div>
         </div>
     );
+}
+
+export function TeamScheduleModal(props) {
+    const day = ["월", "화", "수", "목", "금", "토", "일"];
+    const [selectedDay, setSelectedDay] = useState("");
+    const [dayMes, setDayMes] = useState("");
+    const [startTime, setStartTime] = useState("");
+    const [startTimeMes, setStartTimeMes] = useState("");
+    const [endTime, setEndTime] = useState("");
+    const [endTimeMes, setEndTimeMes] = useState("");
+    const [scheduleList, setScheduleList] = useState([]);
+    const [scheduleStyleList, setScheduleStyleList] = useState([[], [], [], [], [], [], []]);
+    useEffect(() => {
+        if (startTime.length === 4) {
+            setStartTime(
+                startTime
+                    .replace(/(\d{2})(\d{2})/, "$1:$2")
+            );
+        }
+    }, [startTime]);
+    useEffect(() => {
+        if (endTime.length === 4) {
+            setEndTime(
+                endTime
+                    .replace(/(\d{2})(\d{2})/, "$1:$2")
+            );
+        }
+    }, [endTime]);
+    function checkSchedule() {
+        let err = false;
+        const regex = /^([0-9]{2})+:+?([0-9]{2})$/;
+        console.log("ㅎㅇ");
+        if (selectedDay == "") {
+            setDayMes("요일을 선택해주세요.");
+            err = true;
+        }
+        else {
+            setDayMes("");
+        }
+        if (!regex.test(startTime)) {
+            setStartTimeMes("올바르지 않은 형식입니다.");
+            console.log("ㅅㅂ");
+            err = true;
+        }
+        else if (startTime.slice(0, 2) * 1 < 0 || startTime.slice(0, 2) * 1 >= 24 || startTime.slice(3) * 1 < 0 || startTime.slice(3) * 1 >= 60) {
+            setStartTimeMes("올바른 시간을 입력해주세요.");
+            err = true;
+        }
+        else {
+            setStartTimeMes("");
+        }
+        if (!regex.test(endTime)) {
+            setEndTimeMes("올바르지 않은 형식입니다.");
+            err = true;
+        }
+        else if (endTime.slice(0, 2) * 1 < 0 || endTime.slice(0, 2) * 1 >= 24 || endTime.slice(3) * 1 < 0 || endTime.slice(3) * 1 >= 60) {
+            setEndTimeMes("올바른 시간을 입력해주세요.");
+            err = true;
+        }
+        else {
+            setEndTimeMes("");
+        }
+        if ((endTime.slice(0, 2) + endTime.slice(3)) * 1 <= (startTime.slice(0, 2) + startTime.slice(3)) * 1) {
+            setStartTimeMes("시작 시간과 종료 시간을 확인해주세요.")
+            setEndTimeMes("시작 시간과 종료 시간을 확인해주세요.");
+            err = true;
+        }
+        return err;
+    };
+    function addSchedule() {
+        if (checkSchedule()) return;
+        let tmpScheduleList = scheduleList;
+        tmpScheduleList.push(
+            {
+                startTime: startTime,
+                endTime: endTime,
+                week: selectedDay,
+            }
+        );
+        setScheduleList([...tmpScheduleList]);
+        props.setTeamScheduleList([...tmpScheduleList]);
+        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, scheduleList);
+    }
+    return (
+        <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
+            <div class="bg-white w-[60%] min-w-[65rem] min-h-[58rem] h-[90%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
+                <div class="flex justify-between border-b border-gray-300 pb-3">
+                    <div class="ml-2 text-3xl font-sbtest">
+                        팀 시간표 생성
+                    </div>
+                    <button class="text-2xl"
+                        onClick={() => {
+                            props.setShowTeamScheduleModal(false);
+                        }}
+                    >x
+                    </button>
+                </div>
+                <div class="ml-2 flex grow mt-5 gap-3">
+                    <div class="flex flex-col gap-2 basis-[65%]">
+                        <div class="text-2xl font-sbtest">현재 시간표</div>
+                        <div class="h-full flex flex-col justify-between text-center border border-gray-300">
+                            <div class="w-full h-fit bg-indigo-50 grid grid-cols-8 pb-5 pt-2">
+                                <div>시간</div>
+                                {day.map((item) => {
+                                    return (
+                                        <div>{item}</div>
+                                    )
+                                })}
+                            </div>
+                            <div class="w-full grow bg-indigo-50 grid grid-cols-8 gap-1">
+                                <TimeList />
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="border-l flex flex-col justify-between basis-[35%] pl-5 mt-10 mb-6">
+                        <div class="">
+                            <div class="text-3xl font-sbtest mb-8">일정 추가</div>
+                            <div class="mx-2 flex flex-col gap-5">
+                                <div class="flex flex-col gap-3">
+                                    <div class="text-2xl font-sbtest">시작 시간</div>
+                                    <input
+                                        class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
+                                        placeholder="hh:mm"
+                                        value={startTime}
+                                        onChange={(e) => { setStartTime(e.target.value) }}
+                                    />
+                                    {startTimeMes == "" ?
+                                        (<div class="text-red-500 font-ltest h-8"></div>) :
+                                        (<div class="text-red-500 font-ltest">{startTimeMes}</div>)
+                                    }
+                                </div>
+                                <div class="flex flex-col mt-2 gap-3">
+                                    <div class="text-2xl font-sbtest">종료 시간</div>
+                                    <input
+                                        class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
+                                        placeholder="hh:mm"
+                                        value={endTime}
+                                        onChange={(e) => { setEndTime(e.target.value) }}
+                                    />
+                                    {endTimeMes == "" ?
+                                        (<div class="text-red-500 font-ltest h-8"></div>) :
+                                        (<div class="text-red-500 font-ltest">{endTimeMes}</div>)
+                                    }
+                                </div>
+                                <div class="flex flex-col mt-3 gap-6">
+                                    <div class="text-2xl font-sbtest">요일</div>
+                                    <div class="grid grid-cols-4 gap-3">
+                                        {day.map((item) => {
+                                            if (selectedDay == item) {
+                                                return (
+                                                    <button
+                                                        class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl"
+                                                        onClick={() => { setSelectedDay(item) }}
+                                                    >
+                                                        {item}
+                                                    </button>)
+                                            }
+                                            else {
+                                                return (
+                                                    <button
+                                                        class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl"
+                                                        onClick={() => { setSelectedDay(item) }}
+                                                    >
+                                                        {item}
+                                                    </button>
+                                                )
+                                            }
+                                        })}
+                                    </div>
+                                    {dayMes == "" ?
+                                        (<div class="text-red-500 font-ltest h-8"></div>) :
+                                        (<div class="text-red-500 font-ltest">{dayMes}</div>)
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <button
+                            class="relative bottom-0 w-full bg-black text-white text-2xl px-4 py-3 rounded-lg font-test "
+                            onClick={() => { addSchedule() }}
+                        >
+                            추가하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
 }
 
 export function ScheduleModal(props) { // props -> postSchedule, setShowScheduleModal, 기타등등... 수정끝나면 쓰기
@@ -227,8 +415,7 @@ export function ScheduleModal(props) { // props -> postSchedule, setShowSchedule
                                 props.postSchedule();
                                 props.setShowScheduleModal(false);
                             }
-                        }
-                        }
+                        }}
                     >
                         추가하기
                     </button>

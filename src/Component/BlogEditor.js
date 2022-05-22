@@ -358,7 +358,7 @@ function BlogEditor(props) {
     console.log(htmlContent);
     await findImage();
     await makeImageFileStruct();
-    /*
+
     if (imgByteList.length != 0) { //이미지가 존재할 때 
       let htmlContent_after;
       await axios // 이미지 File 객체가 저장 된 formData_Image를 backend에 post.
@@ -370,10 +370,10 @@ function BlogEditor(props) {
             let tmpNameList = imgNameList;
             let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
             let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
-            
+
             //console.log("유알엘 : " + IMG_URL);
             //console.log("이름 : " + imageName);
-            
+
             tmpUrlList.push(IMG_URL);
             tmpNameList.push(imageName);
             setImgUrlList([...tmpUrlList]);
@@ -429,7 +429,7 @@ function BlogEditor(props) {
           console.log(err.response.data);
         }
       });
-      */
+
   };
 
   useEffect(() => {
