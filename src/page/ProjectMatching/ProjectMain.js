@@ -1,8 +1,10 @@
 import axios from "axios";
+//import { da } from "date-fns/locale";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import { ScheduleModal } from "../../Component/Modal";
+import { ScheduleModal, ScheduleDetailModal } from "../../Component/Modal";
 import { SERVER_URL } from "../../utils/SRC";
+import { fillScheduleStyleList } from "../../Component/Schedule";
 
 function ProjectMain() {
   const navigate = useNavigate();
@@ -20,9 +22,11 @@ function ProjectMain() {
     "언어1",
     "언어2",
   ];
+  const time = ["00시", "02시", "04시", "06시", "08시", "10시", "12시", "14시", "16시", "18시", "20시", "22시", "24시"];
   const day = ["월", "화", "수", "목", "금", "토", "일"];
   let timeTable = []; // day:요일 , time : [0~24 리스트]
-  const [scheduleList, setScheduleList] = useState([]);
+  //const [scheduleList, setScheduleList] = useState([]);
+  let scheduleList = [];
   const [timeList, setTimeList] = useState([]);
   const [isTC, setIsTC] = useState(false);
   const [isTagChecked, setIsTagChecked] = useState([]);
@@ -30,6 +34,58 @@ function ProjectMain() {
   const [checkedTagList, setCheckedTagList] = useState([]);
   const [tmp, setTmp] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [showScheduleDetailModal, setShowScheduleDetailModal] = useState(false);
+
+  //
+  const [scheduleStyleList, setScheduleStyleList] = useState([[], [], [], [], [], [], []]);
+  //let selectedSchedule = { startTime: "", endTime: "", week: "", id: 0 };
+  const [selectedSchedule, setSelectedSchedule] = useState({ startTime: "", endTime: "", week: "", id: 0 });
+  const [selectedWeek, setSelectedWeek] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  //
+
+
+  let timetop = 0 - (1 / 12 * 100);
+  let tmpSchedule = [
+    { startTime: "13:48:00", endTime: "14:00:00", day: "월", id: 1 },
+    { startTime: "18:00:00", endTime: "21:35:00", day: "월", id: 2 },
+    { startTime: "10:00:00", endTime: "18:35:00", day: "수", id: 3 },
+    { startTime: "08:00:00", endTime: "11:05:00", day: "토", id: 4 }
+  ];
+
+  const [height, setHeight] = useState("");
+  const scheduleStyle = {
+    color: "black",
+    background: "teal",
+    height: height,
+    top: "10rem",
+  };
+  const timeStyle = (top) => {
+    return (
+      {
+        position: "absolute",
+        top: top,
+        textAlign: "center",
+        left: "50%",
+        transform: "translateX(-50%)",
+      }
+    )
+  }
+  //
+
+  useEffect(() => {
+    loadSchedule();
+    makeTimeTalbe();
+    let t = [];
+    for (let i = 0; i < tagList.length; i++) {
+      t.push(false);
+    }
+    console.log(t);
+    setIsTagChecked(t);
+    console.log(isTagChecked);
+  }, []);
+
   function makeTimeTalbe() {
     day.map((item) => {
       let tmpTimeT = { day: item, time: [] };
@@ -42,30 +98,53 @@ function ProjectMain() {
   function fillTimeTable(time, day) {
 
   }
-  function deleteSchedule(id) {
-    axios.delete(SERVER_URL + "/user-service/api/v1/timetables/" + id)
+  async function deleteSchedule(id) {
+    await axios.delete(SERVER_URL + "/user-service/api/v1/timetables/" + id)
       .then((res) => {
         console.log(res);
+        //setScheduleStyleList([[], [], [], [], [], [], []]);
+        loadSchedule();
       })
       .catch((err) => {
         console.log(err.response);
       })
   }
-  function loadSchedule() {
-    axios.get(SERVER_URL + "/user-service/api/v1/timetables")
+  async function loadSchedule() {
+    await axios.get(SERVER_URL + "/user-service/api/v1/timetables")
       .then((res) => {
         console.log(res);
         let tmpScheduleList = [];
         res.data.data.timeTables.map((item) => {
           tmpScheduleList.push(item);
         })
-        setScheduleList([...tmpScheduleList]);
-        //deleteSchedule(res.data.data.timeTables[0].id);
+        //setScheduleList([...tmpScheduleList]);
+        scheduleList = tmpScheduleList;
+        console.log("스케쥴입니다~");
+        console.log(tmpScheduleList);
+        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, scheduleList);
       })
       .catch((err) => {
         console.log(err.response);
       })
   }
+  async function postSchedule() {
+    //if (checkSchedule()) return;
+    let data = {
+      week: selectedWeek,
+      startTime: startTime,
+      endTime: endTime
+    }
+    console.log(data);
+    await axios.post(SERVER_URL + "/user-service/api/v1/timetables", data)
+      .then((res) => {
+        console.log(res);
+        loadSchedule();
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
+
   let tmpDetail =
     "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
   const onTagButtonClickHandler = (e) => {
@@ -94,25 +173,27 @@ function ProjectMain() {
       navigate("/blog/search");
     }
   };
-  useEffect(() => {
-    loadSchedule();
-    makeTimeTalbe();
-    let t = [];
-    for (let i = 0; i < tagList.length; i++) {
-      t.push(false);
-    }
-    console.log(t);
-    setIsTagChecked(t);
-    console.log(isTagChecked);
-  }, []);
+
   return (
     <div class="bg-white w-full font-test">
       {showScheduleModal ?
         (<ScheduleModal
           setShowScheduleModal={setShowScheduleModal}
+          loadSchedule={loadSchedule}
+          postSchedule={postSchedule}
+          setSelectedWeek={setSelectedWeek}
+          setStartTime={setStartTime}
+          setEndTime={setEndTime}
         />)
         :
         (null)}
+      {showScheduleDetailModal ? (
+        <ScheduleDetailModal
+          selectedSchedule={selectedSchedule}
+          setShowScheduleDetailModal={setShowScheduleDetailModal}
+          deleteSchedule={deleteSchedule}
+        />
+      ) : (null)}
       <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
         <div class="relative my-10">
           <div class="flex ">
@@ -275,9 +356,50 @@ function ProjectMain() {
           <div class="mt-10 text-2xl font-btest">나의 시간표</div>
           <div class="flex ">
             <div class="basis-3/4">
-              <div class="mr-10 my-4 border border-gray-400 h-[70rem] flex flex-col justify-between p-2">
-                <div class="w-full h-full bg-indigo-50 grid grid-cols-7">
-                  <div class={"bg-indigo-500 relative h-[" + "10" + "em] top-[" + "10" + "%] "}></div>
+              <div class="mr-10 my-4 border border-gray-400 h-[100rem] flex flex-col justify-between p-2 text-center">
+                <div class="w-full h-fit bg-indigo-50 grid grid-cols-8 pb-5">
+                  <div>시간</div>
+                  {day.map((item) => {
+                    return (
+                      <div>{item}</div>
+                    )
+                  })}
+                </div>
+                <div class="w-full h-full bg-indigo-50 grid grid-cols-8 gap-1">
+                  <div class="h-full relative">
+                    {
+                      time.map((item) => {
+                        timetop = timetop + (1 / 12 * 100);
+                        return (
+                          <div
+                            style={timeStyle(timetop + "%")}
+                          >
+                            {item}
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                  {day.map((week, index) => {
+                    return (
+                      <div class="h-full relative">
+                        <div>
+                          {scheduleStyleList[index].map((item) => {
+                            return (
+                              <button
+                                style={item.style}
+                                onClick={() => {
+                                  setSelectedSchedule({ startTime: item.startTime, endTime: item.endTime, week: week, id: item.id });
+                                  setShowScheduleDetailModal(true);
+                                }}
+                              >
+                              </button>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
                 <button
                   class="self-end"

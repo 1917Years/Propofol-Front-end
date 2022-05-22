@@ -3,7 +3,83 @@ import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../utils/SRC";
 
-export function ScheduleModal(props) { // props -> setShowScheduleModal
+export function ScheduleDetailModal(props) { // props -> setShowScheduleDetailModal, selectedSchedule, deleteSchedule
+    const day = ["월", "화", "수", "목", "금", "토", "일"];
+    return (
+        <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
+            <div class="bg-white w-[38%] min-w-[45rem] min-h-[36rem] h-[60%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
+                <div class="flex justify-between border-b border-gray-300 pb-3">
+                    <div class="ml-2 text-3xl font-sbtest">
+                        일정 상세정보
+                    </div>
+                    <button class="text-2xl"
+                        onClick={() => { props.setShowScheduleDetailModal(false) }}
+                    >x
+                    </button>
+                </div>
+
+
+                <div class="w-full mt-10 px-10 flex flex-col">
+                    <div class="w-full flex gap-16">
+                        <div class="flex flex-col gap-2 w-1/3">
+                            <div class="font-sbtest text-2xl">시작 시간</div>
+                            <div class="border rounded-lg border-gray-300 text-lg px-3 font-ltest py-1">
+                                {props.selectedSchedule.startTime}
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2 w-1/3">
+                            <div class="font-sbtest text-2xl">종료 시간</div>
+                            <div class="border rounded-lg border-gray-300 text-lg px-3 font-ltest py-1">
+                                {props.selectedSchedule.endTime}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col w-full mt-16 gap-5 border-b border-gray-300 pb-12">
+                        <div class="font-sbtest text-2xl">요일</div>
+                        <div class="flex justify-around">
+                            {day.map((item) => {
+                                if (props.selectedSchedule.week == item) {
+                                    return (
+                                        <div
+                                            class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl flex justify-center items-center"
+                                        >
+                                            <div>
+                                                {item}
+                                            </div>
+                                        </div>)
+                                }
+                                else {
+                                    return (
+                                        <div
+                                            class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl flex justify-center items-center"
+                                        >
+                                            <div>
+                                                {item}
+                                            </div>
+                                        </div>
+                                    )
+                                }
+                            })}
+
+                        </div>
+                    </div>
+                    <button
+                        class="mt-12 mx-1 bg-black text-white text-2xl px-4 w-1/3 py-2 rounded-lg font-ltest self-end"
+                        onClick={() => {
+                            props.deleteSchedule(props.selectedSchedule.id);
+                            props.setShowScheduleDetailModal(false);
+                        }}
+                    >
+                        삭제하기
+                    </button>
+                </div>
+
+            </div>
+        </div>
+    );
+}
+
+export function ScheduleModal(props) { // props -> postSchedule, setShowScheduleModal, 기타등등... 수정끝나면 쓰기
     const [startTime, setStartTime] = useState("");
     const [startTimeMes, setStartTimeMes] = useState("");
     const [endTime, setEndTime] = useState("");
@@ -68,28 +144,7 @@ export function ScheduleModal(props) { // props -> setShowScheduleModal
         }
         return err;
     }
-    function postSchedule() {
-        if (checkSchedule()) return;
-        let data = {
-            week: selectedDay,
-            //startTime: new Date(2022, 5, 20, startTime.slice(0, 2) * 1, startTime.slice(3) * 1, 0),
-            //endTime: new Date(2022, 5, 20, endTime.slice(0, 2) * 1, endTime.slice(3) * 1, 0),
-            startTime: startTime,
-            endTime: endTime
-            //startHour: startTime.slice(0, 2) * 1,
-            //startMinute: startTime.slice(3) * 1,
-            //endHour: endTime.slice(0, 2) * 1,
-            //endMinute: endTime.slice(3) * 1,
-        }
-        console.log(data);
-        axios.post(SERVER_URL + "/user-service/api/v1/timetables", data)
-            .then((res) => {
-                console.log(res);
-            })
-            .catch((err) => {
-                console.log(err.response);
-            })
-    }
+
     return (
         <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
             <div class="bg-white w-[38%] min-w-[45rem] min-h-[40rem] h-[65%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
@@ -97,8 +152,10 @@ export function ScheduleModal(props) { // props -> setShowScheduleModal
                     <div class="ml-2 text-3xl font-sbtest">
                         일정 추가
                     </div>
-                    <button class=""
-                        onClick={() => { props.setShowScheduleModal(false) }}
+                    <button class="text-2xl"
+                        onClick={() => {
+                            props.setShowScheduleModal(false);
+                        }}
                     >x
                     </button>
                 </div>
@@ -110,7 +167,7 @@ export function ScheduleModal(props) { // props -> setShowScheduleModal
                                 class="border rounded-lg border-gray-300 text-lg px-3 font-ltest py-1"
                                 placeholder="시작 시간(hh:mm)"
                                 value={startTime}
-                                onChange={(e) => { setStartTime(e.target.value) }}
+                                onChange={(e) => { setStartTime(e.target.value); props.setStartTime(e.target.value); }}
                             />
                             {startTimeMes == "" ?
                                 (<div class="text-red-500 font-ltest h-8"></div>) :
@@ -123,7 +180,7 @@ export function ScheduleModal(props) { // props -> setShowScheduleModal
                                 class="border rounded-lg border-gray-300 text-lg px-3 font-ltest py-1"
                                 placeholder="종료 시간(hh:mm)"
                                 value={endTime}
-                                onChange={(e) => { setEndTime(e.target.value) }}
+                                onChange={(e) => { setEndTime(e.target.value); props.setEndTime(e.target.value) }}
                             />
                             {endTimeMes == "" ?
                                 (<div class="text-red-500 font-ltest h-8"></div>) :
@@ -139,7 +196,7 @@ export function ScheduleModal(props) { // props -> setShowScheduleModal
                                     return (
                                         <button
                                             class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl"
-                                            onClick={() => { setSelectedDay(item) }}
+                                            onClick={() => { setSelectedDay(item); props.setSelectedWeek(item); }}
                                         >
                                             {item}
                                         </button>)
@@ -148,7 +205,7 @@ export function ScheduleModal(props) { // props -> setShowScheduleModal
                                     return (
                                         <button
                                             class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl"
-                                            onClick={() => { setSelectedDay(item) }}
+                                            onClick={() => { setSelectedDay(item); props.setSelectedWeek(item); }}
                                         >
                                             {item}
                                         </button>
@@ -164,7 +221,14 @@ export function ScheduleModal(props) { // props -> setShowScheduleModal
                     </div>
                     <button
                         class="mt-12 mx-1 bg-black text-white text-2xl px-4 w-1/3 py-2 rounded-lg font-ltest self-end"
-                        onClick={postSchedule}
+                        onClick={() => {
+                            if (checkSchedule()) { }
+                            else {
+                                props.postSchedule();
+                                props.setShowScheduleModal(false);
+                            }
+                        }
+                        }
                     >
                         추가하기
                     </button>
@@ -272,7 +336,7 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
                         태그 추가
                     </div>
                     <button
-                        class="mr-2 text-black"
+                        class="mr-2 text-black text-2xl"
                         onClick={() => { props.setShowTagModal(false) }}
                     >X
                     </button>

@@ -13,6 +13,7 @@ function BlogDetail() {
     const id = useParams().id;
     const [compileResultList, setCompileResultList] = useState([]);
     const [codeList, setCodeList] = useState([]);
+    const [codeLanguageList, setCodeLanguageList] = useState([]);
     const [detailList, setDetailList] = useState([]);
     const [detailAfter, setDetailAfter] = useState("");
     const [tmp, setTmp] = useState(false);
@@ -42,7 +43,7 @@ function BlogDetail() {
         console.log(index);
         console.log(codeList[index]);
         axios.post(SERVER_URL + "/til-service/api/v1/boards/code/" + id, {
-            type: "python",
+            type: codeLanguageList[index],
             code: codeList[index]
         })
             .then((res) => {
@@ -357,6 +358,9 @@ function BlogDetail() {
         syntax: {
             value: (text) => hljs.highlightAuto(text).language,
             highlight: (text) => {
+                let tmpLang = codeLanguageList;
+                tmpLang.push(hljs.highlightAuto.language);
+                setCodeLanguageList([...tmpLang]);
                 return (hljs.highlightAuto(text).value);
             }
         },

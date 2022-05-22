@@ -49,6 +49,13 @@ function ProjectAdd() {
         "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
 
     function saveHandler() {
+        let tmpTagIdList = [];
+        selectedTagList.map((item) => {
+            tmpTagIdList.push(item.id);
+        })
+        const formData_Save = new FormData();
+        const formData_Image = new FormData();
+        /*
         let data = {
             title: title,
             content: content,
@@ -56,17 +63,32 @@ function ProjectAdd() {
             endDate: endDate,
             recruit: recruit,
             file: formData,
-            tags: selectedTagList
-        }
+            tags: tmpTagIdList
+        }*/
+        formData_Image.append('file', formData);
+        formData_Save.append('title', title);
+        formData_Save.append('content', content);
+        formData_Save.append('startDate', startDate);
+        formData_Save.append('endDate', endDate);
+        formData_Save.append('recruit', recruit);
+        formData_Save.append('tagId', tmpTagIdList);
         console.log(formData.get('file'));
         console.log("플젝을 저장해볼까나~");
-        console.log(data);
-        axios.post(SERVER_URL + "/matching-service/api/v1/matchings", data)
+        axios.post(SERVER_URL + "/matching-service/api/v1/matchings/images", formData_Image)
             .then((res) => {
-
+                console.log(res);
             })
             .catch((err) => {
-
+                console.log(err.response);
+            })
+        //console.log(data);
+        //console.log(data.title.type());
+        axios.post(SERVER_URL + "/matching-service/api/v1/matchings", formData_Save)
+            .then((res) => {
+                console.log(res);
+            })
+            .catch((err) => {
+                console.log(err.response);
             })
     }
 
