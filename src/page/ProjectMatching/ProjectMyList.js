@@ -1,6 +1,8 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
-import profileImage from "../../assets/img/profile.jpg";
+import axios from "axios";
+import { SERVER_URL } from "../../utils/SRC";
+
 
 function ProjectMyList() {
     const navigate = useNavigate();
@@ -22,10 +24,11 @@ function ProjectMyList() {
     const [isTagChecked, setIsTagChecked] = useState([]);
     const [isTagFull, setIsTagFull] = useState(false);
     const [checkedTagList, setCheckedTagList] = useState([]);
+    const [projectList, setProjectList] = useState([]);
     const [tmp, setTmp] = useState(false);
 
     let tmpDetail =
-        "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
+        "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
     const onTagButtonClickHandler = (e) => {
         if (e.target.value == "-1") return;
         if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
@@ -52,12 +55,41 @@ function ProjectMyList() {
             navigate("/blog/search");
         }
     };
+
+    function loadProject() {
+        axios.get(SERVER_URL + "/matching-service/api/v1/matchings/page?",
+            {
+                params: {
+                    page: 1
+                }
+            })
+            .then((res) => {
+                let tmpProjectList = [];
+                console.log(res);
+                res.data.data.boards.map((item) => {
+                    tmpProjectList.push(item);
+                })
+                tmpProjectList.map((item) => {
+                    console.log(item);
+                })
+                setProjectList([...tmpProjectList]);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            })
+    }
+
+    useEffect(() => {
+        console.log(projectList);
+    }, [projectList])
+
     useEffect(() => {
         let t = [];
         for (let i = 0; i < tagList.length; i++) {
             t.push(false);
         }
         console.log(t);
+        loadProject();
         setIsTagChecked(t);
         console.log(isTagChecked);
     }, []);
@@ -65,7 +97,7 @@ function ProjectMyList() {
         <div class="bg-white w-full font-test">
             <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
                 <div class="relative my-10">
-                    <div class="flex ">
+                    <div class="flex">
                         <div class="h-12 w-1/2">
                             <div class="flex gap-2 content-center bg-gray-50 rounded-lg border border-slate-300 px-2 py-2 ">
                                 <div class="self-center ml-2">🔍</div>
@@ -154,130 +186,264 @@ function ProjectMyList() {
                             </label>
                         </p>
                     </div>
-                    <div class="mt-6 px-4 border rounded-lg border-gray-300">
-                        <div class="flex mt-4 gap-4">
-                            <div class="text-2xl font-btest w-fit">
-                                개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
-                            </div>
-                        </div>
-                        <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
-                        <div class="mt-2 w-full flex justify-end gap-4">
-                            <button>프로젝트 수정 {">"} </button>
-                            <button>프로젝트 삭제 {">"} </button>
-                        </div>
-                        <div class="text-xl font-btest mb-4">지원님, 이런 인재들은 어떠신가요?</div>
-                        <div class="px-4 py-4 flex mt-2 border rounded-lg">
-                            <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                <img
-                                    src={profileImage}
-                                    class="w-28 h-28 rounded-full drop-shadow-lg"
-                                    alt="profile"
-                                />
-                            </div>
-                            <div class="ml-4 my-auto ">
-                                <div class="text-2xl font-btest">신유진</div>
-                                <div class="tont-ltest pt-1 text-sm">UI/UX Designer</div>
-                                <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, 프론트 디자이너입니다. </div>
-                                <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                            </div>
-                            <div class="ml-auto text-right text-sm">
-                                <div class="text-bluepurple text-base">기술</div>
-                                <div class=" ml-3 text-black">React, Javascript</div>
-                                <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                                <div>월요일 화요일 15:00~16:30</div>
-                                <div>수요일 목요일 16:00~18:30</div>
-                                <div>금요일 토요일 일요일 18:00~16:30</div>
-                            </div>
-                        </div>
-                        <div class="px-4 py-4 flex mt-2 mb-4 border rounded-lg">
-                            <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                <img
-                                    src={profileImage}
-                                    class="w-28 h-28 rounded-full drop-shadow-lg"
-                                    alt="profile"
-                                />
-                            </div>
-                            <div class="ml-4 my-auto ">
-                                <div class="text-2xl font-btest">최영찬</div>
-                                <div class="tont-ltest pt-1 text-sm">Backend Developer</div>
-                                <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, 백엔드 디자이너입니다.</div>
-                                <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                            </div>
-                            <div class="ml-auto text-right text-sm">
-                                <div class="text-bluepurple text-base">기술</div>
-                                <div class="ml-3 text-black">Spring, Java</div>
+                    <div class="mt-4 text-2xl font-btest">
+                        유진님이 모집 중인 프로젝트예요.
+                    </div>
+                    <div class="mt-4 border rounded-lg">
+                        {projectList.map((item) => {
+                            if (item.image != null) {
+                                return (
+                                    <div
+                                        className="Writing"
+                                        class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                                    >
+                                        <div class="w-[47rem]">
+                                            <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                                {item.status == "ACTIVE" ? (
+                                                    <>
+                                                        <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                                                        <button
+                                                            class="ml-auto"
+                                                            onClick={async () => {
+                                                                const formData_Image = new FormData();
+                                                                const formData_Save = new FormData();
+                                                                formData_Image.append('boardId', item.id);
+                                                                //
+                                                                let imgB = item.image.replace("data:image/" + item.imageType.split("/")[1] + ";base64,", "");
+                                                                let bstr = atob(imgB);
+                                                                let n = bstr.length;
+                                                                let u8arr = new Uint8Array(n);
+                                                                while (n--) {
+                                                                    u8arr[n] = bstr.charCodeAt(n);
+                                                                }
+                                                                let file = new File([u8arr], "file" + "." + item.imageType.split("/")[1], { type: 'image/' + item.imageType.split("/")[1], lastModified: new Date() });
+                                                                formData_Image.append('file', file);
+                                                                //
+                                                                await axios.post(SERVER_URL + "/matching-service/api/v1/matchings/images", formData_Image)
+                                                                    .then((res) => {
+                                                                        console.log(res);
+                                                                        let tmpUrlList = [];
+                                                                        let tmpNameList = [];
+                                                                        res.data.data.map((result) => {
+                                                                            let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+                                                                            let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+                                                                            //console.log("유알엘 : " + IMG_URL);
+                                                                            //console.log("이름 : " + imageName);
+                                                                            tmpUrlList.push(IMG_URL);
+                                                                            tmpNameList.push(imageName);
+                                                                        })
+                                                                        tmpNameList.map((fileName) => { //formData_Save에 파일 이름(백에 저장된 이름) 저장
+                                                                            formData_Save.append('fileName', fileName);
+                                                                            console.log("fileName = " + fileName);
+                                                                        })
+                                                                    })
+                                                                    .catch((err) => {
+                                                                        console.log(err.response);
+                                                                    })
+                                                                //
+                                                                formData_Save.append('title', "수정 제목");
+                                                                formData_Save.append('content', "수정 내용");
+                                                                formData_Save.append('startDate', "2022-05-05");
+                                                                formData_Save.append('endDate', "2022-05-22");
+                                                                formData_Save.append('recruit', 5);
+                                                                formData_Save.append('status', true);
+                                                                formData_Save.append('tagId', [1]);
+                                                                await axios.post(SERVER_URL + "/matching-service/api/v1/matchings/" + item.id, formData_Save)
+                                                                    .then((res) => {
+                                                                        console.log(res);
+                                                                    })
+                                                                    .catch((err) => {
+                                                                        console.log(err.response);
+                                                                    })
+                                                            }}
 
-                                <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                                <div>월요일 화요일 12:00~16:30</div>
-                                <div>목요일 13:00~18:30</div>
-                                <div>일요일 19:00~16:30</div>
-                            </div>
-                        </div>
 
-                        <div class="text-xl font-btest mt-10 mb-4">📢 본 프로젝트에 지원한 팀원들이에요. 어서 확인해보세요! </div>
-                        <div class="flex gap-3">
-                            <div class="px-4 py-4 flex mt-2 border rounded-lg w-5/6">
-                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                    <img
-                                        src={profileImage}
-                                        class="w-28 h-28 rounded-full drop-shadow-lg"
-                                        alt="profile"
-                                    />
-                                </div>
-                                <div class="ml-4 my-auto ">
-                                    <div class="text-2xl font-btest">신유진</div>
-                                    <div class="tont-ltest pt-1 text-sm">UI/UX Designer</div>
-                                    <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, 저를 뽑아주세요. 잠수는 절대 안 탑니다. </div>
-                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                                </div>
-                                <div class="ml-auto text-right text-sm">
-                                    <div class="text-bluepurple text-base">기술</div>
-                                    <div class=" ml-3 text-black">React, Javascript</div>
-                                    <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                                    <div>월요일 화요일 15:00~16:30</div>
-                                    <div>수요일 목요일 16:00~18:30</div>
-                                    <div>금요일 토요일 일요일 18:00~16:30</div>
-                                </div>
-                            </div>
-                            <div class="grow flex flex-col gap-4 mt-2 justify-center mb-4">
-                                <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">수락</button>
-                                <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">거절</button>
-                            </div>
-                        </div>
-                        <div class="flex gap-3">
-                            <div class="px-4 py-4 flex mt-2 mb-4 border rounded-lg w-5/6">
-                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                    <img
-                                        src={profileImage}
-                                        class="w-28 h-28 rounded-full drop-shadow-lg"
-                                        alt="profile"
-                                    />
-                                </div>
-                                <div class="ml-4 my-auto ">
-                                    <div class="text-2xl font-btest">최영찬</div>
-                                    <div class="tont-ltest pt-1 text-sm">Backend Developer</div>
-                                    <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, "혁준"하지 않겠습니다. </div>
-                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                                </div>
-                                <div class="ml-auto text-right text-sm">
-                                    <div class="text-bluepurple text-base">기술</div>
-                                    <div class="ml-3 text-black">Spring, Java</div>
+                                                        >{">"} 수정하기{"(임시로 지금은 기존 데이터 그대로 보냄)"}</button>
+                                                    </>
+                                                )
+                                                    :
+                                                    (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+                                                }
+                                            </div>
+                                            <button
+                                                onClick={() => navigate("/pm/myproject/" + item.id)}
+                                                class="mt-1 py-1 text-black text-xl">
+                                                {item.title}
+                                            </button>
+                                            <div class="font-ltest min-h-[45px]">{item.content}</div>
+                                            <div class="flex gap-2">
+                                                {item.tagInfos.map((tags) => {
+                                                    return (
+                                                        <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                            {tags.name}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
+                                        </div>
+                                        <div class="w-grow">
+                                            <div class="w-32 h-32 mb-2">
+                                                <img
+                                                    src={"data:image/" + item.imgType + ";base64," + item.image}
+                                                    class="w-full z-full z-40 min-h-[32px] max-h-[32px]"
+                                                />
+                                            </div>
+                                            <div class="w-32 grid grid-rows-2 text-sm ">
+                                                <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                            else {
+                                return (
+                                    <div
+                                        className="Writing"
+                                        class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                                    >
+                                        <div class="w-[47rem]">
+                                            <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                                {item.status == "ACTIVE" ? (
+                                                    <>
+                                                        <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                                                        <button class="ml-auto">{">"} 수정하기</button>
+                                                    </>
+                                                )
+                                                    :
+                                                    (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+                                                }
+                                            </div>
+                                            <button
+                                                onClick={() => navigate("/pm/myproject/" + item.id)}
+                                                class="mt-1 py-1 text-black text-xl">
+                                                {item.title}
+                                            </button>
+                                            <div class="font-ltest min-h-[45px]">{item.content}</div>
+                                            <div class="flex gap-2">
+                                                {item.tagInfos.map((tags) => {
+                                                    return (
+                                                        <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                            {tags.name}
+                                                        </div>
+                                                    )
+                                                })}
+                                            </div>
+                                            <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
+                                        </div>
+                                        <div class="w-grow">
+                                            <div class="w-32 grid grid-rows-2 text-sm ">
+                                                <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )
+                            }
+                        })}
 
-                                    <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                                    <div>월요일 화요일 12:00~16:30</div>
-                                    <div>목요일 13:00~18:30</div>
-                                    <div>일요일 19:00~16:30</div>
+                        <div
+                            className="Writing"
+                            class="flex border-b bg-white h-54 px-10 py-5 gap-5"
+                        >
+                            <div class="w-[47rem]">
+                                <div class="text-sm flex gap-4 text-gray-400 font-ltest">
+                                    <div class="px-2 bg-red-300 text-black">모집완료</div>
+                                </div>
+                                <button class="mt-1 py-1 text-black text-xl">
+                                    개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
+                                </button>
+                                <div class="font-ltest">{tmpDetail}</div>
+                                <div class="flex gap-2">
+                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                        #Spring
+                                    </div>
+                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                        #JavaScript
+                                    </div>
                                 </div>
                             </div>
-                            <div class="grow flex flex-col gap-4 mt-2 justify-center mb-4">
-                                <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">수락</button>
-                                <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">거절</button>
+                            <div class="w-grow">
+                                <div class="bg-gray-300 w-32 h-28 mb-2">사진</div>
+                                <div class="w-32 grid grid-rows-2 text-sm ">
+                                    <div>마감 날짜: 5월 12일</div>
+                                    <div>참여 인원: 2/4</div>
+                                </div>
                             </div>
                         </div>
                     </div>
+
+                    <div class="flex mt-10 ">
+                        <div class="text-2xl font-btest">
+                            유진님이 참여 중인 프로젝트예요.
+                        </div>
+                        <button class="ml-auto text-lg mr-2">{">"} 신청 목록</button>
+                    </div>
+
+                    <div class="mt-4 border rounded-lg">
+                        <div
+                            className="Writing"
+                            class="flex border-b bg-white h-54 px-10 py-5 gap-5"
+                        >
+                            <div class="w-[47rem]">
+
+                                <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                    <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                                </div>
+                                <button class="mt-1 py-1 text-black text-xl">
+                                    개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
+                                </button>
+                                <div class="font-ltest">{tmpDetail}</div>
+                                <div class="flex gap-2">
+                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                        #Spring
+                                    </div>
+                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                        #JavaScript
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-grow">
+                                <div class="bg-gray-300 w-32 h-28 mb-2">사진</div>
+                                <div class="w-32 grid grid-rows-2 text-sm ">
+                                    <div>마감 날짜: 5월 12일</div>
+                                    <div>참여 인원: 2/4</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div
+                            className="Writing"
+                            class="flex border-b bg-white h-54 px-10 py-5 gap-5"
+                        >
+                            <div class="w-[47rem]">
+                                <div class="text-sm flex gap-4 text-gray-400 font-ltest">
+                                    <div class="px-2 bg-red-300 text-black">모집완료</div>
+                                </div>
+                                <button class="mt-1 py-1 text-black text-xl">
+                                    개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
+                                </button>
+                                <div class="font-ltest">{tmpDetail}</div>
+                                <div class="flex gap-2">
+                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                        #Spring
+                                    </div>
+                                    <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                        #JavaScript
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="w-grow">
+                                <div class="bg-gray-300 w-32 h-28 mb-2">사진</div>
+                                <div class="w-32 grid grid-rows-2 text-sm ">
+                                    <div>마감 날짜: 5월 12일</div>
+                                    <div>참여 인원: 2/4</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
-        </div >
+        </div>
     );
 }
 

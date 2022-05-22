@@ -9,8 +9,8 @@ import Login from "./page/Login";
 import Register from "./page/Register";
 import ProjectAdd from "./page/ProjectMatching/ProjectAdd";
 import ProjectMain from "./page/ProjectMatching/ProjectMain";
-import ProjectList from "./page/ProjectMatching/ProjectList";
 import ProjectMyList from "./page/ProjectMatching/ProjectMyList";
+import ProjectMyDetail from "./page/ProjectMatching/ProjectMyDetail";
 import ProjectDetail from "./page/ProjectMatching/ProjectDetail";
 import ProjectSearch from "./page/ProjectMatching/ProjectSearch";
 import BlogMain from "./page/Blog/BlogMain";
@@ -170,9 +170,9 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/pm/add" element={<ProjectAdd />} />
           <Route path="/pm/main" element={<ProjectMain />} />
-          <Route path="/pm/myproject" element={<ProjectMyList />} />
-          <Route path="/pm/list" element={<ProjectList />} />
-          <Route path="/pm/detail" element={<ProjectDetail />} />
+          <Route path="/pm/myproject/:id" element={<ProjectMyDetail />} />
+          <Route path="/pm/mylist" element={<ProjectMyList />} />
+          <Route path="/pm/detail/:id" element={<ProjectDetail />} />
           <Route path="/pm/search" element={<ProjectSearch />} />
           <Route path="/blog/main/:page" element={<BlogMain />} />
           <Route path="/blog/search" element={<BlogSearch />} />

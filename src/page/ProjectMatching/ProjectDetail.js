@@ -1,11 +1,12 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useParams } from "react-router-dom";
 import profileImage from "../../assets/img/profile.jpg";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 
 function ProjectDetail() {
   const navigate = useNavigate();
+  const id = useParams().id;
   const tagList = [
     "JAVA",
     "Spring",
@@ -54,8 +55,20 @@ function ProjectDetail() {
       navigate("/blog/search");
     }
   };
+
+  function loadProjectDetail() {
+    axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
+
   useEffect(() => {
     let t = [];
+    loadProjectDetail();
     for (let i = 0; i < tagList.length; i++) {
       t.push(false);
     }
@@ -158,12 +171,63 @@ function ProjectDetail() {
             </p>
           </div>
           <div class="mt-6 px-4 border rounded-lg border-gray-300">
-            <div class="flex mt-4">
-              <div class="text-2xl font-btest">
-                개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
+            <div class="flex mt-4 justify-between pr-2">
+              <div class="flex">
+                <div class="text-2xl font-btest">
+                  개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
+                </div>
+                <div class="ml-4 w-fit px-3 bg-green-300 text-black align-middle">
+                  모집중
+                </div>
               </div>
-              <div class="ml-4 w-fit px-3 bg-green-300 text-black align-middle"> 모집중
-              </div>
+              <button
+                class="bg-black text-white"
+                onClick={() => {
+                  axios.delete(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
+                    .then((res) => {
+                      console.log(res);
+                      navigate("/pm/main");
+                    })
+                    .catch((err) => {
+                      console.log(err.response);
+                    })
+                }}
+              >
+                임시삭제버튼!!!
+              </button>
+              <button
+                onClick={() => {
+                  axios.post(SERVER_URL + "/matching-service/api/v1/matchings/" + id + "/timeTable",
+                    {
+                      startTime: "08:00",
+                      endTime: "10:30",
+                      week: "수",
+                    }
+                  )
+                    .then((res) => {
+                      console.log(res);
+                    })
+                    .catch((err) => {
+                      console.log(err.response);
+                    })
+                }}
+              >{"임시 버튼(누르면 수요일 08:00 ~ 10:30 일정이 추가돼요!"}</button>
+              <button
+                onClick={() => {
+                  axios.delete(SERVER_URL + "/matching-service/api/v1/matchings/" + id + "/" + 8)
+                    .then((res) => {
+                      console.log(res);
+                    })
+                    .catch((err) => {
+                      console.log(err.response);
+                    })
+                }}
+              >{"임시 버튼(누르면 지정한 id(지금은 8)의 일정이 삭제돼요!)"}</button>
+              <button
+                onClick={() => {
+
+                }}
+              >{"시간표 >"}</button>
             </div>
             <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
 

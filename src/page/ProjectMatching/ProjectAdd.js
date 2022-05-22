@@ -111,7 +111,7 @@ function ProjectAdd() {
             sd_d = "0" + startDate.getDate();
         }
         else {
-            sd_d = startDate.getDay();
+            sd_d = startDate.getDate();
         }
         if (endDate.getMonth() < 10) {
             ed_m = "0" + (endDate.getMonth() + 1);

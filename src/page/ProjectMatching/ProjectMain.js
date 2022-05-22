@@ -35,7 +35,7 @@ function ProjectMain() {
   const [tmp, setTmp] = useState(false);
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showScheduleDetailModal, setShowScheduleDetailModal] = useState(false);
-
+  const [projectList, setProjectList] = useState([]);
   //
   const [scheduleStyleList, setScheduleStyleList] = useState([[], [], [], [], [], [], []]);
   //let selectedSchedule = { startTime: "", endTime: "", week: "", id: 0 };
@@ -43,6 +43,7 @@ function ProjectMain() {
   const [selectedWeek, setSelectedWeek] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
+
   //
 
 
@@ -76,6 +77,7 @@ function ProjectMain() {
 
   useEffect(() => {
     loadSchedule();
+    loadProject();
     makeTimeTalbe();
     let t = [];
     for (let i = 0; i < tagList.length; i++) {
@@ -85,6 +87,29 @@ function ProjectMain() {
     setIsTagChecked(t);
     console.log(isTagChecked);
   }, []);
+
+  function loadProject() {
+    axios.get(SERVER_URL + "/matching-service/api/v1/matchings/page?",
+      {
+        params: {
+          page: 1
+        }
+      })
+      .then((res) => {
+        let tmpProjectList = [];
+        console.log(res);
+        res.data.data.boards.map((item) => {
+          tmpProjectList.push(item);
+        })
+        tmpProjectList.map((item) => {
+          console.log(item);
+        })
+        setProjectList([...tmpProjectList]);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
 
   function makeTimeTalbe() {
     day.map((item) => {
@@ -291,6 +316,98 @@ function ProjectMain() {
           </div>
 
           <div class="mt-4 border rounded-lg">
+            {projectList.map((item) => {
+              if (item.image != null) {
+                return (
+                  <div
+                    className="Writing"
+                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                  >
+                    <div class="w-[47rem]">
+                      <div class="text-sm text-gray-400 flex items-center font-ltest">
+                        {item.status == "ACTIVE" ? (
+                          <>
+                            <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                          </>
+                        )
+                          :
+                          (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+                        }
+                      </div>
+                      <button
+                        onClick={() => navigate("/pm/detail/" + item.id)}
+                        class="mt-1 py-1 text-black text-xl">
+                        {item.title}
+                      </button>
+                      <div class="font-ltest min-h-[45px]">{item.content}</div>
+                      <div class="flex gap-2">
+                        {item.tagInfos.map((tags) => {
+                          return (
+                            <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                              {tags.name}
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
+                    </div>
+                    <div class="w-grow">
+                      <div class="w-32 h-32 mb-2">
+                        <img
+                          src={"data:image/" + item.imgType + ";base64," + item.image}
+                          class="w-full z-full z-40 min-h-[32px] max-h-[32px]"
+                        />
+                      </div>
+                      <div class="w-32 grid grid-rows-2 text-sm ">
+                        <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+              else {
+                return (
+                  <div
+                    className="Writing"
+                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                  >
+                    <div class="w-[47rem]">
+                      <div class="text-sm text-gray-400 flex items-center font-ltest">
+                        {item.status == "ACTIVE" ? (
+                          <>
+                            <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                          </>
+                        )
+                          :
+                          (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+                        }
+                      </div>
+                      <button
+                        onClick={() => navigate("/pm/detail/" + item.id)}
+                        class="mt-1 py-1 text-black text-xl">
+                        {item.title}
+                      </button>
+                      <div class="font-ltest min-h-[45px]">{item.content}</div>
+                      <div class="flex gap-2">
+                        {item.tagInfos.map((tags) => {
+                          return (
+                            <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                              {tags.name}
+                            </div>
+                          )
+                        })}
+                      </div>
+                      <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
+                    </div>
+                    <div class="w-grow">
+                      <div class="w-32 grid grid-rows-2 text-sm ">
+                        <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
+                      </div>
+                    </div>
+                  </div>
+                )
+              }
+            })}
             <div
               className="Writing"
               class="flex border-b bg-white h-54 px-10 py-5 gap-5"
@@ -420,7 +537,7 @@ function ProjectMain() {
                   새 프로젝트 모집하기
                 </button>
                 <button
-                  onClick={() => navigate("/pm/list")}
+                  onClick={() => navigate("/pm/mylist")}
                   class=" text-gray-600 rounded-lg border border-slate-300 w-full my-4 py-2">
                   내 프로젝트 보기
                 </button>
