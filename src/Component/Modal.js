@@ -177,17 +177,46 @@ export function TeamScheduleModal(props) {
                 <div class="ml-2 flex grow mt-5 gap-3">
                     <div class="flex flex-col gap-2 basis-[65%]">
                         <div class="text-2xl font-sbtest">현재 시간표</div>
-                        <div class="h-full flex flex-col justify-between text-center border border-gray-300">
-                            <div class="w-full h-fit bg-indigo-50 grid grid-cols-8 pb-5 pt-2">
-                                <div>시간</div>
+                        <div class="h-full flex flex-col justify-start text-center border border-gray-300">
+                            <div class="w-full h-fit grid grid-cols-8 font-ltest text-gray-600 border-b gap-1">
+                                <div class="border-r pt-2 pb-2">시간</div>
                                 {day.map((item) => {
-                                    return (
-                                        <div>{item}</div>
-                                    )
+                                    if (item == "일") {
+                                        return (
+                                            <div class="pt-2">{item}</div>
+                                        )
+                                    }
+                                    else {
+                                        return (
+                                            <div class="pt-2 border-r">{item}</div>
+                                        )
+                                    }
                                 })}
                             </div>
-                            <div class="w-full grow bg-indigo-50 grid grid-cols-8 gap-1">
-                                <TimeList />
+                            <div class="relative h-[100%]">
+                                <div class="h-full w-full grow grid grid-cols-8 gap-1 text-sm">
+                                    <TimeList />
+                                    {day.map((week, index) => {
+                                        return (
+                                            <div class="h-full relative">
+                                                <div>
+                                                    {scheduleStyleList[index].map((item) => {
+                                                        return (
+                                                            <button
+                                                                style={item.style}
+                                                                onClick={() => {
+                                                                    //setSelectedSchedule({ startTime: item.startTime, endTime: item.endTime, week: week, id: item.id });
+                                                                    //setShowScheduleDetailModal(true);
+                                                                }}
+                                                            >
+                                                            </button>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
                             </div>
                         </div>
 
@@ -229,7 +258,7 @@ export function TeamScheduleModal(props) {
                                             if (selectedDay == item) {
                                                 return (
                                                     <button
-                                                        class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl"
+                                                        class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl focus:outline-0"
                                                         onClick={() => { setSelectedDay(item) }}
                                                     >
                                                         {item}
@@ -238,7 +267,7 @@ export function TeamScheduleModal(props) {
                                             else {
                                                 return (
                                                     <button
-                                                        class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl"
+                                                        class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl focus:outline-0"
                                                         onClick={() => { setSelectedDay(item) }}
                                                     >
                                                         {item}

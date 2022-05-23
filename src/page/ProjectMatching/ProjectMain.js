@@ -4,7 +4,7 @@ import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import { ScheduleModal, ScheduleDetailModal } from "../../Component/Modal";
 import { SERVER_URL } from "../../utils/SRC";
-import { fillScheduleStyleList } from "../../Component/Schedule";
+import { fillScheduleStyleList, TimeList } from "../../Component/Schedule";
 
 function ProjectMain() {
   const navigate = useNavigate();
@@ -475,7 +475,7 @@ function ProjectMain() {
           <div class="flex ">
             <div class="basis-3/4">
               <div class="mr-10 my-4 border border-gray-400 h-[50rem] flex flex-col justify-between p-2 text-center">
-                <div class="w-full h-fit bg-indigo-50 grid grid-cols-8 pb-5">
+                <div class="w-full h-fit grid grid-cols-8 pb-5 font-ltest">
                   <div>시간</div>
                   {day.map((item) => {
                     return (
@@ -483,21 +483,8 @@ function ProjectMain() {
                     )
                   })}
                 </div>
-                <div class="w-full h-full bg-indigo-50 grid grid-cols-8 gap-1">
-                  <div class="h-full relative">
-                    {
-                      time.map((item) => {
-                        timetop = timetop + (1 / 12 * 100);
-                        return (
-                          <div
-                            style={timeStyle(timetop + "%")}
-                          >
-                            {item}
-                          </div>
-                        )
-                      })
-                    }
-                  </div>
+                <div class="w-full h-full grid grid-cols-8 gap-1">
+                  <TimeList />
                   {day.map((week, index) => {
                     return (
                       <div class="h-full relative">
@@ -520,7 +507,7 @@ function ProjectMain() {
                   })}
                 </div>
                 <button
-                  class="self-end"
+                  class="self-end text-base font-ltest"
                   onClick={() => {
                     setShowScheduleModal(true);
                   }}

@@ -15,7 +15,7 @@ export function fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, s
                 let endLine = ((item.endTime.slice(0, 2) * 60 + item.endTime.slice(3, 5) * 1) / 1440) * 100;
                 let scheduleHeight = endLine - startLine;
                 tmpScheduleStyleList_t[index].push({
-                    style: { position: "absolute", width: "100%", top: startLine + "%", height: scheduleHeight + "%", background: "teal", left: "0%", },
+                    style: { position: "absolute", width: "100%", top: startLine + "%", height: scheduleHeight + "%", background: "#C9C7FF", left: "0%", },
                     id: item.id,
                     startTime: item.startTime,
                     endTime: item.endTime,
@@ -29,31 +29,25 @@ export function fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, s
 
 export function TimeList() {
     let timetop = 0 - (1 / 12 * 100);
-    const time = ["00시", "02시", "04시", "06시", "08시", "10시", "12시", "14시", "16시", "18시", "20시", "22시", "24시"];
-    const timeStyle = (top) => {
-        return (
-            {
-                position: "absolute",
-                top: top,
-                textAlign: "center",
-                left: "50%",
-                transform: "translateX(-50%)",
-
-            }
-        )
-    }
+    const time = ["00", "02", "04", "06", "08", "10", "12", "14", "16", "18", "20", "22", "24"];
     return (
-        <div class="h-full relative">
+        <div class="h-[100%] relative flex flex-col items-center justify-between text-gray-600 text-sm font-ltest border-r">
             {
                 time.map((item) => {
-                    timetop = timetop + (1 / 12 * 100);
-                    return (
-                        <div
-                            style={timeStyle(timetop + "%")}
-                        >
-                            {item}
-                        </div>
-                    )
+                    if (item == "00") {
+                        return (
+                            <div class="w-full">
+                                {item}
+                            </div>
+                        )
+                    }
+                    else {
+                        return (
+                            <div class="border-t w-full">
+                                {item}
+                            </div>
+                        )
+                    }
                 })
             }
         </div>
