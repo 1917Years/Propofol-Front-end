@@ -5,6 +5,7 @@ import { SERVER_URL } from "../../utils/SRC";
 import { TagModal, TeamScheduleModal } from "../../Component/Modal";
 import "react-datepicker/dist/react-datepicker.css";
 import { connect } from "react-redux";
+import ProjectEditor from "../../Component/ProjectEditor";
 import axios from "axios";
 
 let tmpSkillList = [];
@@ -54,83 +55,132 @@ function ProjectAdd() {
     let tmpDetail =
         "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
 
+    function dateToString(prevdate) {
+        let year, month, date;
+        year = prevdate.getFullYear();
+        if (prevdate.getMonth() < 10) {
+            month = "0" + (prevdate.getMonth() + 1);
+        }
+        else {
+            month = prevdate.getMonth();
+        }
+        if (prevdate.getDate() < 10) {
+            date = "0" + prevdate.getDate();
+        }
+        else {
+            date = prevdate.getDate();
+        }
+        return year + "-" + month + "-" + date;
+    }
+
+    function findImage(isUpdated, imgByteList, imgByteTypeList) {
+        //content 내부의 image를 string 검색으로 찾아냄. 
+        //해당 이미지들을 imgByteList에 push하고, 해당 이미지의 type들도 imgByteTypeList에 push함.
+        // --> imgByteList , imgByteTypeList 
+        let start = 0;
+        let end = 0;
+        let k = 0;
+        let tmpContent;
+        //
+        tmpContent = content;
+        /*
+        if (isUpdated || !(props.isModify)) { //만약 업데이트가 되었거나, props.isModify가 거짓일 경우(글 수정이 아니라 작성 중일 경우)
+            tmpContent = content; //tmpContent에 content 넣어줌.
+        }
+        else { // 글 수정중이고, 업데이트도 되지 않았을 경우
+            //tmpContent = props.loadWritingInfo.detail; //props.loadWritingInfo에서 받아온 기존 글의 detail을 넣어줌.
+        }
+        */
+        while (tmpContent.indexOf("<img src=\"data:image/", end) != -1) {
+            start = tmpContent.indexOf("<img src=\"data:image/", end);
+            end = tmpContent.indexOf(">", start);
+            imgByteList.push(tmpContent.slice(start + 10, end - 1));
+            imgByteTypeList.push(imgByteList[k].slice(11, imgByteList[k].indexOf(";", 11)));
+            console.log(k + "번째고 저는 이미지바이트에용");
+            console.log(start);
+            console.log(end);
+            console.log(imgByteList[k]);
+            console.log(imgByteTypeList[k]);
+            k++;
+        }
+    }
+
+    function makeImageFileStruct(imgByteList, imgByteTypeList, formData_Image) {
+        //파일 구조체 만듦
+        //findImage 이후에 호출함. findImage에서 이미지 base64값을 넣은 imgByteList의 값들을 통해 File 객체를 만듦.
+        //해당 File 객체들은 formData_Image에 append됨. --> 이후 backend에 axios를 통해 전달.
+        let fileName = [];
+        console.log("하이!!!!");
+        console.log(imgByteList.length);
+        for (let i = 0; i < imgByteList.length; i++) {
+            fileName.push(Math.random().toString(36).substring(2, 11));
+        }
+        for (let i = 0; i < imgByteList.length; i++) {
+            let imgB = imgByteList[i].replace("data:image/" + imgByteTypeList[i] + ";base64,", "");
+            let bstr = atob(imgB);
+            let n = bstr.length;
+            let u8arr = new Uint8Array(n);
+            while (n--) {
+                u8arr[n] = bstr.charCodeAt(n);
+            }
+            console.log("파일 구조체 만드는중~!");
+            console.log(u8arr);
+            let file = new File([u8arr], fileName[i] + "." + imgByteTypeList[i], { type: 'image/' + imgByteTypeList[i], lastModified: new Date() });
+            console.log(imgB);
+            //console.log(file);
+            formData_Image.append('file', file);
+            console.log(formData_Image.get('file'));
+        }
+    }
+
+
     async function saveHandler() {
+        const formData_Save = new FormData();
+        const formData_Image = new FormData();
+        console.log(content);
         let tmpTagIdList = [];
         selectedTagList.map((item) => {
             tmpTagIdList.push(item.id);
         })
-        const formData_Save = new FormData();
-        const formData_Image = new FormData();
-        imageFileList.map((item) => {
-            formData.append('file', item);
-        })
-        console.log(formData.getAll('file'));
+        //
+        let imgByteList = [];
+        let imgByteTypeList = [];
+        await findImage(true, imgByteList, imgByteTypeList);
+        console.log(imgByteList);
+        await makeImageFileStruct(imgByteList, imgByteTypeList, formData_Image);
+        console.log(formData_Image.getAll('file'));
+        //
 
-        await axios.post(SERVER_URL + "/matching-service/api/v1/matchings/images", formData)
-            .then((res) => {
-                console.log(res);
-                let tmpUrlList = [];
-                let tmpNameList = [];
-                res.data.data.map((result) => {
-                    let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
-                    let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
-                    //console.log("유알엘 : " + IMG_URL);
-                    //console.log("이름 : " + imageName);
-                    tmpUrlList.push(IMG_URL);
-                    tmpNameList.push(imageName);
+        if (formData_Image.getAll('file').length != 0) {
+            await axios.post(SERVER_URL + "/matching-service/api/v1/matchings/images", formData_Image)
+                .then((res) => {
+                    console.log(res);
+                    let content_after = content;
+                    let tmpUrlList = [];
+                    let tmpNameList = [];
+                    res.data.data.map((result) => {
+                        let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+                        let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+                        tmpUrlList.push(IMG_URL);
+                        tmpNameList.push(imageName);
+                    })
+                    tmpNameList.map((fileName) => { //formData_Save에 파일 이름(백에 저장된 이름) 저장
+                        formData_Save.append('fileName', fileName);
+                        console.log("fileName = " + fileName);
+                    })
+                    for (let i = 0; i < tmpUrlList.length; i++) {
+                        content_after = content_after.toString().replace(imgByteList[i], tmpUrlList[i]);
+                    }
+                    formData_Save.append('content', content_after);
                 })
-                tmpNameList.map((fileName) => { //formData_Save에 파일 이름(백에 저장된 이름) 저장
-                    formData_Save.append('fileName', fileName);
-                    console.log("fileName = " + fileName);
+                .catch((err) => {
+                    console.log(err.response);
                 })
-
-            })
-            .catch((err) => {
-                console.log(err.response);
-            })
-
-        /*
-        let data = {
-            title: title,
-            content: content,
-            startDate: startDate,
-            endDate: endDate,
-            recruit: recruit,
-            file: formData,
-            tags: tmpTagIdList
-        }*/
-        //formData_Image.append('file', formData);
-        let sd_m, sd_d, ed_m, ed_d;
-        if (startDate.getMonth() < 10) {
-            sd_m = "0" + (startDate.getMonth() + 1);
         }
-        else {
-            sd_m = startDate.getMonth();
-        }
-        if (startDate.getDate() < 10) {
-            sd_d = "0" + startDate.getDate();
-        }
-        else {
-            sd_d = startDate.getDate();
-        }
-        if (endDate.getMonth() < 10) {
-            ed_m = "0" + (endDate.getMonth() + 1);
-        }
-        else {
-            ed_m = endDate.getMonth();
-        }
-        if (endDate.getDate() < 10) {
-            ed_d = "0" + endDate.getDate();
-        }
-        else {
-            ed_d = endDate.getDate();
-        }
-        console.log(startDate.getFullYear() + "-" + sd_m + "-" + sd_d);
-        console.log(endDate.getFullYear() + "-" + ed_m + "-" + ed_d);
+        console.log(formData_Save.get('content'));
         formData_Save.append('title', title);
-        formData_Save.append('content', content);
-        formData_Save.append('startDate', startDate.getFullYear() + "-" + sd_m + "-" + sd_d);
-        formData_Save.append('endDate', endDate.getFullYear() + "-" + ed_m + "-" + ed_d);
+        formData_Save.append('startDate', dateToString(startDate));
+        formData_Save.append('endDate', dateToString(endDate));
         formData_Save.append('recruit', recruit);
         formData_Save.append('tagId', tmpTagIdList);
         teamScheduleList.map((item) => {
@@ -143,8 +193,6 @@ function ProjectAdd() {
         console.log(formData_Save.getAll('week'));
         console.log(formData.get('file'));
         console.log("플젝을 저장해볼까나~");
-        //console.log(data);
-        //console.log(data.title.type());
 
         await axios.post(SERVER_URL + "/matching-service/api/v1/matchings", formData_Save)
             .then((res) => {
@@ -153,8 +201,6 @@ function ProjectAdd() {
             .catch((err) => {
                 console.log(err.response);
             })
-
-
     }
 
     const onSkillInputHandler = (event) => {
@@ -202,15 +248,6 @@ function ProjectAdd() {
         const myInput = document.getElementById("input-file");
         myInput.click();
     };
-
-    const onFileInputHandler = (e) => {
-        let tmpImageList = imageFileList;
-        tmpImageList.push(e.target.files[0]);
-        setImageFileList(tmpImageList);
-        //formData.append('file', e.target.files[0]);
-        console.log(e.target.files[0]);
-        //console.log(formData.get('file'));
-    }
 
     useEffect(() => {
         let t = [];
@@ -407,24 +444,10 @@ function ProjectAdd() {
                                 setShowTeamScheduleModal(true);
                             }}
                         >팀 시간표 생성</button>
-                        <button
-                            onClick={onFileButtonHandler}
-                        >
-                            <input
-                                type="file"
-                                accept="image/*"
-                                id="input-file"
-                                class="hidden"
-                                onChange={onFileInputHandler}
-                            />
-                            + 첨부파일
-                        </button>
                     </div>
-                    <div class="w-full mt-6 py-2 px-8 border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
-                        <textarea
-                            class="w-full mt-5 focus:outline-0 resize-none bg-inherit pb-3 min-h-[30rem] "
-                            placeholder="내용"
-                            onChange={(e) => { setContent(e.target.value) }}
+                    <div class="w-full mt-6 min-h-[60rem] border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
+                        <ProjectEditor
+                            setContent={setContent}
                         />
                     </div>
                     <div class="mt-4 flex justify-end">

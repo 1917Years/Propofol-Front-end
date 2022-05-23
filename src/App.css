@@ -159,8 +159,14 @@ input:focus {
 }
 
 .ql-toolbar.ql-snow {
-  filter: drop-shadow(0 0px 5px rgba(0, 0, 0, 0.15));
   border: 0px none rgb(255, 255, 255) !important;
+}
+
+.project.ql-toolbar.ql-snow {
+  border-top: 0px none rgb(255, 255, 255) !important;
+  border-left: 0px none rgb(255, 255, 255) !important;
+  border-right: 0px none rgb(255, 255, 255) !important;
+  border-bottom: 1px solid rgb(216, 216, 216) !important;
 }
 
 .ql-editor {
@@ -184,10 +190,10 @@ input:focus {
 }
 
 .ql-container.ql-snow {
-  width: 54rem;
-  left: 50%;
-  height: 100%;
-  transform: translate(-50%);
+  max-width: 60rem;
+  min-width: 20rem;
+  width: 100%;
+  height: 80vh;
   border: 0px none rgb(255, 255, 255) !important;
 }
 

@@ -28,7 +28,7 @@ function EditorToolbar() {
   return (
     <div
       id="toolbar_custom"
-      class="flex w-full min-w-[100rem] bg-gray-50 h-12 fixed z-40 gap-[1px]"
+      class="flex w-full min-w-[100rem] bg-gray-50 h-12 fixed z-40 gap-[1px] shadow-sm drop-shadow-[0_0_5px_rgba(0,0,0,0.15)]"
     >
       <span className="ql-formats mt-1 ml-3">
         <select className="ql-font" defaultValue="iroBatang">
@@ -101,8 +101,6 @@ function BlogEditor(props) {
   const [htmlContent, setHtmlContent] = useState("");
   let prevTitle = "";
   let prevContent = "";
-  let imgByteList = [];
-  let imgByteTypeList = [];
   const [prev_Title, setPrev_Title] = useState("");
   const [prev_Content, setPrev_Content] = useState("");
   const [title, setTitle] = useState("");
@@ -287,7 +285,7 @@ function BlogEditor(props) {
     console.log(detailAfter);
   };
 
-  function findImage(isUpdated) {
+  function findImage(isUpdated, imgByteList, imgByteTypeList) {
     //content 내부의 image를 string 검색으로 찾아냄. 
     //해당 이미지들을 imgByteList에 push하고, 해당 이미지의 type들도 imgByteTypeList에 push함.
     // --> imgByteList , imgByteTypeList 
@@ -315,7 +313,7 @@ function BlogEditor(props) {
     }
   }
 
-  function makeImageFileStruct() {
+  function makeImageFileStruct(imgByteList, imgByteTypeList) {
     //파일 구조체 만듦
     //findImage 이후에 호출함. findImage에서 이미지 base64값을 넣은 imgByteList의 값들을 통해 File 객체를 만듦.
     //해당 File 객체들은 formData_Image에 append됨. --> 이후 backend에 axios를 통해 전달.
@@ -324,14 +322,10 @@ function BlogEditor(props) {
     console.log(imgByteList.length);
     for (let i = 0; i < imgByteList.length; i++) {
       fileName.push(Math.random().toString(36).substring(2, 11));
-      //formData_Save.append('fileName', fileName[i]);
-      //postWriting();
     }
     for (let i = 0; i < imgByteList.length; i++) {
       let imgB = imgByteList[i].replace("data:image/" + imgByteTypeList[i] + ";base64,", "");
-      //console.log(imgB);
       let bstr = atob(imgB);
-      //console.log(bstr);
       let n = bstr.length;
       let u8arr = new Uint8Array(n);
       while (n--) {
@@ -354,10 +348,12 @@ function BlogEditor(props) {
   }
 
   async function saveHandler() {
+    let imgByteList = [];
+    let imgByteTypeList = [];
     console.log("세이브핸들러입니다~안녕하세요~~!");
     console.log(htmlContent);
-    await findImage();
-    await makeImageFileStruct();
+    await findImage(true, imgByteList, imgByteTypeList);
+    await makeImageFileStruct(imgByteList, imgByteTypeList);
 
     if (imgByteList.length != 0) { //이미지가 존재할 때 
       let htmlContent_after;
@@ -441,18 +437,20 @@ function BlogEditor(props) {
     // saveHandler와 동일하게 정보를 보냄. 
     // 기존 내용에서 수정되지 않았을 경우를 if문으로 처리해줌.
     // 이미지를 보낼 때 boardId도 함께 보내줌. 
+    let imgByteList = [];
+    let imgByteTypeList = [];
     console.log("모디파이핸들러입니다!! 안녕하세요><");
     console.log(htmlContent);
 
     console.log(title);
     console.log(open);
     if (htmlContent == "") { // content에 변화가 없어 setState로 관리되는 htmlContent가 비어있을 때 
-      await findImage(false); // findImage에 내용 변화가 없었음을 전달
+      await findImage(false, imgByteList, imgByteTypeList); // findImage에 내용 변화가 없었음을 전달
     }
     else { // 내용 변화가 있었을 경우
-      await findImage(true); // findImage에 내용 변화가 있었음을 전달
+      await findImage(true, imgByteList, imgByteTypeList); // findImage에 내용 변화가 있었음을 전달
     }
-    await makeImageFileStruct();
+    await makeImageFileStruct(imgByteList, imgByteTypeList);
     formData_Save.append('open', open);
     if (title == "") { formData_Save.append('title', props.loadWritingInfo.title); } // 제목에 변화가 없었을 시 기존 제목 formData_Save에 넣어줌.
     else { formData_Save.append('title', title); }

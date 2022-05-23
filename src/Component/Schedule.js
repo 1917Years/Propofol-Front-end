@@ -38,6 +38,7 @@ export function TimeList() {
                 textAlign: "center",
                 left: "50%",
                 transform: "translateX(-50%)",
+
             }
         )
     }
