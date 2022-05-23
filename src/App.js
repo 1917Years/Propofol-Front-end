@@ -27,7 +27,14 @@ import { SERVER_URL } from "./utils/SRC";
 import { createRoot } from "react-dom/client";
 import "tailwindcss/tailwind.css";
 import KakaoOauth from "./utils/oauth/KakaoOauth";
-import { setRefreshTokenToCookie, setAccessTokenToCookie, getRefreshToken, getAccessToken, refreshJWT, removeJWT } from "./utils/auth";
+import {
+  setRefreshTokenToCookie,
+  setAccessTokenToCookie,
+  getRefreshToken,
+  getAccessToken,
+  refreshJWT,
+  removeJWT,
+} from "./utils/auth";
 import BlogWr2 from "./page/Blog/BlogWr2";
 import BlogDetail from "./page/Blog/BlogDetail";
 
@@ -44,28 +51,46 @@ axios.interceptors.response.use(
     }
     console.log(error);
     console.log("왜안돼!!!!");
-    if (error != null && error != undefined && error.response.data.data == "No Jwt Token") {
+    if (
+      error != null &&
+      error != undefined &&
+      error.response.data.data == "No Jwt Token"
+    ) {
       const originalRequest = error.config;
       console.log("왜안돼!!!!!!!!!!!!!!!!!");
-      axios.defaults.headers.common['Authorization'] = `Bearer ${getAccessToken()}`;
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${getAccessToken()}`;
       return await axios.request(originalRequest);
     }
-    if (error != null && error != undefined && error.response.data.data == "Please RefreshToken.") {
+    if (
+      error != null &&
+      error != undefined &&
+      error.response.data.data == "Please RefreshToken."
+    ) {
       try {
         console.log("왜안!ㅇㄴㅁ!!!");
         const originalRequest = error.config;
-        const Data = await (await axios.get(SERVER_URL + "/user-service/auth/refresh", { headers: { "refresh-token": getRefreshToken() }, })).data.data;
+        const Data = await (
+          await axios.get(SERVER_URL + "/user-service/auth/refresh", {
+            headers: { "refresh-token": getRefreshToken() },
+          })
+        ).data.data;
         console.log(Data);
         const accessToken = Data.accessToken;
         const refreshToken = Data.refreshToken;
         console.log("access-token = " + accessToken);
         setAccessTokenToCookie(accessToken);
-        originalRequest.headers['Authorization'] = `Bearer ${getAccessToken()}`;
+        originalRequest.headers["Authorization"] = `Bearer ${getAccessToken()}`;
         //console.log("refresh-token = " + refreshToken);
         //originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-        console.log("access-token = " + originalRequest.headers['Authorization']);
+        console.log(
+          "access-token = " + originalRequest.headers["Authorization"]
+        );
         console.log(originalRequest);
-        axios.defaults.headers.common['Authorization'] = `Bearer ${getAccessToken()}`;
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${getAccessToken()}`;
         setRefreshTokenToCookie(refreshToken);
         return await axios.request(originalRequest);
       } catch (error) {
@@ -156,7 +181,7 @@ function App() {
   };
 
   const Detail = (props) => {
-    return <BlogDetail {...props}></BlogDetail>
+    return <BlogDetail {...props}></BlogDetail>;
   };
 
   return (
@@ -181,6 +206,7 @@ function App() {
           <Route path="/blog/Detail/:id" element={<BlogDetail />} />
           <Route path="/oauth2/kakao/login" element={<KakOauth />} />
           <Route path="/portfolio/main" element={<PortfolioMain />} />
+          <Route path="/portfolio/main/:id" element={<PortfolioMain />} />
           <Route path="/portfolio/template/t1" element={<T1 />} />
           <Route path="/portfolio/template/t2" element={<T2 />} />
           <Route path="/portfolio/template/t3" element={<T3 />} />

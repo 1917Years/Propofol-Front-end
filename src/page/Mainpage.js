@@ -1,10 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "animate.css";
 import { useNavigate, Navigate } from "react-router-dom";
-import { Link } from 'react-scroll';
+import { Link } from "react-scroll";
 import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
-import { setRefreshTokenToCookie, getRefreshToken, refreshJWT, getAccessToken } from "../utils/auth.js"
+import {
+  setRefreshTokenToCookie,
+  getRefreshToken,
+  refreshJWT,
+  getAccessToken,
+} from "../utils/auth.js";
 import Cookies from "universal-cookie";
 
 function Mainpage(props) {
@@ -13,6 +18,7 @@ function Mainpage(props) {
     backgroundImage:
       "url(https://cdn.discordapp.com/attachments/766266146520563785/967860864743002112/cherrydeck-rMILC1PIwM0-unsplash.jpg)",
   };
+
   return (
     <div class="text-gray-800 antialiased z-1">
       <main>
@@ -21,8 +27,7 @@ function Mainpage(props) {
           <div
             class="bg-cover bg-center absolute top-0 w-full h-[58rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%]  "
             style={style}
-          >
-          </div>
+          ></div>
           <div class="relative mx-auto flex flex-col">
             <div class="z-20 animate__animated animate__fadeIn absolute flex lg:gap-[145%] md:gap-[130%] gap-[15px] 3xl:left-1/4 2xl:left-[20%] xl:left-[17%] md:left-[10%] left-[5%]">
               <div>
@@ -32,7 +37,9 @@ function Mainpage(props) {
                       1
                     </button>
                   </Link>
-                  <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center lg:text-base md:text-sm">TIL 블로그</div>
+                  <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center lg:text-base md:text-sm">
+                    TIL 블로그
+                  </div>
                 </div>
                 <div class="absolute lg:ml-36 lg:bottom-20 md:ml-20 md:bottom-20 border-t border-white opacity-50 md:w-full"></div>
               </div>
@@ -43,7 +50,9 @@ function Mainpage(props) {
                       2
                     </button>
                   </Link>
-                  <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center lg:text-base md:text-sm">포트폴리오</div>
+                  <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center lg:text-base md:text-sm">
+                    포트폴리오
+                  </div>
                 </div>
                 <div class="absolute lg:ml-36 lg:bottom-20 md:ml-20 md:bottom-20 border-t border-white opacity-50 md:w-full"></div>
               </div>
@@ -54,7 +63,9 @@ function Mainpage(props) {
                     3
                   </button>
                 </Link>
-                <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center text-sm">프로젝트 매칭</div>
+                <div class="mt-4 ml-2 md:ml-[0px] md:mt-3 text-center text-sm">
+                  프로젝트 매칭
+                </div>
               </div>
             </div>
             <div class="w-full mt-20 pt-20 ml-auto mr-auto text-center border-white">
@@ -64,7 +75,8 @@ function Mainpage(props) {
                 </h1>
                 <p class="animate__animated animate__fadeIn text-2xl text-white opacity-90 font-ltest">
                   ( <a class="font-sbtest">Pro</a>file +{" "}
-                  <a class="font-sbtest">Po</a>rt<a class="font-sbtest">fol</a>io )
+                  <a class="font-sbtest">Po</a>rt<a class="font-sbtest">fol</a>
+                  io )
                 </p>
               </div>
               <p class="animate__animated animate__fadeIn pt-10 font-ltest text-lg text-gray-300">
@@ -80,7 +92,7 @@ function Mainpage(props) {
               <button
                 class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-100/10 hover:text-white mt-12 drop-shadow-lg"
                 onClick={() => {
-                  navigate('/login');
+                  navigate("/login");
                 }}
               >
                 로그인
@@ -89,7 +101,7 @@ function Mainpage(props) {
               <button
                 class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-100/10 hover:text-white drop-shadow-lg"
                 onClick={() => {
-                  navigate('/register');
+                  navigate("/register");
                 }}
               >
                 회원가입
@@ -351,7 +363,7 @@ function Mainpage(props) {
           </div>
         </section>
       </main>
-    </div >
+    </div>
   );
 }
 
