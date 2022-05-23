@@ -14,8 +14,18 @@ export function fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, s
                 let startLine = ((item.startTime.slice(0, 2) * 60 + item.startTime.slice(3, 5) * 1) / 1440) * 100;
                 let endLine = ((item.endTime.slice(0, 2) * 60 + item.endTime.slice(3, 5) * 1) / 1440) * 100;
                 let scheduleHeight = endLine - startLine;
+                let color, rancolor = Math.floor(Math.random() * 3);
+                if (rancolor == 0) {
+                    color = "#C9C7FF"
+                }
+                else if (rancolor == 1) {
+                    color = "#B5B2FF"
+                }
+                else {
+                    color = "#E1E0FF"
+                }
                 tmpScheduleStyleList_t[index].push({
-                    style: { position: "absolute", width: "100%", top: startLine + "%", height: scheduleHeight + "%", background: "#C9C7FF", left: "0%", },
+                    style: { position: "absolute", width: "100%", top: startLine + "%", height: scheduleHeight + "%", background: color, left: "0%", },
                     id: item.id,
                     startTime: item.startTime,
                     endTime: item.endTime,

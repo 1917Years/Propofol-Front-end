@@ -48,7 +48,7 @@ function T3() {
           if (res.data.data.profileType == null) {
             console.log("프로필 없삼");
             setCheckProfile(false);
-            setLoadingComplete(true);
+            // setLoadingComplete(true);
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.data.profileType);
@@ -56,7 +56,7 @@ function T3() {
             console.log(profileType);
             console.log(profileType);
             setCheckProfile(true);
-            setLoadingComplete(true);
+            // setLoadingComplete(true);
           }
         })
         .catch((err) => {

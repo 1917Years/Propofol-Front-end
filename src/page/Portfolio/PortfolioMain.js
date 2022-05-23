@@ -28,6 +28,7 @@ function PortfolioMain() {
 
   const [prjName, setPrjName] = useState(null);
   const [prjImg, setPrjImg] = useState(null);
+  const [prjImgList, setPrjImgList] = useState([]);
   const [prjDevStart, setPrjDevStart] = useState(null);
   const [prjDevEnd, setPrjDevEnd] = useState(null);
   const [prjDev, setPrjDev] = useState(null);
@@ -299,10 +300,10 @@ function PortfolioMain() {
       axios
         .post(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            id +
-            "/template?template=" +
-            template
+          "/ptf-service/api/v1/portfolio/" +
+          id +
+          "/template?template=" +
+          template
         )
         .then((res) => {
           console.log("템플릿 변경");
@@ -414,10 +415,10 @@ function PortfolioMain() {
       await axios
         .post(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            id +
-            "/career/" +
-            params,
+          "/ptf-service/api/v1/portfolio/" +
+          id +
+          "/career/" +
+          params,
           tmpWork
         )
         .then((res) => {
@@ -509,10 +510,10 @@ function PortfolioMain() {
       await axios
         .post(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            id +
-            "/award/" +
-            params,
+          "/ptf-service/api/v1/portfolio/" +
+          id +
+          "/award/" +
+          params,
           tmpAward
         )
         .then((res) => {
@@ -608,10 +609,10 @@ function PortfolioMain() {
       await axios
         .post(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            id +
-            "/project/" +
-            params,
+          "/ptf-service/api/v1/portfolio/" +
+          id +
+          "/project/" +
+          params,
           tmpProject
         )
         .then((res) => {
@@ -824,7 +825,12 @@ function PortfolioMain() {
 
     console.log("포트폴리오 생성");
     console.log(portfolio);
-
+    const formData_Image = new FormData();
+    prjImgList.map((item) => {
+      formData_Image.append('prjimg', item);
+    })
+    console.log(formData_Image.getAll('prjimg'));
+    /*
     axios
       .post(SERVER_URL + "/ptf-service/api/v1/portfolio", portfolio)
       .then((res) => {
@@ -838,6 +844,7 @@ function PortfolioMain() {
     else if (template == "TYPE_2") navigate("/portfolio/template/t2");
     else if (template == "TYPE_3") navigate("/portfolio/template/t3");
     else if (template == "TYPE_4") navigate("/portfolio/template/t4");
+    */
   };
 
   async function onCareerGetHandler() {
@@ -906,10 +913,10 @@ function PortfolioMain() {
       axios
         .delete(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            id +
-            "/career/" +
-            params
+          "/ptf-service/api/v1/portfolio/" +
+          id +
+          "/career/" +
+          params
         )
         .then((res) => {
           console.log(res);
@@ -928,10 +935,10 @@ function PortfolioMain() {
       axios
         .delete(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            id +
-            "/award/" +
-            params
+          "/ptf-service/api/v1/portfolio/" +
+          id +
+          "/award/" +
+          params
         )
         .then((res) => {
           console.log(res);
@@ -950,10 +957,10 @@ function PortfolioMain() {
       axios
         .delete(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            id +
-            "/project/" +
-            params
+          "/ptf-service/api/v1/portfolio/" +
+          id +
+          "/project/" +
+          params
         )
         .then((res) => {
           console.log(res);
@@ -1199,7 +1206,7 @@ function PortfolioMain() {
                     <div class="flex gap-4 justify-center">
                       <div>
                         <div class="w-28 h-56 bg-white border border-gray-300">
-                          　
+
                         </div>
                         <button
                           class={
@@ -1287,9 +1294,9 @@ function PortfolioMain() {
                                 checkProfile == false
                                   ? profileImage
                                   : "data:image/" +
-                                    profileType +
-                                    ";base64," +
-                                    profileImg
+                                  profileType +
+                                  ";base64," +
+                                  profileImg
                               }
                               class="w-24 h-24 rounded-full drop-shadow-md"
                               alt="profile"
@@ -1502,353 +1509,353 @@ function PortfolioMain() {
                         <div>
                           {checkCreate
                             ? careerInfo.map((item) => {
-                                return (
-                                  <div>
-                                    {item.delete ? null : (
-                                      <div
-                                        class={
-                                          item.update
-                                            ? "border-b border-gray-300 w-full px-4 text-gray-500 bg-white text-base font-ltest min-w-[20rem]"
-                                            : "border-b border-gray-300 w-full px-4 text-gray-500 bg-gray-50 text-base font-ltest min-w-[20rem]"
-                                        }
-                                      >
-                                        {item.update ? (
-                                          <input
-                                            class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 "
-                                            placeholder={item.title}
-                                            onChange={(e) =>
-                                              onUpdateWorknameInput(
-                                                e.currentTarget.value,
-                                                item.title,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        ) : (
-                                          <input
-                                            class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 bg-inherit"
-                                            placeholder={item.title}
-                                            disabled
-                                          />
-                                        )}
+                              return (
+                                <div>
+                                  {item.delete ? null : (
+                                    <div
+                                      class={
+                                        item.update
+                                          ? "border-b border-gray-300 w-full px-4 text-gray-500 bg-white text-base font-ltest min-w-[20rem]"
+                                          : "border-b border-gray-300 w-full px-4 text-gray-500 bg-gray-50 text-base font-ltest min-w-[20rem]"
+                                      }
+                                    >
+                                      {item.update ? (
+                                        <input
+                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 "
+                                          placeholder={item.title}
+                                          onChange={(e) =>
+                                            onUpdateWorknameInput(
+                                              e.currentTarget.value,
+                                              item.title,
+                                              e
+                                            )
+                                          }
+                                        />
+                                      ) : (
+                                        <input
+                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 bg-inherit"
+                                          placeholder={item.title}
+                                          disabled
+                                        />
+                                      )}
 
-                                        {item.update ? (
-                                          <textarea
-                                            class="w-full mt-5 focus:outline-0 resize-none pb-3 border-b border-gray-300  min-h-[10rem] "
-                                            placeholder={item.content}
-                                            onChange={(e) =>
-                                              onUpdateWorkDetailInput(
-                                                e.currentTarget.value,
-                                                item.content,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        ) : (
-                                          <textarea
-                                            class="w-full mt-5 focus:outline-0 resize-none text-gray-500 bg-inherit pb-3 border-b border-gray-300  min-h-[10rem] "
-                                            placeholder={item.content}
-                                            disabled
-                                          />
-                                        )}
+                                      {item.update ? (
+                                        <textarea
+                                          class="w-full mt-5 focus:outline-0 resize-none pb-3 border-b border-gray-300  min-h-[10rem] "
+                                          placeholder={item.content}
+                                          onChange={(e) =>
+                                            onUpdateWorkDetailInput(
+                                              e.currentTarget.value,
+                                              item.content,
+                                              e
+                                            )
+                                          }
+                                        />
+                                      ) : (
+                                        <textarea
+                                          class="w-full mt-5 focus:outline-0 resize-none text-gray-500 bg-inherit pb-3 border-b border-gray-300  min-h-[10rem] "
+                                          placeholder={item.content}
+                                          disabled
+                                        />
+                                      )}
 
-                                        <div class="font-ltest text-lg text-gray-400 pb-4">
-                                          경력 기간
-                                          <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
-                                            <div class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0">
-                                              {item.update ? (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2"
-                                                  placeholder={item.startTerm}
-                                                  onChange={(e) =>
-                                                    onUpdateWorkStartInput(
-                                                      e.currentTarget.value,
-                                                      item.startTerm,
-                                                      e
-                                                    )
-                                                  }
-                                                />
-                                              ) : (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                  placeholder={item.startTerm}
-                                                  disabled
-                                                />
-                                              )}
-                                            </div>
-                                            <div>~</div>
-                                            <div class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0">
-                                              {item.update ? (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2"
-                                                  placeholder={item.endTerm}
-                                                  onChange={(e) =>
-                                                    onUpdateWorkEndInput(
-                                                      e.currentTarget.value,
-                                                      item.endTerm,
-                                                      e
-                                                    )
-                                                  }
-                                                />
-                                              ) : (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                  placeholder={item.endTerm}
-                                                  disabled
-                                                />
-                                              )}
-                                            </div>
+                                      <div class="font-ltest text-lg text-gray-400 pb-4">
+                                        경력 기간
+                                        <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
+                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0">
+                                            {item.update ? (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2"
+                                                placeholder={item.startTerm}
+                                                onChange={(e) =>
+                                                  onUpdateWorkStartInput(
+                                                    e.currentTarget.value,
+                                                    item.startTerm,
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                            ) : (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                                                placeholder={item.startTerm}
+                                                disabled
+                                              />
+                                            )}
+                                          </div>
+                                          <div>~</div>
+                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0">
+                                            {item.update ? (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2"
+                                                placeholder={item.endTerm}
+                                                onChange={(e) =>
+                                                  onUpdateWorkEndInput(
+                                                    e.currentTarget.value,
+                                                    item.endTerm,
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                            ) : (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                                                placeholder={item.endTerm}
+                                                disabled
+                                              />
+                                            )}
                                           </div>
                                         </div>
-                                        <div class="w-full flex justify-end gap-5">
-                                          {item.update ? (
+                                      </div>
+                                      <div class="w-full flex justify-end gap-5">
+                                        {item.update ? (
+                                          <button
+                                            class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                            onClick={(e) =>
+                                              onUpdateCareerHandler(
+                                                item.id,
+                                                item.title,
+                                                item.content,
+                                                item.startTerm,
+                                                item.endTerm,
+                                                e
+                                              )
+                                            }
+                                          >
+                                            수정완료
+                                          </button>
+                                        ) : (
+                                          <>
+                                            {" "}
                                             <button
                                               class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={(e) =>
-                                                onUpdateCareerHandler(
-                                                  item.id,
-                                                  item.title,
-                                                  item.content,
-                                                  item.startTerm,
-                                                  item.endTerm,
-                                                  e
-                                                )
-                                              }
-                                            >
-                                              수정완료
-                                            </button>
-                                          ) : (
-                                            <>
-                                              {" "}
-                                              <button
-                                                class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                                onClick={() => {
-                                                  const findIndex =
-                                                    careerInfo.findIndex(
-                                                      (element) =>
-                                                        element.id == item.id
-                                                    );
-                                                  let copyCareer = [
-                                                    ...careerInfo,
-                                                  ];
-                                                  copyCareer[findIndex] = {
-                                                    ...copyCareer[findIndex],
-                                                    update: true,
-                                                  };
-                                                  setCareerInfo(copyCareer);
-                                                }}
-                                              >
-                                                수정하기
-                                              </button>
-                                              <button
-                                                class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                                onClick={(e) => {
-                                                  onCareerDeleteHandler(
-                                                    item.id,
-                                                    e
+                                              onClick={() => {
+                                                const findIndex =
+                                                  careerInfo.findIndex(
+                                                    (element) =>
+                                                      element.id == item.id
                                                   );
-                                                  const findIndex =
-                                                    careerInfo.findIndex(
-                                                      (element) =>
-                                                        element.id == item.id
-                                                    );
-                                                  let copyCareer = [
-                                                    ...careerInfo,
-                                                  ];
-                                                  copyCareer[findIndex] = {
-                                                    ...copyCareer[findIndex],
-                                                    delete: true,
-                                                  };
-                                                  setCareerInfo(copyCareer);
-                                                }}
-                                              >
-                                                삭제하기
-                                              </button>
-                                            </>
-                                          )}
-                                        </div>
+                                                let copyCareer = [
+                                                  ...careerInfo,
+                                                ];
+                                                copyCareer[findIndex] = {
+                                                  ...copyCareer[findIndex],
+                                                  update: true,
+                                                };
+                                                setCareerInfo(copyCareer);
+                                              }}
+                                            >
+                                              수정하기
+                                            </button>
+                                            <button
+                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                              onClick={(e) => {
+                                                onCareerDeleteHandler(
+                                                  item.id,
+                                                  e
+                                                );
+                                                const findIndex =
+                                                  careerInfo.findIndex(
+                                                    (element) =>
+                                                      element.id == item.id
+                                                  );
+                                                let copyCareer = [
+                                                  ...careerInfo,
+                                                ];
+                                                copyCareer[findIndex] = {
+                                                  ...copyCareer[findIndex],
+                                                  delete: true,
+                                                };
+                                                setCareerInfo(copyCareer);
+                                              }}
+                                            >
+                                              삭제하기
+                                            </button>
+                                          </>
+                                        )}
                                       </div>
-                                    )}
-                                  </div>
-                                );
-                              })
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })
                             : firstCareerInfo.map((item) => {
-                                return (
-                                  <div>
-                                    {item.delete ? null : (
-                                      <div
-                                        class={
-                                          item.update
-                                            ? "border-b border-gray-300 w-full px-4 text-gray-500 bg-white text-base font-ltest min-w-[20rem]"
-                                            : "border-b border-gray-300 w-full px-4 text-gray-500 bg-gray-50 text-base font-ltest min-w-[20rem]"
-                                        }
-                                      >
-                                        {item.update ? (
-                                          <input
-                                            class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 "
-                                            placeholder={item.title}
-                                            onChange={(e) =>
-                                              onUpdateWorknameInput(
-                                                e.currentTarget.value,
-                                                item.title,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        ) : (
-                                          <input
-                                            class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 bg-inherit"
-                                            placeholder={item.title}
-                                            disabled
-                                          />
-                                        )}
+                              return (
+                                <div>
+                                  {item.delete ? null : (
+                                    <div
+                                      class={
+                                        item.update
+                                          ? "border-b border-gray-300 w-full px-4 text-gray-500 bg-white text-base font-ltest min-w-[20rem]"
+                                          : "border-b border-gray-300 w-full px-4 text-gray-500 bg-gray-50 text-base font-ltest min-w-[20rem]"
+                                      }
+                                    >
+                                      {item.update ? (
+                                        <input
+                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 "
+                                          placeholder={item.title}
+                                          onChange={(e) =>
+                                            onUpdateWorknameInput(
+                                              e.currentTarget.value,
+                                              item.title,
+                                              e
+                                            )
+                                          }
+                                        />
+                                      ) : (
+                                        <input
+                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 bg-inherit"
+                                          placeholder={item.title}
+                                          disabled
+                                        />
+                                      )}
 
-                                        {item.update ? (
-                                          <textarea
-                                            class="w-full mt-5 focus:outline-0 resize-none pb-3 border-b border-gray-300  min-h-[10rem] "
-                                            placeholder={item.content}
-                                            onChange={(e) =>
-                                              onUpdateWorkDetailInput(
-                                                e.currentTarget.value,
-                                                item.content,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        ) : (
-                                          <textarea
-                                            class="w-full mt-5 focus:outline-0 resize-none text-gray-500 bg-inherit pb-3 border-b border-gray-300  min-h-[10rem] "
-                                            placeholder={item.content}
-                                            disabled
-                                          />
-                                        )}
+                                      {item.update ? (
+                                        <textarea
+                                          class="w-full mt-5 focus:outline-0 resize-none pb-3 border-b border-gray-300  min-h-[10rem] "
+                                          placeholder={item.content}
+                                          onChange={(e) =>
+                                            onUpdateWorkDetailInput(
+                                              e.currentTarget.value,
+                                              item.content,
+                                              e
+                                            )
+                                          }
+                                        />
+                                      ) : (
+                                        <textarea
+                                          class="w-full mt-5 focus:outline-0 resize-none text-gray-500 bg-inherit pb-3 border-b border-gray-300  min-h-[10rem] "
+                                          placeholder={item.content}
+                                          disabled
+                                        />
+                                      )}
 
-                                        <div class="font-ltest text-lg text-gray-400 pb-4">
-                                          경력 기간
-                                          <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
-                                            <div class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0">
-                                              {item.update ? (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2"
-                                                  placeholder={item.startTerm}
-                                                  onChange={(e) =>
-                                                    onUpdateWorkStartInput(
-                                                      e.currentTarget.value,
-                                                      item.startTerm,
-                                                      e
-                                                    )
-                                                  }
-                                                />
-                                              ) : (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                  placeholder={item.startTerm}
-                                                  disabled
-                                                />
-                                              )}
-                                            </div>
-                                            <div>~</div>
-                                            <div class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0">
-                                              {item.update ? (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2"
-                                                  placeholder={item.endTerm}
-                                                  onChange={(e) =>
-                                                    onUpdateWorkEndInput(
-                                                      e.currentTarget.value,
-                                                      item.endTerm,
-                                                      e
-                                                    )
-                                                  }
-                                                />
-                                              ) : (
-                                                <input
-                                                  class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                  placeholder={item.endTerm}
-                                                  disabled
-                                                />
-                                              )}
-                                            </div>
+                                      <div class="font-ltest text-lg text-gray-400 pb-4">
+                                        경력 기간
+                                        <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
+                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0">
+                                            {item.update ? (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2"
+                                                placeholder={item.startTerm}
+                                                onChange={(e) =>
+                                                  onUpdateWorkStartInput(
+                                                    e.currentTarget.value,
+                                                    item.startTerm,
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                            ) : (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                                                placeholder={item.startTerm}
+                                                disabled
+                                              />
+                                            )}
+                                          </div>
+                                          <div>~</div>
+                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0">
+                                            {item.update ? (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2"
+                                                placeholder={item.endTerm}
+                                                onChange={(e) =>
+                                                  onUpdateWorkEndInput(
+                                                    e.currentTarget.value,
+                                                    item.endTerm,
+                                                    e
+                                                  )
+                                                }
+                                              />
+                                            ) : (
+                                              <input
+                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                                                placeholder={item.endTerm}
+                                                disabled
+                                              />
+                                            )}
                                           </div>
                                         </div>
-                                        <div class="w-full flex justify-end gap-5">
-                                          {item.update ? (
+                                      </div>
+                                      <div class="w-full flex justify-end gap-5">
+                                        {item.update ? (
+                                          <button
+                                            class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                            onClick={(e) =>
+                                              onUpdateCareerHandler(
+                                                item.id,
+                                                item.title,
+                                                item.content,
+                                                item.startTerm,
+                                                item.endTerm,
+                                                e
+                                              )
+                                            }
+                                          >
+                                            수정완료
+                                          </button>
+                                        ) : (
+                                          <>
+                                            {" "}
                                             <button
                                               class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={(e) =>
-                                                onUpdateCareerHandler(
-                                                  item.id,
-                                                  item.title,
-                                                  item.content,
-                                                  item.startTerm,
-                                                  item.endTerm,
-                                                  e
-                                                )
-                                              }
-                                            >
-                                              수정완료
-                                            </button>
-                                          ) : (
-                                            <>
-                                              {" "}
-                                              <button
-                                                class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                                onClick={() => {
-                                                  const findIndex =
-                                                    firstCareerInfo.findIndex(
-                                                      (element) =>
-                                                        element.id == item.id
-                                                    );
-                                                  let copyCareer = [
-                                                    ...firstCareerInfo,
-                                                  ];
-                                                  copyCareer[findIndex] = {
-                                                    ...copyCareer[findIndex],
-                                                    update: true,
-                                                  };
+                                              onClick={() => {
+                                                const findIndex =
+                                                  firstCareerInfo.findIndex(
+                                                    (element) =>
+                                                      element.id == item.id
+                                                  );
+                                                let copyCareer = [
+                                                  ...firstCareerInfo,
+                                                ];
+                                                copyCareer[findIndex] = {
+                                                  ...copyCareer[findIndex],
+                                                  update: true,
+                                                };
 
-                                                  console.log(copyCareer);
-                                                  setFirstCareerInfo(
-                                                    copyCareer
+                                                console.log(copyCareer);
+                                                setFirstCareerInfo(
+                                                  copyCareer
+                                                );
+                                              }}
+                                            >
+                                              수정하기
+                                            </button>
+                                            <button
+                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                              onClick={(e) => {
+                                                onCareerDeleteHandler(
+                                                  item.id,
+                                                  e
+                                                );
+                                                const findIndex =
+                                                  firstCareerInfo.findIndex(
+                                                    (element) =>
+                                                      element.id == item.id
                                                   );
-                                                }}
-                                              >
-                                                수정하기
-                                              </button>
-                                              <button
-                                                class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                                onClick={(e) => {
-                                                  onCareerDeleteHandler(
-                                                    item.id,
-                                                    e
-                                                  );
-                                                  const findIndex =
-                                                    firstCareerInfo.findIndex(
-                                                      (element) =>
-                                                        element.id == item.id
-                                                    );
-                                                  let copyCareer = [
-                                                    ...firstCareerInfo,
-                                                  ];
-                                                  copyCareer[findIndex] = {
-                                                    ...copyCareer[findIndex],
-                                                    delete: true,
-                                                  };
-                                                  setFirstCareerInfo(
-                                                    copyCareer
-                                                  );
-                                                }}
-                                              >
-                                                삭제하기
-                                              </button>
-                                            </>
-                                          )}
-                                        </div>
+                                                let copyCareer = [
+                                                  ...firstCareerInfo,
+                                                ];
+                                                copyCareer[findIndex] = {
+                                                  ...copyCareer[findIndex],
+                                                  delete: true,
+                                                };
+                                                setFirstCareerInfo(
+                                                  copyCareer
+                                                );
+                                              }}
+                                            >
+                                              삭제하기
+                                            </button>
+                                          </>
+                                        )}
                                       </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
                           {workAdd ? (
                             <div class="w-full mt-2 py-2 px-4  bg-white text-base font-ltest min-w-[20rem] ">
                               <input
@@ -1914,227 +1921,227 @@ function PortfolioMain() {
                       <td class="border border-slate-300">
                         {checkCreate
                           ? awardInfo.map((item) => {
-                              return (
-                                <div class="xl:flex justify-between w-full">
-                                  {item.delete ? null : (
-                                    <>
-                                      {item.update ? (
-                                        <>
-                                          <div class="w-[30%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                              placeholder={item.date}
-                                              onChange={(e) =>
-                                                onUpdateAwardDateInput(
-                                                  e.currentTarget.value,
-                                                  item.date,
-                                                  e
-                                                )
-                                              }
-                                            />
-                                          </div>
-                                          <div class="w-[60%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                              placeholder={item.name}
-                                              onChange={(e) =>
-                                                onUpdateAwardNameInput(
-                                                  e.currentTarget.value,
-                                                  item.name,
-                                                  e
-                                                )
-                                              }
-                                            />
-                                          </div>
-                                          <button
-                                            class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-test min-w-[5rem]"
-                                            onClick={(e) =>
-                                              onUpdateAwardHandler(
-                                                item.id,
+                            return (
+                              <div class="xl:flex justify-between w-full">
+                                {item.delete ? null : (
+                                  <>
+                                    {item.update ? (
+                                      <>
+                                        <div class="w-[30%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                            placeholder={item.date}
+                                            onChange={(e) =>
+                                              onUpdateAwardDateInput(
+                                                e.currentTarget.value,
                                                 item.date,
+                                                e
+                                              )
+                                            }
+                                          />
+                                        </div>
+                                        <div class="w-[60%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                            placeholder={item.name}
+                                            onChange={(e) =>
+                                              onUpdateAwardNameInput(
+                                                e.currentTarget.value,
                                                 item.name,
                                                 e
                                               )
                                             }
-                                          >
-                                            수정완료
-                                          </button>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <div class="w-[40%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                              placeholder={item.date}
-                                              type="text"
-                                              disabled
-                                            />
-                                          </div>
-                                          <div class="w-[60%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                              placeholder={item.name}
-                                              type="text"
-                                              disabled
-                                            />
-                                          </div>
-                                          <button
-                                            class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                            onClick={() => {
-                                              const findIndex =
-                                                awardInfo.findIndex(
-                                                  (element) =>
-                                                    element.id == item.id
-                                                );
-                                              let copyAward = [...awardInfo];
-                                              copyAward[findIndex] = {
-                                                ...copyAward[findIndex],
-                                                update: true,
-                                              };
-                                              setAwardInfo(copyAward);
-                                            }}
-                                          >
-                                            수정하기
-                                          </button>
-                                          <button
-                                            class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                            onClick={(e) => {
-                                              onAwardDeleteHandler(item.id, e);
-                                              const findIndex =
-                                                awardInfo.findIndex(
-                                                  (element) =>
-                                                    element.id == item.id
-                                                );
-                                              let copyAward = [...awardInfo];
-                                              copyAward[findIndex] = {
-                                                ...copyAward[findIndex],
-                                                delete: true,
-                                              };
-                                              setAwardInfo(copyAward);
-                                            }}
-                                          >
-                                            삭제하기
-                                          </button>
-                                        </>
-                                      )}
-                                    </>
-                                  )}
-                                </div>
-                              );
-                            })
+                                          />
+                                        </div>
+                                        <button
+                                          class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-test min-w-[5rem]"
+                                          onClick={(e) =>
+                                            onUpdateAwardHandler(
+                                              item.id,
+                                              item.date,
+                                              item.name,
+                                              e
+                                            )
+                                          }
+                                        >
+                                          수정완료
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <div class="w-[40%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                            placeholder={item.date}
+                                            type="text"
+                                            disabled
+                                          />
+                                        </div>
+                                        <div class="w-[60%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                            placeholder={item.name}
+                                            type="text"
+                                            disabled
+                                          />
+                                        </div>
+                                        <button
+                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                                          onClick={() => {
+                                            const findIndex =
+                                              awardInfo.findIndex(
+                                                (element) =>
+                                                  element.id == item.id
+                                              );
+                                            let copyAward = [...awardInfo];
+                                            copyAward[findIndex] = {
+                                              ...copyAward[findIndex],
+                                              update: true,
+                                            };
+                                            setAwardInfo(copyAward);
+                                          }}
+                                        >
+                                          수정하기
+                                        </button>
+                                        <button
+                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                                          onClick={(e) => {
+                                            onAwardDeleteHandler(item.id, e);
+                                            const findIndex =
+                                              awardInfo.findIndex(
+                                                (element) =>
+                                                  element.id == item.id
+                                              );
+                                            let copyAward = [...awardInfo];
+                                            copyAward[findIndex] = {
+                                              ...copyAward[findIndex],
+                                              delete: true,
+                                            };
+                                            setAwardInfo(copyAward);
+                                          }}
+                                        >
+                                          삭제하기
+                                        </button>
+                                      </>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            );
+                          })
                           : firstAwardInfo.map((item) => {
-                              return (
-                                <div class="xl:flex justify-between w-full">
-                                  {item.delete ? null : (
-                                    <>
-                                      {item.update ? (
-                                        <>
-                                          <div class="w-[30%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                              placeholder={item.date}
-                                              onChange={(e) =>
-                                                onUpdateAwardDateInput(
-                                                  e.currentTarget.value,
-                                                  item.date,
-                                                  e
-                                                )
-                                              }
-                                            />
-                                          </div>
-                                          <div class="w-[60%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                              placeholder={item.name}
-                                              onChange={(e) =>
-                                                onUpdateAwardNameInput(
-                                                  e.currentTarget.value,
-                                                  item.name,
-                                                  e
-                                                )
-                                              }
-                                            />
-                                          </div>
-                                          <button
-                                            class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-test min-w-[5rem]"
-                                            onClick={(e) =>
-                                              onUpdateAwardHandler(
-                                                item.id,
+                            return (
+                              <div class="xl:flex justify-between w-full">
+                                {item.delete ? null : (
+                                  <>
+                                    {item.update ? (
+                                      <>
+                                        <div class="w-[30%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                            placeholder={item.date}
+                                            onChange={(e) =>
+                                              onUpdateAwardDateInput(
+                                                e.currentTarget.value,
                                                 item.date,
+                                                e
+                                              )
+                                            }
+                                          />
+                                        </div>
+                                        <div class="w-[60%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                            placeholder={item.name}
+                                            onChange={(e) =>
+                                              onUpdateAwardNameInput(
+                                                e.currentTarget.value,
                                                 item.name,
                                                 e
                                               )
                                             }
-                                          >
-                                            수정완료
-                                          </button>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <div class="w-[40%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                              placeholder={item.date}
-                                              type="text"
-                                              disabled
-                                            />
-                                          </div>
-                                          <div class="w-[60%]">
-                                            <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                              placeholder={item.name}
-                                              type="text"
-                                              disabled
-                                            />
-                                          </div>
-                                          <button
-                                            class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                            onClick={() => {
-                                              const findIndex =
-                                                firstAwardInfo.findIndex(
-                                                  (element) =>
-                                                    element.id == item.id
-                                                );
-                                              let copyAward = [
-                                                ...firstAwardInfo,
-                                              ];
-                                              copyAward[findIndex] = {
-                                                ...copyAward[findIndex],
-                                                update: true,
-                                              };
-                                              setFirstAwardInfo(copyAward);
-                                            }}
-                                          >
-                                            수정하기
-                                          </button>
-                                          <button
-                                            class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                            onClick={(e) => {
-                                              onAwardDeleteHandler(item.id, e);
-                                              const findIndex =
-                                                firstAwardInfo.findIndex(
-                                                  (element) =>
-                                                    element.id == item.id
-                                                );
-                                              let copyAward = [
-                                                ...firstAwardInfo,
-                                              ];
-                                              copyAward[findIndex] = {
-                                                ...copyAward[findIndex],
-                                                delete: true,
-                                              };
-                                              setFirstAwardInfo(copyAward);
-                                            }}
-                                          >
-                                            삭제하기
-                                          </button>
-                                        </>
-                                      )}
-                                    </>
-                                  )}
-                                </div>
-                              );
-                            })}
+                                          />
+                                        </div>
+                                        <button
+                                          class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-test min-w-[5rem]"
+                                          onClick={(e) =>
+                                            onUpdateAwardHandler(
+                                              item.id,
+                                              item.date,
+                                              item.name,
+                                              e
+                                            )
+                                          }
+                                        >
+                                          수정완료
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <>
+                                        <div class="w-[40%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                            placeholder={item.date}
+                                            type="text"
+                                            disabled
+                                          />
+                                        </div>
+                                        <div class="w-[60%]">
+                                          <input
+                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                            placeholder={item.name}
+                                            type="text"
+                                            disabled
+                                          />
+                                        </div>
+                                        <button
+                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                                          onClick={() => {
+                                            const findIndex =
+                                              firstAwardInfo.findIndex(
+                                                (element) =>
+                                                  element.id == item.id
+                                              );
+                                            let copyAward = [
+                                              ...firstAwardInfo,
+                                            ];
+                                            copyAward[findIndex] = {
+                                              ...copyAward[findIndex],
+                                              update: true,
+                                            };
+                                            setFirstAwardInfo(copyAward);
+                                          }}
+                                        >
+                                          수정하기
+                                        </button>
+                                        <button
+                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                                          onClick={(e) => {
+                                            onAwardDeleteHandler(item.id, e);
+                                            const findIndex =
+                                              firstAwardInfo.findIndex(
+                                                (element) =>
+                                                  element.id == item.id
+                                              );
+                                            let copyAward = [
+                                              ...firstAwardInfo,
+                                            ];
+                                            copyAward[findIndex] = {
+                                              ...copyAward[findIndex],
+                                              delete: true,
+                                            };
+                                            setFirstAwardInfo(copyAward);
+                                          }}
+                                        >
+                                          삭제하기
+                                        </button>
+                                      </>
+                                    )}
+                                  </>
+                                )}
+                              </div>
+                            );
+                          })}
 
                         {awardAdd ? (
                           <div class="xl:flex justify-between w-full">
@@ -2264,8 +2271,11 @@ function PortfolioMain() {
                                                   if (
                                                     e.target.value.length > 0
                                                   ) {
+                                                    let tmpList = prjImgList;
                                                     let imgTarget =
                                                       e.target.files[0];
+                                                    tmpList.push(imgTarget);
+                                                    setPrjImgList([...tmpList]);
                                                     let fileReader =
                                                       new FileReader();
                                                     fileReader.readAsDataURL(
@@ -2978,14 +2988,14 @@ function PortfolioMain() {
                                       class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
                                       onChange={onPrjDevStartInputHandler}
                                       placeholder="시작 일자(yyyy.mm)"
-                                      // value={prjDevStart}
+                                    // value={prjDevStart}
                                     />
                                     <div>~</div>
                                     <input
                                       class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
                                       onChange={onPrjEndInputHandler}
                                       placeholder="종료 일자(yyyy.mm)"
-                                      // value={prjDevEnd}
+                                    // value={prjDevEnd}
                                     />
                                   </div>
                                 </div>

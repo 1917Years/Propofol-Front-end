@@ -7,7 +7,7 @@ import MyPage from "./page/Mypage";
 import Mainpage from "./page/Mainpage";
 import Login from "./page/Login";
 import Register from "./page/Register";
-import ProjectAdd from "./page/ProjectMatching/ProjectAdd";
+import ProjectWriting from "./page/ProjectMatching/ProjectWriting";
 import ProjectMain from "./page/ProjectMatching/ProjectMain";
 import ProjectMyList from "./page/ProjectMatching/ProjectMyList";
 import ProjectMyDetail from "./page/ProjectMatching/ProjectMyDetail";
@@ -193,7 +193,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/pm/add" element={<ProjectAdd />} />
+          <Route path="/pm/writing" element={<ProjectWriting />} />
           <Route path="/pm/main" element={<ProjectMain />} />
           <Route path="/pm/myproject/:id" element={<ProjectMyDetail />} />
           <Route path="/pm/mylist" element={<ProjectMyList />} />

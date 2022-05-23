@@ -1,16 +1,17 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { SERVER_URL } from "../../utils/SRC";
 import { TagModal, TeamScheduleModal } from "../../Component/Modal";
 import "react-datepicker/dist/react-datepicker.css";
-import { connect } from "react-redux";
 import ProjectEditor from "../../Component/ProjectEditor";
 import axios from "axios";
 
-let tmpSkillList = [];
-
-function ProjectAdd() {
+function ProjectWriting() {
+  let isModify = false;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [loadingComplete, setLoadingComplete] = useState(false);
+  const writingNo = searchParams.get('No');
   const navigate = useNavigate();
   const tagList = [
     "JAVA",
@@ -26,17 +27,13 @@ function ProjectAdd() {
     "언어1",
     "언어2",
   ];
-  const [isTC, setIsTC] = useState(false);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isTagChecked, setIsTagChecked] = useState([]);
   const [isTagFull, setIsTagFull] = useState(false);
   const [checkedTagList, setCheckedTagList] = useState([]);
-  const formData = new FormData();
   const [tmp, setTmp] = useState(false);
 
-  const [skillsAdd, setSkillsAdd] = useState(false);
-  const [skillInput, setSkillInput] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [recruit, setRecruit] = useState("");
@@ -44,16 +41,9 @@ function ProjectAdd() {
   const [showTagMoadl, setShowTagModal] = useState(false);
   const [selectedTagList, setSelectedTagList] = useState([]);
 
-  const [imageFileList, setImageFileList] = useState([]);
-
+  const [project, setProject] = useState({});
   const [showTeamScheduleModal, setShowTeamScheduleModal] = useState(false);
   const [teamScheduleList, setTeamScheduleList] = useState([]);
-  const [schedule, setSchedule] = useState({});
-  const [selectedWeek, setSelectedWeek] = useState("");
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  let tmpDetail =
-    "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
 
   function dateToString(prevdate) {
     let year, month, date;
@@ -71,6 +61,48 @@ function ProjectAdd() {
     return year + "-" + month + "-" + date;
   }
 
+  async function loadImage(tmpInfo) {
+    let tmpimgsrc = [];
+    let tmpimgsrctype = [];
+    let tmploadbyte = [];
+    let start = 0;
+    let end = 0;
+    let k = 0;
+    while (tmpInfo.detail.indexOf("<img src=\"http://", end) != -1) {
+      start = tmpInfo.detail.indexOf("<img src=\"http://");
+      end = tmpInfo.detail.indexOf(">", start);
+      tmpimgsrc.push(tmpInfo.detail.slice(start + 10, end - 1));
+      tmpimgsrctype.push(tmpimgsrc[k].slice(-3));
+      console.log("저는 이미지소스에용");
+      console.log(start);
+      console.log(end);
+      console.log(tmpimgsrc[k]);
+      console.log(tmpimgsrctype[k]);
+      k++;
+    }
+    for (let i = 0; i < tmpimgsrc.length; i++) {
+      await axios.get(tmpimgsrc[i])
+        .then((res) => {
+          console.log("이미지 바이트를 가져왔어요~");
+          console.log(res);
+          tmploadbyte.push("data:image/" + tmpimgsrctype[i] + ";base64," + res.data);
+          console.log(tmploadbyte[i]);
+        })
+        .catch((err) => {
+          console.log("이미지 바이트를 가져오려고 했는데 에러가 났네요~");
+          console.log(err);
+        });
+    }
+
+    for (let i = 0; i < tmpimgsrc.length; i++) {
+      tmpInfo.detail = tmpInfo.detail.replace(tmpimgsrc[i], tmploadbyte[i]);
+    }
+    //console.log("달라진 디테일은~");
+    await setProject(tmpInfo);
+    console.log(tmpInfo);
+    await setLoadingComplete(true);
+  };
+
   function findImage(isUpdated, imgByteList, imgByteTypeList) {
     //content 내부의 image를 string 검색으로 찾아냄.
     //해당 이미지들을 imgByteList에 push하고, 해당 이미지의 type들도 imgByteTypeList에 push함.
@@ -81,14 +113,14 @@ function ProjectAdd() {
     let tmpContent;
     //
     tmpContent = content;
-    /*
-        if (isUpdated || !(props.isModify)) { //만약 업데이트가 되었거나, props.isModify가 거짓일 경우(글 수정이 아니라 작성 중일 경우)
-            tmpContent = content; //tmpContent에 content 넣어줌.
-        }
-        else { // 글 수정중이고, 업데이트도 되지 않았을 경우
-            //tmpContent = props.loadWritingInfo.detail; //props.loadWritingInfo에서 받아온 기존 글의 detail을 넣어줌.
-        }
-        */
+
+    if (isUpdated || !(isModify)) { //만약 업데이트가 되었거나, props.isModify가 거짓일 경우(글 수정이 아니라 작성 중일 경우)
+      tmpContent = content; //tmpContent에 content 넣어줌.
+    }
+    else { // 글 수정중이고, 업데이트도 되지 않았을 경우
+      tmpContent = project.detail; //props.loadWritingInfo에서 받아온 기존 글의 detail을 넣어줌.
+    }
+
     while (tmpContent.indexOf('<img src="data:image/', end) != -1) {
       start = tmpContent.indexOf('<img src="data:image/', end);
       end = tmpContent.indexOf(">", start);
@@ -139,6 +171,127 @@ function ProjectAdd() {
     }
   }
 
+
+  async function modifyHandler() {
+    // saveHandler와 동일하게 정보를 보냄. 
+    // 기존 내용에서 수정되지 않았을 경우를 if문으로 처리해줌.
+    // 이미지를 보낼 때 boardId도 함께 보내줌. 
+    const formData_Save = new FormData();
+    const formData_Image = new FormData();
+    let imgByteList = [];
+    let imgByteTypeList = [];
+    console.log("모디파이핸들러입니다!! 안녕하세요><");
+    console.log(content);
+    console.log(title);
+    if (content == "") { // content에 변화가 없어 setState로 관리되는 htmlContent가 비어있을 때 
+      await findImage(false, imgByteList, imgByteTypeList); // findImage에 내용 변화가 없었음을 전달
+    }
+    else { // 내용 변화가 있었을 경우
+      await findImage(true, imgByteList, imgByteTypeList); // findImage에 내용 변화가 있었음을 전달
+    }
+    await makeImageFileStruct(imgByteList, imgByteTypeList);
+    if (title == "") { formData_Save.append('title', project.title); } // 제목에 변화가 없었을 시 기존 제목 formData_Save에 넣어줌.
+    else { formData_Save.append('title', title); }
+    //
+    if (startDate == null) { formData_Save.append("startDate", project.startDate); }
+    else { formData_Save.append("startDate", dateToString(startDate)); }
+    if (endDate == null) { formData_Save.append("startDate", project.startDate); }
+    else { formData_Save.append("endDate", dateToString(endDate)); }
+    if (recruit == "") { formData_Save.append("recruit", project.recruit); }
+    else { formData_Save.append("recruit", recruit); }
+    if (selectedTagList.length == 0) {
+      formData_Save.append("tagId", project.tags); //이거 이름 맞나? 내일 확인해보기
+    }
+    else {
+      selectedTagList.map((item) => {
+        tmpTagIdList.push(item.id);
+      });
+      formData_Save.append("tagId", tmpTagIdList);
+    }
+    /* 그러고보니 수정할 때는 시간표 생성 막아야하지 않나? 그럼 시간표는 axios로 보내면 안될듯..... 내일 백이랑 얘기해보기!!!
+        if (teamScheduleList.length == 0) {
+    
+        }
+        else {
+          teamScheduleList.map((item) => {
+            formData_Save.append("startTime", item.startTime);
+            formData_Save.append("endTime", item.endTime);
+            formData_Save.append("week", item.week);
+          });
+        }
+        */
+    //
+    if (imgByteList.length != 0) {
+      let htmlContent_after;
+      formData_Image.append('boardId', project.id);
+      await axios
+        .post(SERVER_URL + "/matching-service/api/v1/boards/image", formData_Image)
+        .then((res) => {
+          console.log(res);
+          let tmpUrlList = [];
+          let tmpNameList = [];
+          res.data.data.map((result) => {
+            let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
+            let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+            console.log("유알엘 : " + IMG_URL);
+            console.log("이름 : " + imageName);
+            tmpUrlList.push(IMG_URL);
+            tmpNameList.push(imageName);
+          })
+          tmpNameList.map((fileName) => {
+            formData_Save.append('fileName', fileName);
+            console.log("fileName = " + fileName);
+          })
+
+          if (content == "") { // 내용 수정이 없었을 시, props.loadWritingInfo.detail에서 image src 교체
+            console.log("내용수정이 없었네용~ prevContent는 " + project.content);
+            htmlContent_after = project.content;
+          }
+          else {
+            htmlContent_after = content;
+          }
+          for (let i = 0; i < tmpUrlList.length; i++) {
+            htmlContent_after = htmlContent_after.toString().replace(imgByteList[i], tmpUrlList[i]);
+          }
+          formData_Save.append('content', htmlContent_after);
+        })
+        .catch((err) => {
+          if (err.response) {
+            console.log(err.response.data);
+          }
+        });
+    }
+    else { //이미지가 없을 시
+      console.log("이미지 리스트가 없어용~");
+      console.log(content);
+      if (content == "") { // 내용 변화가 없었으므로 기존 내용을 formData_save에 'content' 키값으로 저장
+        console.log("내용수정이 없었네용~ prevContent는 " + project.content);
+        formData_Save.append('content', project.content);
+      } else { //, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
+        formData_Save.append('content', content);
+      }
+    }
+    let tmpTagIdList = [];
+    selectedTagList.map((item) => {
+      tmpTagIdList.push(item.id);
+    })
+    console.log(tmpTagIdList);
+    formData_Save.append('tagId', tmpTagIdList);
+    await axios
+      .post(SERVER_URL + "/matching-service/api/v1/boards/" + project.id, formData_Save)
+      .then((res) => {
+        console.log("성공.");
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log("실패.");
+        if (err.response) {
+          console.log(err.response.data);
+        }
+      });
+  }
+
+
   async function saveHandler() {
     const formData_Save = new FormData();
     const formData_Image = new FormData();
@@ -155,7 +308,6 @@ function ProjectAdd() {
     await makeImageFileStruct(imgByteList, imgByteTypeList, formData_Image);
     console.log(formData_Image.getAll("file"));
     //
-
     if (formData_Image.getAll("file").length != 0) {
       await axios
         .post(
@@ -173,7 +325,7 @@ function ProjectAdd() {
               .replace("http://localhost:8000", SERVER_URL);
             let imageName = result
               .toString()
-              .replace("http://localhost:8000/til-service/api/v1/images/", "");
+              .replace("http://localhost:8000/matching-service/api/v1/images/", "");
             tmpUrlList.push(IMG_URL);
             tmpNameList.push(imageName);
           });
@@ -207,7 +359,6 @@ function ProjectAdd() {
     console.log(formData_Save.getAll("startTime"));
     console.log(formData_Save.getAll("endTime"));
     console.log(formData_Save.getAll("week"));
-    console.log(formData.get("file"));
     console.log("플젝을 저장해볼까나~");
 
     await axios
@@ -219,19 +370,6 @@ function ProjectAdd() {
         console.log(err.response);
       });
   }
-
-  const onSkillInputHandler = (event) => {
-    let tmpSkill = skillInput;
-    tmpSkillList.push(tmpSkill);
-    console.log(tmpSkill);
-    setSkillsAdd(false);
-  };
-
-  const onKeyPress = (event) => {
-    if (event.key === "Enter") {
-      onSkillInputHandler(event);
-    }
-  };
 
   const onTagButtonClickHandler = (e) => {
     if (e.target.value == "-1") return;
@@ -265,7 +403,35 @@ function ProjectAdd() {
     myInput.click();
   };
 
+  function loadProjectDetail() {
+    let tmpInfo;
+    axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + writingNo)
+      .then((res) => {
+        console.log(res);
+        //setProject(res.data.data);
+        console.log("^^tmpInfo는");
+        console.log(tmpInfo);
+        //console.log(wrInfo);
+        loadImage(tmpInfo);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
+
   useEffect(() => {
+    if (writingNo != null) {
+      isModify = true;
+      loadProjectDetail();
+      console.log("수정중이에요!");
+      console.log("글 정보는~");
+      if (isModify) {
+        console.log("글 불러오는 중...");
+        //loadWritings();
+        console.log("불러온 글 정보는~");
+        //console.log(wrInfo);
+      }
+    }
     let t = [];
     for (let i = 0; i < tagList.length; i++) {
       t.push(false);
@@ -274,6 +440,8 @@ function ProjectAdd() {
     setIsTagChecked(t);
     console.log(isTagChecked);
   }, []);
+
+
   return (
     <div class="bg-white w-full font-test">
       {showTagMoadl ? (
@@ -307,7 +475,7 @@ function ProjectAdd() {
                 </select>
                 <div class="h-6 my-auto border-l border-gray-300 z-10"></div>
                 <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
-                  <div>{}</div>
+                  <div>{ }</div>
                   <button
                     class="ml-2"
                     name=""
@@ -317,25 +485,6 @@ function ProjectAdd() {
                     x
                   </button>
                 </div>
-                {/*
-                                tagList.map((tag, index) => {
-                                    if (isTagChecked[index]) {
-                                        return (
-                                            <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
-                                                <div>{tag}</div>
-                                                <button
-                                                    class="ml-2"
-                                                    name={tag}
-                                                    value={index}
-                                                    onClick={onTagButtonClickHandler}
-                                                >
-                                                    x
-                                                </button>
-                                            </div>
-                                        );
-                                    }
-                                })
-                            */}
                 <input
                   class="bg-gray-50 grow focus:outline-0 text-gray-500 ml-2"
                   type="text"
@@ -400,7 +549,7 @@ function ProjectAdd() {
             </p>
           </div>
           <div class="mt-4 text-2xl font-btest">새 프로젝트 생성하기</div>
-          <div class="mt-4 border">
+          <div class="mt-4">
             <input
               class="w-full py-2 px-3 border bg-gray-50 focus:outline-0 text-lg font-ltest"
               placeholder="제목"
@@ -409,16 +558,17 @@ function ProjectAdd() {
               }}
             />
           </div>
-          <div class="flex items-center gap-5 mt-2">
+          <div class="flex items-center gap-5 mt-4">
+            <div class="text-lg text-gray-600 font-ltest">#태그</div>
             {selectedTagList.map((item) => {
               return (
-                <div class="w-1/6 mt-2 py-2 px-4 border border-indigo-300 text-indigo-400 rounded-xl text-center bg-indigo-50 text-lg font-test min-w-[8rem]">
+                <div class="w-1/6 py-2 px-3 border border-indigo-300 text-indigo-400 text-center bg-indigo-50 text-md font-test min-w-[6rem]">
                   {item.name}
                 </div>
               );
             })}
             <button
-              class="text-center w-1/6 mt-2 py-2 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-test min-w-[8rem]"
+              class="text-center w-1/6 py-2 px-3 border border-gray-300 bg-gray-50 focus:outline-0 text-md font-test min-w-[6rem]"
               onClick={() => {
                 setShowTagModal(true);
               }}
@@ -426,9 +576,8 @@ function ProjectAdd() {
               +
             </button>
           </div>
-          <div class="mt-6 px-4 border rounded-lg border-gray-300"></div>
           <div class="flex gap-2">
-            <div class="mt-4 w-1/3 border rounded-lg border-gray-300">
+            <div class="mt-4 w-1/3 border border-gray-300">
               <DatePicker
                 selected={startDate}
                 dateFormat="yyyy-MM-dd"
@@ -437,7 +586,7 @@ function ProjectAdd() {
                 placeholderText="시작 날짜"
               />
             </div>
-            <div class="mt-4 w-1/3 border rounded-lg border-gray-300">
+            <div class="mt-4 w-1/3 border border-gray-300">
               <DatePicker
                 selected={endDate}
                 dateFormat="yyyy-MM-dd"
@@ -447,7 +596,7 @@ function ProjectAdd() {
                 placeholderText="종료 날짜"
               />
             </div>
-            <div class="mt-4 w-1/3 py-2 px-2 border rounded-lg border-gray-300">
+            <div class="mt-4 w-1/3 py-2 px-2 border border-gray-300">
               <input
                 class="focus:outline-0"
                 placeholder="모집 인원"
@@ -455,33 +604,76 @@ function ProjectAdd() {
               />
             </div>
           </div>
-          <div class="mt-4 flex justify-end gap-10">
-            <button
-              class=""
-              onClick={() => {
-                setShowTeamScheduleModal(true);
-              }}
-            >
-              팀 시간표 생성
-            </button>
+          <div class="mt-4 flex text-lg text-gray-600 font-ltest justify-start gap-10">
+            {teamScheduleList.length == 0 ?
+              (<button
+                class=""
+                onClick={() => {
+                  setShowTeamScheduleModal(true);
+                }}
+              >
+                팀 시간표 생성{">"}
+              </button>)
+              :
+              (<button
+                class=""
+                onClick={() => {
+                  setShowTeamScheduleModal(true);
+                }}
+              >
+                팀 시간표 조회{">"}
+              </button>)}
           </div>
-          <div class="w-full mt-6 min-h-[60rem] border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
-            <ProjectEditor setContent={setContent} />
-          </div>
-          <div class="mt-4 flex justify-end">
-            <button
-              class="bg-gray-600 text-white border rounded-lg px-4 py-2"
-              onClick={() => {
-                saveHandler();
-              }}
-            >
-              등록하기
-            </button>
-          </div>
+          {isModify ? (
+            loadingComplete ?
+              (
+                <>
+                  <div class="w-full mt-6 min-h-[60rem] border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
+                    <ProjectEditor
+                      setContent={setContent}
+                      isModify={isModify}
+                      loadedProject={project}
+                    />
+                  </div>
+                  <div class="mt-4 flex justify-end">
+                    <button
+                      class="bg-gray-600 text-white border rounded-lg px-4 py-2"
+                      onClick={() => {
+                        modifyHandler();
+                      }}
+                    >
+                      수정하기
+                    </button>
+                  </div>
+                </>
+              )
+              :
+              (<div>로딩중...</div>)
+          ) : (
+            <>
+              <div class="w-full mt-6 min-h-[60rem] border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
+                <ProjectEditor
+                  setContent={setContent}
+                  isModify={isModify}
+                  loadedProject={project}
+                />
+              </div>
+              <div class="mt-4 flex justify-end">
+                <button
+                  class="bg-gray-600 text-white border rounded-lg px-4 py-2"
+                  onClick={() => {
+                    saveHandler();
+                  }}
+                >
+                  등록하기
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default ProjectAdd;
+export default ProjectWriting;
