@@ -161,6 +161,9 @@ export function TeamScheduleModal(props) {
         props.setTeamScheduleList([...tmpScheduleList]);
         fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, scheduleList);
     }
+    function deleteSchedule() {
+
+    }
     return (
         <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
             <div class="bg-white w-[60%] min-w-[65rem] min-h-[50rem] h-[90%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
@@ -359,9 +362,12 @@ export function TeamScheduleModal(props) {
                                     </div>
                                     <button
                                         class="relative bottom-0 w-full bg-black text-white text-2xl px-4 py-3 rounded-lg font-test "
-                                        onClick={() => { addSchedule() }}
+                                        onClick={() => {
+                                            //addSchedule() 
+                                            deleteSchedule()
+                                        }}
                                     >
-                                        추가하기
+                                        삭제하기
                                     </button>
                                 </div>
                             )
