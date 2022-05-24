@@ -3,14 +3,13 @@ import axios from "axios";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
 import profileImage from "../../assets/img/profile.jpg";
-import { isCompositeComponent } from "react-dom/test-utils";
-import { set } from "date-fns";
 
 let tmpSkillList = [];
 let tmpWorkList = [];
 let tmpAwardList = [];
 let tmpPrjSkillsList = [];
 let tmpPrjList = [];
+let tmpPrjImgList = [];
 
 function PortfolioMain() {
   const [skillsAdd, setSkillsAdd] = useState(false);
@@ -35,6 +34,7 @@ function PortfolioMain() {
   const [prjSkillInput, setPrjSkillInput] = useState(null);
   const [prjSkillsAdd, setPrjSkillsAdd] = useState(false);
   const [prjDetailInput, setPrjDetailInput] = useState(null);
+  const [prjImageList, setPrjImageList] = useState([]);
   const [projectAdd, setProjectAdd] = useState(false);
 
   const [userInfo, setUserInfo] = useState([]);
@@ -166,22 +166,39 @@ function PortfolioMain() {
 
   async function onProjectInputHandler() {
     if (checkCreate) {
+      const formData = new FormData();
       let tmpProject = {
         title: prjName,
         content: prjDetailInput,
         job: prjDev,
         startTerm: prjDevStart,
         endTerm: prjDevEnd,
-        projectSkills: prjSkillsList,
-        // img: prjImg,
+        // projectSkills: prjSkillsList,
+        // image: prjImg,
       };
       tmpPrjList = tmpProject;
       console.log(tmpProject);
 
+      formData.append("portfolioId", id);
+      formData.append("title", tmpProject.title);
+      formData.append("content", tmpProject.content);
+      formData.append("job", tmpProject.job);
+      formData.append("startTerm", tmpProject.startTerm);
+      formData.append("endTerm", tmpProject.endTerm);
+
+      // 우선 임시로 해둠
+      formData.append("skillCount", "0");
+      formData.append("skills", "hello");
+
+      console.log("음........................");
+      prjImageList.map((image) => {
+        formData.append("file", image);
+      });
+
       await axios
         .post(
           SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/project",
-          tmpProject
+          formData
         )
         .then((res) => {
           console.log(res);
@@ -210,7 +227,8 @@ function PortfolioMain() {
         startTerm: prjDevStart,
         endTerm: prjDevEnd,
         projectSkills: prjSkillsList,
-        // img: prjImg,
+        projectSkillsCount: prjSkillsList.length,
+        image: prjImg,
       };
 
       tmpPrjList.push(tmpProject);
@@ -222,6 +240,7 @@ function PortfolioMain() {
       setPrjDevEnd(null);
       setPrjSkillsList([]);
       setPrjDetailInput(null);
+      setPrjImg(null);
       setProjectIndex(projectIndex + 1);
       console.log(tmpPrjList);
     }
@@ -563,20 +582,22 @@ function PortfolioMain() {
     startTerm,
     endTerm,
     job,
+    prjImage,
     projectSkills,
     e
   ) {
     console.log("프로젝트 수정");
 
     if (checkCreate) {
+      const formData = new FormData();
       let tmpProject = {
         title: prjName,
         content: prjDetailInput,
         job: prjDev,
         startTerm: prjDevStart,
         endTerm: prjDevEnd,
-        projectSkills: prjSkillsList,
-        // image: prjImg,
+        // projectSkills: prjSkillsList,
+        image: prjImg,
       };
 
       if (prjName == null) {
@@ -599,11 +620,24 @@ function PortfolioMain() {
         tmpProject.endTerm = endTerm;
       }
 
-      if (prjSkillsList == null) {
-        tmpProject.projectSkills = projectSkills;
+      if (prjImg == null) {
+        tmpProject.image = prjImage;
       }
 
-      tmpPrjList = tmpProject;
+      // if (prjSkillsList == null) {
+      // tmpProject.projectSkills = projectSkills;
+      // }
+
+      // tmpPrjList = tmpProject;
+      formData.append("title", tmpProject.title);
+      formData.append("content", tmpProject.content);
+      formData.append("job", tmpProject.job);
+      formData.append("startTerm", tmpProject.startTerm);
+      formData.append("endTerm", tmpProject.endTerm);
+      // formData.append("skillCount", );
+      // formData.append("skills", )
+      formData.append("file", tmpProject.image);
+      formData.append("projectId", params);
 
       await axios
         .post(
@@ -612,7 +646,8 @@ function PortfolioMain() {
             id +
             "/project/" +
             params,
-          tmpProject
+          // tmpProject
+          formData
         )
         .then((res) => {
           console.log(res);
@@ -641,7 +676,7 @@ function PortfolioMain() {
         startTerm: prjDevStart,
         endTerm: prjDevEnd,
         projectSkills: prjSkillsList,
-        // image: prjImg,
+        image: prjImg,
         update: false,
         delete: false,
       };
@@ -668,6 +703,10 @@ function PortfolioMain() {
 
       if (prjSkillsList == null) {
         tmpProject.projectSkills = projectSkills;
+      }
+
+      if (prjImage == null) {
+        tmpProject.image = prjImage;
       }
 
       let copyProject = [...tmpPrjList];
@@ -778,6 +817,13 @@ function PortfolioMain() {
     console.log(prjDetailInput);
   };
 
+  const onUpdatePrjImgInput = (params, imageBytes, imageType) => {
+    console.log("프로젝트 이미지");
+    let image = "data:image/" + imageType + ";base64," + imageBytes;
+    if (params == null) setPrjImg(image);
+    else setPrjImg(params);
+  };
+
   // useEffect(() => {
   //   if (workStart.length == 6) {
   //     setWorkStart(workStart.replace(/(\d{4})(\d{2})/, "$1.$2"));
@@ -809,24 +855,88 @@ function PortfolioMain() {
   // }, [prjDevEnd]);
 
   const onPortfolioCreateHandler = (e) => {
-    let portfolio = {
-      template: template,
-      github: githubInput,
-      job: jobInput,
-      content: introInput,
-      // awards: tmpAwardList,
-      // careers: tmpWorkList,
-      // projects: tmpPrjList,
-      awards: firstAwardInfo,
-      careers: firstCareerInfo,
-      projects: firstProjectInfo,
-    };
+    const formData = new FormData();
+    // let portfolio = {
+    //   template: template,
+    //   github: githubInput,
+    //   job: jobInput,
+    //   content: introInput,
+    //   // awards: tmpAwardList,
+    //   // careers: tmpWorkList,
+    //   // projects: tmpPrjList,
+    //   awards: firstAwardInfo,
+    //   careers: firstCareerInfo,
+    //   projects: firstProjectInfo,
+    //   // files: prjImageList,
+    //   projectId: null,
+    // };
+
+    // formData.append("portfolio", portfolio);
+
+    formData.append("template", template);
+    formData.append("github", githubInput);
+    formData.append("job", jobInput);
+    formData.append("content", introInput);
+
+    let tempAwardName = [];
+    let tempAwardDate = [];
+    firstAwardInfo.map((award) => {
+      tempAwardName.push(award.name);
+      tempAwardDate.push(award.date);
+    });
+    formData.append("awardNames", tempAwardName);
+    formData.append("awardDates", tempAwardDate);
+
+    let tempCareerTitle = [];
+    let tempCareerContent = [];
+    let tempCareerSTerm = [];
+    let tempCareerETerm = [];
+    firstCareerInfo.map((car) => {
+      tempCareerTitle.push(car.title);
+      tempCareerContent.push(car.content);
+      tempCareerSTerm.push(car.startTerm);
+      tempCareerETerm.push(car.endTerm);
+    });
+    formData.append("careerTitles", tempCareerTitle);
+    formData.append("careerContents", tempCareerContent);
+    formData.append("careerStartTerms", tempCareerSTerm);
+    formData.append("careerEndTerms", tempCareerETerm);
+
+    let tempPrjTitle = [];
+    let tempPrjContent = [];
+    let tempPrjJob = [];
+    let tempPrjSTerm = [];
+    let tempPrjETerm = [];
+    let tempPrjSCount = [];
+    let tempPrjSkill = [];
+    firstProjectInfo.map((prj) => {
+      tempPrjTitle.push(prj.title);
+      tempPrjContent.push(prj.content);
+      tempPrjJob.push(prj.job);
+      tempPrjSTerm.push(prj.startTerm);
+      tempPrjETerm.push(prj.endTerm);
+      tempPrjSCount.push(prj.projectSkillsCount);
+      tempPrjSkill.push(prj.projectSkills);
+    });
+
+    formData.append("prjTitles", tempPrjTitle);
+    formData.append("prjContents", tempPrjContent);
+    formData.append("prjJobs", tempPrjJob);
+    formData.append("prjStartTerms", tempPrjSTerm);
+    formData.append("prjEndTerms", tempPrjETerm);
+    formData.append("prjSkillCount", tempPrjSCount);
+    formData.append("prjSkills", tempPrjSkill);
+
+    prjImageList.map((image) => {
+      formData.append("files", image);
+    });
+
+    // formData.append("projectId", null);
 
     console.log("포트폴리오 생성");
-    console.log(portfolio);
 
     axios
-      .post(SERVER_URL + "/ptf-service/api/v1/portfolio", portfolio)
+      .post(SERVER_URL + "/ptf-service/api/v1/portfolio", formData)
       .then((res) => {
         console.log(res);
       })
@@ -1111,7 +1221,9 @@ function PortfolioMain() {
                 startTerm: pro.startTerm,
                 endTerm: pro.endTerm,
                 job: pro.job,
-                projectSkills: pro.projectSkills,
+                imageBytes: pro.imageBytes,
+                imageType: pro.imageType,
+                // projectSkills: pro.projectSkills,
                 update: false,
                 delete: false,
               };
@@ -2230,7 +2342,7 @@ function PortfolioMain() {
                                                 for="input-prjimg"
                                                 class="w-full flex justify-end"
                                               >
-                                                <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-500 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
+                                                <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-400 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
                                                   <div>사진 수정</div>
                                                 </div>
                                               </label>
@@ -2241,18 +2353,21 @@ function PortfolioMain() {
                                                 for="input-prjimg"
                                                 class=""
                                               >
-                                                <div
+                                                <img
                                                   class="w-full h-full font-ltest text-base text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
+                                                  src={
+                                                    "data:image/" +
+                                                    item.imageType +
+                                                    ";base64," +
+                                                    item.imageBytes
+                                                  }
                                                   style={{
-                                                    minHeight: "14rem",
-                                                    minWidth: "22rem",
-                                                    maxHeight: "14rem",
-                                                    maxWidth: "22rem",
+                                                    minHeight: "12rem",
+                                                    minWidth: "16rem",
+                                                    maxHeight: "12rem",
+                                                    maxWidth: "16rem",
                                                   }}
-                                                >
-                                                  {/* <div>+</div>프로젝트 대표
-                                                  이미지 추가 */}
-                                                </div>
+                                                />
                                               </label>
                                               <input
                                                 type="file"
@@ -2260,7 +2375,6 @@ function PortfolioMain() {
                                                 id="input-prjimg"
                                                 class="w-0 h-0"
                                                 onChange={(e) => {
-                                                  console.log(e.target.value);
                                                   if (
                                                     e.target.value.length > 0
                                                   ) {
@@ -2274,8 +2388,13 @@ function PortfolioMain() {
                                                     fileReader.onload =
                                                       function (evt) {
                                                         /* file을 꺼내서 State로 지정 */
-                                                        setPrjImg(
-                                                          evt.target.result
+                                                        // setPrjImg(
+                                                        //   evt.target.result
+                                                        // );
+                                                        onUpdatePrjImgInput(
+                                                          evt.target.result,
+                                                          item.imageBytes,
+                                                          item.imageType
                                                         );
                                                       };
                                                   }
@@ -2377,7 +2496,12 @@ function PortfolioMain() {
                                           <div class="flex flex-col items-center">
                                             <img
                                               class="w-40rem h-50rem border border-gray-300"
-                                              // src={item.img}
+                                              src={
+                                                "data:image/" +
+                                                item.imageType +
+                                                ";base64," +
+                                                item.imageBytes
+                                              }
                                               style={{
                                                 minHeight: "12rem",
                                                 minWidth: "16rem",
@@ -2418,7 +2542,7 @@ function PortfolioMain() {
                                                 사용 기술
                                               </div>
                                               <div class="text-gray-500 grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                                                {item.projectSkills.map(
+                                                {/* {item.projectSkills.map(
                                                   (skill) => {
                                                     return (
                                                       <div class="font-ltest w-full rounded-lg bg-gray-100 border border-gray-300 px-2 text-center py-1 ">
@@ -2426,7 +2550,7 @@ function PortfolioMain() {
                                                       </div>
                                                     );
                                                   }
-                                                )}
+                                                )} */}
                                               </div>
                                             </div>
                                           </div>
@@ -2461,7 +2585,8 @@ function PortfolioMain() {
                                                   item.startTerm,
                                                   item.endTerm,
                                                   item.job,
-                                                  item.projectSkills,
+                                                  prjImg,
+                                                  // item.projectSkills,
                                                   e
                                                 );
                                               }}
@@ -2481,7 +2606,7 @@ function PortfolioMain() {
                                             disabled
                                           />
                                           <div class="flex justify-end gap-2">
-                                            <button
+                                            {/* <button
                                               class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
                                               onClick={() => {
                                                 const findIndex =
@@ -2502,7 +2627,7 @@ function PortfolioMain() {
                                               }}
                                             >
                                               수정하기
-                                            </button>
+                                            </button> */}
                                             <button
                                               class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
                                               onClick={(e) => {
@@ -2588,28 +2713,29 @@ function PortfolioMain() {
                                                 for="input-prjimg"
                                                 class="w-full flex justify-end"
                                               >
-                                                <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-500 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
+                                                <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-400 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
                                                   <div>사진 수정</div>
                                                 </div>
                                               </label>
                                             </div>
                                           ) : (
                                             <div>
+                                              <img
+                                                class="w-full h-full font-ltest text-base text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
+                                                src={item.image}
+                                                style={{
+                                                  minHeight: "12rem",
+                                                  minWidth: "16rem",
+                                                  maxHeight: "12rem",
+                                                  maxWidth: "16rem",
+                                                }}
+                                              />
                                               <label
                                                 for="input-prjimg"
-                                                class=""
+                                                class="w-full flex justify-end"
                                               >
-                                                <div
-                                                  class="w-full h-full font-ltest text-base text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
-                                                  style={{
-                                                    minHeight: "14rem",
-                                                    minWidth: "22rem",
-                                                    maxHeight: "14rem",
-                                                    maxWidth: "22rem",
-                                                  }}
-                                                >
-                                                  {/* <div>+</div>프로젝트 대표
-                                              이미지 추가 */}
+                                                <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-300 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
+                                                  <div>사진 수정</div>
                                                 </div>
                                               </label>
                                               <input
@@ -2629,9 +2755,17 @@ function PortfolioMain() {
                                                     fileReader.readAsDataURL(
                                                       imgTarget
                                                     );
+
+                                                    tmpPrjImgList.push(
+                                                      imgTarget
+                                                    );
+                                                    setPrjImageList(
+                                                      tmpPrjImgList
+                                                    );
                                                     fileReader.onload =
                                                       function (evt) {
                                                         /* file을 꺼내서 State로 지정 */
+
                                                         setPrjImg(
                                                           evt.target.result
                                                         );
@@ -2735,7 +2869,7 @@ function PortfolioMain() {
                                           <div class="flex flex-col items-center">
                                             <img
                                               class="w-40rem h-50rem border border-gray-300"
-                                              // src={item.img}
+                                              src={item.image}
                                               style={{
                                                 minHeight: "12rem",
                                                 minWidth: "16rem",
@@ -2820,6 +2954,7 @@ function PortfolioMain() {
                                                   item.endTerm,
                                                   item.job,
                                                   item.projectSkills,
+                                                  item.image,
                                                   e
                                                 );
                                               }}
@@ -2839,7 +2974,7 @@ function PortfolioMain() {
                                             disabled
                                           />
                                           <div class="flex justify-end gap-2">
-                                            <button
+                                            {/* <button
                                               class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
                                               onClick={() => {
                                                 const findIndex =
@@ -2864,7 +2999,7 @@ function PortfolioMain() {
                                               }}
                                             >
                                               수정하기
-                                            </button>
+                                            </button> */}
                                             <button
                                               class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
                                               onClick={(e) => {
@@ -2929,7 +3064,7 @@ function PortfolioMain() {
                                     for="input-prjimg"
                                     class="w-full flex justify-end"
                                   >
-                                    <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-500 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
+                                    <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-400 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
                                       <div>사진 수정</div>
                                     </div>
                                   </label>
@@ -2951,6 +3086,7 @@ function PortfolioMain() {
                                   </label>
                                 </div>
                               )}
+
                               <input
                                 type="file"
                                 accept="image/*"
@@ -2960,7 +3096,12 @@ function PortfolioMain() {
                                   console.log(e.target.value);
                                   if (e.target.value.length > 0) {
                                     let imgTarget = e.target.files[0];
+
+                                    tmpPrjImgList.push(imgTarget);
+                                    setPrjImageList(tmpPrjImgList);
+
                                     let fileReader = new FileReader();
+
                                     fileReader.readAsDataURL(imgTarget);
                                     fileReader.onload = function (evt) {
                                       /* file을 꺼내서 State로 지정 */
@@ -3059,6 +3200,7 @@ function PortfolioMain() {
                                   onProjectInputHandler();
                                   setPrjSkillsList([]);
                                   tmpPrjSkillsList = [];
+                                  setPrjImg(null);
                                 }}
                               >
                                 추가하기

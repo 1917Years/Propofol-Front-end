@@ -55,7 +55,6 @@ function T2() {
           if (res.data.data.profileType == null) {
             console.log("프로필 없삼");
             setCheckProfile(false);
-            setLoadingComplete(true);
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.data.profileType);
@@ -63,7 +62,6 @@ function T2() {
             console.log(profileType);
             console.log(profileType);
             setCheckProfile(true);
-            setLoadingComplete(true);
           }
         })
         .catch((err) => {
