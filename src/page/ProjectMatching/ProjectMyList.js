@@ -26,7 +26,7 @@ function ProjectMyList() {
     const [checkedTagList, setCheckedTagList] = useState([]);
     const [projectList, setProjectList] = useState([]);
     const [tmp, setTmp] = useState(false);
-
+    const [projectTextList, setProejctTextList] = useState([]);
     let tmpDetail =
         "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
     const onTagButtonClickHandler = (e) => {
@@ -55,24 +55,40 @@ function ProjectMyList() {
             navigate("/blog/search");
         }
     };
-
+    function htmlDetailToText(htmlContent) {
+        let text = htmlContent.replace(/(<([^>]+)>)/ig, "");
+        text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
+            const entityMap = {
+                '&amp;': '&',
+                '&lt;': '<',
+                '&gt;': '>',
+                '&quot;': '"',
+                '&#39;': "'",
+            };
+            return entityMap[s];
+        });
+        console.log(text);
+        return text;
+    }
     function loadProject() {
-        axios.get(SERVER_URL + "/matching-service/api/v1/matchings/page?",
+        axios.get(SERVER_URL + "/matching-service/api/v1/matchings/myBoard?",
             {
                 params: {
                     page: 1
                 }
             })
             .then((res) => {
-                let tmpProjectList = [];
+                let tmpProjectList = [], tmpTextList = [];
                 console.log(res);
                 res.data.data.boards.map((item) => {
                     tmpProjectList.push(item);
+                    tmpTextList.push(htmlDetailToText(item.content));
                 })
                 tmpProjectList.map((item) => {
                     console.log(item);
                 })
                 setProjectList([...tmpProjectList]);
+                setProejctTextList([...tmpTextList]);
             })
             .catch((err) => {
                 console.log(err.response);
@@ -190,7 +206,7 @@ function ProjectMyList() {
                         유진님이 모집 중인 프로젝트예요.
                     </div>
                     <div class="mt-4 border rounded-lg">
-                        {projectList.map((item) => {
+                        {projectList.map((item, index) => {
                             if (item.image != null) {
                                 return (
                                     <div
@@ -205,6 +221,8 @@ function ProjectMyList() {
                                                         <button
                                                             class="ml-auto"
                                                             onClick={async () => {
+                                                                navigate("/pm/writing?No=" + item.id);
+                                                                /*
                                                                 const formData_Image = new FormData();
                                                                 const formData_Save = new FormData();
                                                                 formData_Image.append('boardId', item.id);
@@ -255,10 +273,11 @@ function ProjectMyList() {
                                                                     .catch((err) => {
                                                                         console.log(err.response);
                                                                     })
+                                                                */
                                                             }}
 
 
-                                                        >{">"} 수정하기{"(임시로 지금은 기존 데이터 그대로 보냄)"}</button>
+                                                        >{">"} 수정하기</button>
                                                     </>
                                                 )
                                                     :
@@ -270,7 +289,7 @@ function ProjectMyList() {
                                                 class="mt-1 py-1 text-black text-xl">
                                                 {item.title}
                                             </button>
-                                            <div class="font-ltest min-h-[45px]">{item.content}</div>
+                                            <div class="font-ltest min-h-[45px]">{projectTextList[index]}</div>
                                             <div class="flex gap-2">
                                                 {item.tagInfos.map((tags) => {
                                                     return (
@@ -286,7 +305,7 @@ function ProjectMyList() {
                                             <div class="w-32 h-32 mb-2">
                                                 <img
                                                     src={"data:image/" + item.imgType + ";base64," + item.image}
-                                                    class="w-full z-full z-40 min-h-[32px] max-h-[32px]"
+                                                    class=" z-40 h-32 w-32"
                                                 />
                                             </div>
                                             <div class="w-32 grid grid-rows-2 text-sm ">

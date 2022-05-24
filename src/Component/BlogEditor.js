@@ -532,7 +532,6 @@ function BlogEditor(props) {
           console.log(err.response.data);
         }
       });
-
   }
 
   const tmpSaveHandler = (e) => {

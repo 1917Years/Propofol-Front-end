@@ -53,6 +53,10 @@ function T1() {
           if (res.data.data.profileType == null) {
             console.log("프로필 없삼");
             setCheckProfile(false);
+<<<<<<< HEAD
+=======
+            //setLoadingComplete(true);
+>>>>>>> e869d3a759be3248575250e70da54012442468e4
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.data.profileType);
@@ -60,6 +64,10 @@ function T1() {
             console.log(profileType);
             console.log(profileType);
             setCheckProfile(true);
+<<<<<<< HEAD
+=======
+            //setLoadingComplete(true);
+>>>>>>> e869d3a759be3248575250e70da54012442468e4
           }
         })
         .catch((err) => {

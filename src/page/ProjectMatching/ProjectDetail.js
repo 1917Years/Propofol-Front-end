@@ -1,8 +1,10 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
+import ReactQuill, { Quill } from "react-quill";
 import profileImage from "../../assets/img/profile.jpg";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
+import 'react-quill/dist/quill.bubble.css';
 
 function ProjectDetail() {
   const navigate = useNavigate();
@@ -26,6 +28,7 @@ function ProjectDetail() {
   const [isTagFull, setIsTagFull] = useState(false);
   const [checkedTagList, setCheckedTagList] = useState([]);
   const [tmp, setTmp] = useState(false);
+  const [project, setProject] = useState([])
 
   let tmpDetail =
     "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
@@ -60,6 +63,7 @@ function ProjectDetail() {
     axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
       .then((res) => {
         console.log(res);
+        setProject(res.data.data);
       })
       .catch((err) => {
         console.log(err.response);
@@ -174,11 +178,20 @@ function ProjectDetail() {
             <div class="flex mt-4 justify-between pr-2">
               <div class="flex">
                 <div class="text-2xl font-btest">
-                  개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
+                  {project.title}
                 </div>
-                <div class="ml-4 w-fit px-3 bg-green-300 text-black align-middle">
-                  모집중
-                </div>
+                {project.status == "ACTIVE" ?
+                  (
+                    <div class="ml-4 w-fit px-3 bg-green-300 text-black align-middle">
+                      모집중
+                    </div>
+                  )
+                  :
+                  (
+                    <div class="px-2 bg-red-300 text-black">
+                      모집완료
+                    </div>
+                  )}
               </div>
               <button
                 class="bg-black text-white"
@@ -193,7 +206,7 @@ function ProjectDetail() {
                     })
                 }}
               >
-                임시삭제버튼!!!
+                asd
               </button>
               <button
                 onClick={() => {
@@ -211,7 +224,7 @@ function ProjectDetail() {
                       console.log(err.response);
                     })
                 }}
-              >{"임시 버튼(누르면 수요일 08:00 ~ 10:30 일정이 추가돼요!"}</button>
+              >{"임시 버튼"}</button>
               <button
                 onClick={() => {
                   axios.delete(SERVER_URL + "/matching-service/api/v1/matchings/" + id + "/" + 8)
@@ -222,7 +235,7 @@ function ProjectDetail() {
                       console.log(err.response);
                     })
                 }}
-              >{"임시 버튼(누르면 지정한 id(지금은 8)의 일정이 삭제돼요!)"}</button>
+              >{"임시 버튼"}</button>
               <button
                 onClick={() => {
 
@@ -235,47 +248,43 @@ function ProjectDetail() {
               <div class="mt-4 w-3/4">
                 <div
                   className="Writing"
-                  class="flex border-b bg-white h-54 py-5 gap-5"
+                  class="flex bg-white h-54 py-5 gap-5"
                 >
                   <div class="w-[47rem]">
                     <div class="flex">
                       <div>
                         <div class="bg-gray-300 w-56 h-72 mb-2">사진</div>
                       </div>
-                      <div class="ml-10">
-                        <div class="text-bluepurple text-lg">팀명 <a class="text-base ml-3 text-black">델리만쥬</a></div>
-                        <div class="text-bluepurple text-lg">프로젝트명 <a class="text-base ml-3 text-black">프로포폴 - 개발자 경력 개발 도움 웹 서비스</a></div>
+                      <div class="ml-10 flex flex-col gap-2 items-start">
                         <div class="text-bluepurple text-lg">사용 기술 <a class="text-base ml-3 text-black">Java, JavaScript, Spring</a></div>
                         <div class="text-bluepurple text-lg">모집 인원 <a class="text-base ml-3 text-black">4명</a></div>
                         <div class="text-bluepurple text-lg">프로젝트 기간 <a class="text-base ml-3 text-black">2022.06.01~2022.09.01</a></div>
-                        <div class="text-bluepurple text-lg">모집 분야<a class="text-base ml-3 text-black">Web Service</a></div>
-                        <div class="text-bluepurple text-lg">가능 시간</div>
-                        <div>월요일 화요일 15:00~16:30</div>
-                        <div>수요일 목요일 16:00~18:30</div>
-                        <div>금요일 토요일 일요일 18:00~16:30</div>
                       </div>
                     </div>
 
-                    <div class="mt-4 font-ltest">{tmpDetail}</div>
-
+                    <div class="mt-4 font-ltest">
+                      <ReactQuill
+                        value={project.content}
+                        readOnly={true}
+                        theme={"bubble"}
+                      />
+                    </div>
                   </div>
 
                 </div>
               </div>
               <div class="ml-5 w-1/4 py-5">
-
-                <div class="mt-10 mb-4 text-xl font-btest">팀장 정보</div>
-
+                <div class="mb-4 text-xl font-btest">팀장 정보</div>
                 <div class="bg-gray-100 py-4 px-4 rounded-lg">
                   <div class="flex mt-2">
                     <div className="ProfileImage" class=" w-14 h-14 rounded-full">
                       <img
-                        src={profileImage}
+                        src={project.profileString}
                         class="w-14 h-14 rounded-full drop-shadow-lg"
                         alt="profile"
                       />
                     </div>
-                    <div class="ml-4 my-auto text-2xl font-btest">이지원</div>
+                    <div class="ml-4 my-auto text-2xl font-btest">{project.nickName}</div>
                   </div>
                   <div class="mt-4 text-sm font-ltest">안녕하세요.
                     저는 개발자 이지원입니다. 개발을 저의 인생 모토로 삼아 일일 공부를
@@ -287,37 +296,8 @@ function ProjectDetail() {
                 <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
                 <button class="mt-4 border text-md rounded-lg w-full py-2">지원하기</button>
                 <div class="mt-6 text-lg font-btest">현재 참여 중인 팀원</div>
-                <div class="mt-3">
-                  <div class="flex mb-2">
-                    <div className="ProfileImage" class=" w-6 h-6 rounded-full">
-                      <img
-                        src={profileImage}
-                        class="w-6 h-6 rounded-full drop-shadow-lg"
-                        alt="profile"
-                      />
-                    </div>
-                    <div class="ml-2 my-auto font-btest">최영찬</div>
-                  </div>
-                  <div class="flex mb-2">
-                    <div className="ProfileImage" class="w-6 h-6 rounded-full">
-                      <img
-                        src={profileImage}
-                        class="w-6 h-6 rounded-full drop-shadow-lg"
-                        alt="profile"
-                      />
-                    </div>
-                    <div class="ml-2 my-auto font-btest">최영찬</div>
-                  </div>
-                  <div class="flex mb-2">
-                    <div className="ProfileImage" class="w-6 h-6 rounded-full">
-                      <img
-                        src={profileImage}
-                        class="w-6 h-6 rounded-full drop-shadow-lg"
-                        alt="profile"
-                      />
-                    </div>
-                    <div class="ml-2 my-auto font-btest">최영찬</div>
-                  </div>
+                <div class="mt-3 text-gray-600">
+                  {project.recruited + "명이 참여하고 있어요!"}
                 </div>
               </div>
             </div>

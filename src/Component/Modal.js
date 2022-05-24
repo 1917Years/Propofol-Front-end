@@ -89,6 +89,7 @@ export function TeamScheduleModal(props) {
     const [endTimeMes, setEndTimeMes] = useState("");
     const [scheduleList, setScheduleList] = useState([]);
     const [scheduleStyleList, setScheduleStyleList] = useState([[], [], [], [], [], [], []]);
+    const [selectedSchedule, setSelectedSchedule] = useState({ startTime: "", endTime: "", week: "" });
     useEffect(() => {
         if (startTime.length === 4) {
             setStartTime(
@@ -162,7 +163,7 @@ export function TeamScheduleModal(props) {
     }
     return (
         <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
-            <div class="bg-white w-[60%] min-w-[65rem] min-h-[58rem] h-[90%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
+            <div class="bg-white w-[60%] min-w-[65rem] min-h-[50rem] h-[90%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
                 <div class="flex justify-between border-b border-gray-300 pb-3">
                     <div class="ml-2 text-3xl font-sbtest">
                         팀 시간표 생성
@@ -177,7 +178,7 @@ export function TeamScheduleModal(props) {
                 <div class="ml-2 flex grow mt-5 gap-3">
                     <div class="flex flex-col gap-2 basis-[65%]">
                         <div class="text-2xl font-sbtest">현재 시간표</div>
-                        <div class="h-full flex flex-col justify-start text-center border border-gray-300">
+                        <div class="h-[90%] flex flex-col justify-start text-center border border-gray-300">
                             <div class="w-full h-fit grid grid-cols-8 font-ltest text-gray-600 border-b gap-1">
                                 <div class="border-r pt-2 pb-2">시간</div>
                                 {day.map((item) => {
@@ -205,7 +206,7 @@ export function TeamScheduleModal(props) {
                                                             <button
                                                                 style={item.style}
                                                                 onClick={() => {
-                                                                    //setSelectedSchedule({ startTime: item.startTime, endTime: item.endTime, week: week, id: item.id });
+                                                                    setSelectedSchedule({ startTime: item.startTime, endTime: item.endTime, week: week });
                                                                     //setShowScheduleDetailModal(true);
                                                                 }}
                                                             >
@@ -221,75 +222,150 @@ export function TeamScheduleModal(props) {
                         </div>
 
                     </div>
-                    <div class="border-l flex flex-col justify-between basis-[35%] pl-5 mt-10 mb-6">
-                        <div class="">
-                            <div class="text-3xl font-sbtest mb-8">일정 추가</div>
-                            <div class="mx-2 flex flex-col gap-5">
-                                <div class="flex flex-col gap-3">
-                                    <div class="text-2xl font-sbtest">시작 시간</div>
-                                    <input
-                                        class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
-                                        placeholder="hh:mm"
-                                        value={startTime}
-                                        onChange={(e) => { setStartTime(e.target.value) }}
-                                    />
-                                    {startTimeMes == "" ?
-                                        (<div class="text-red-500 font-ltest h-8"></div>) :
-                                        (<div class="text-red-500 font-ltest">{startTimeMes}</div>)
-                                    }
-                                </div>
-                                <div class="flex flex-col mt-2 gap-3">
-                                    <div class="text-2xl font-sbtest">종료 시간</div>
-                                    <input
-                                        class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
-                                        placeholder="hh:mm"
-                                        value={endTime}
-                                        onChange={(e) => { setEndTime(e.target.value) }}
-                                    />
-                                    {endTimeMes == "" ?
-                                        (<div class="text-red-500 font-ltest h-8"></div>) :
-                                        (<div class="text-red-500 font-ltest">{endTimeMes}</div>)
-                                    }
-                                </div>
-                                <div class="flex flex-col mt-3 gap-6">
-                                    <div class="text-2xl font-sbtest">요일</div>
-                                    <div class="grid grid-cols-4 gap-3">
-                                        {day.map((item) => {
-                                            if (selectedDay == item) {
-                                                return (
-                                                    <button
-                                                        class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl focus:outline-0"
-                                                        onClick={() => { setSelectedDay(item) }}
-                                                    >
-                                                        {item}
-                                                    </button>)
+                    {
+                        selectedSchedule.week == "" ?
+                            (<div class="border-l flex flex-col justify-between basis-[35%] pl-5 mt-10 mb-6">
+                                <div class="">
+                                    <div class="text-3xl font-sbtest mb-8">일정 추가</div>
+                                    <div class="mx-2 flex flex-col gap-5">
+                                        <div class="flex flex-col gap-3">
+                                            <div class="text-2xl font-sbtest">시작 시간</div>
+                                            <input
+                                                class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
+                                                placeholder="hh:mm"
+                                                value={startTime}
+                                                onChange={(e) => { setStartTime(e.target.value) }}
+                                            />
+                                            {startTimeMes == "" ?
+                                                (<div class="text-red-500 font-ltest h-8"></div>) :
+                                                (<div class="text-red-500 font-ltest">{startTimeMes}</div>)
                                             }
-                                            else {
-                                                return (
-                                                    <button
-                                                        class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl focus:outline-0"
-                                                        onClick={() => { setSelectedDay(item) }}
-                                                    >
-                                                        {item}
-                                                    </button>
-                                                )
+                                        </div>
+                                        <div class="flex flex-col mt-2 gap-3">
+                                            <div class="text-2xl font-sbtest">종료 시간</div>
+                                            <input
+                                                class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
+                                                placeholder="hh:mm"
+                                                value={endTime}
+                                                onChange={(e) => { setEndTime(e.target.value) }}
+                                            />
+                                            {endTimeMes == "" ?
+                                                (<div class="text-red-500 font-ltest h-8"></div>) :
+                                                (<div class="text-red-500 font-ltest">{endTimeMes}</div>)
                                             }
-                                        })}
+                                        </div>
+                                        <div class="flex flex-col mt-3 gap-6">
+                                            <div class="text-2xl font-sbtest">요일</div>
+                                            <div class="grid grid-cols-4 gap-3">
+                                                {day.map((item) => {
+                                                    if (selectedDay == item) {
+                                                        return (
+                                                            <button
+                                                                class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl focus:outline-0"
+                                                                onClick={() => { setSelectedDay(item) }}
+                                                            >
+                                                                {item}
+                                                            </button>)
+                                                    }
+                                                    else {
+                                                        return (
+                                                            <button
+                                                                class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl focus:outline-0"
+                                                                onClick={() => { setSelectedDay(item) }}
+                                                            >
+                                                                {item}
+                                                            </button>
+                                                        )
+                                                    }
+                                                })}
+                                            </div>
+                                            {dayMes == "" ?
+                                                (<div class="text-red-500 font-ltest h-8"></div>) :
+                                                (<div class="text-red-500 font-ltest">{dayMes}</div>)
+                                            }
+                                        </div>
                                     </div>
-                                    {dayMes == "" ?
-                                        (<div class="text-red-500 font-ltest h-8"></div>) :
-                                        (<div class="text-red-500 font-ltest">{dayMes}</div>)
-                                    }
                                 </div>
-                            </div>
-                        </div>
-                        <button
-                            class="relative bottom-0 w-full bg-black text-white text-2xl px-4 py-3 rounded-lg font-test "
-                            onClick={() => { addSchedule() }}
-                        >
-                            추가하기
-                        </button>
-                    </div>
+                                <button
+                                    class="relative bottom-0 w-full bg-black text-white text-2xl px-4 py-3 rounded-lg font-test "
+                                    onClick={() => { addSchedule() }}
+                                >
+                                    추가하기
+                                </button>
+                            </div>)
+                            :
+                            (
+                                <div class="border-l flex flex-col justify-between basis-[35%] pl-5 mt-10 mb-6">
+                                    <div class="">
+                                        <div class="text-3xl font-sbtest mb-8">일정 정보</div>
+                                        <div class="mx-2 flex flex-col gap-5">
+                                            <div class="flex flex-col gap-3">
+                                                <div class="text-2xl font-sbtest">시작 시간</div>
+                                                <input
+                                                    class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
+                                                    placeholder="hh:mm"
+                                                    value={startTime}
+                                                    onChange={(e) => { setStartTime(e.target.value) }}
+                                                />
+                                                {startTimeMes == "" ?
+                                                    (<div class="text-red-500 font-ltest h-8"></div>) :
+                                                    (<div class="text-red-500 font-ltest">{startTimeMes}</div>)
+                                                }
+                                            </div>
+                                            <div class="flex flex-col mt-2 gap-3">
+                                                <div class="text-2xl font-sbtest">종료 시간</div>
+                                                <input
+                                                    class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
+                                                    placeholder="hh:mm"
+                                                    value={endTime}
+                                                    onChange={(e) => { setEndTime(e.target.value) }}
+                                                />
+                                                {endTimeMes == "" ?
+                                                    (<div class="text-red-500 font-ltest h-8"></div>) :
+                                                    (<div class="text-red-500 font-ltest">{endTimeMes}</div>)
+                                                }
+                                            </div>
+                                            <div class="flex flex-col mt-3 gap-6">
+                                                <div class="text-2xl font-sbtest">요일</div>
+                                                <div class="grid grid-cols-4 gap-3">
+                                                    {day.map((item) => {
+                                                        if (selectedDay == item) {
+                                                            return (
+                                                                <button
+                                                                    class="w-16 h-16 rounded-full bg-indigo-400 text-white text-2xl focus:outline-0"
+                                                                    onClick={() => { setSelectedDay(item) }}
+                                                                >
+                                                                    {item}
+                                                                </button>)
+                                                        }
+                                                        else {
+                                                            return (
+                                                                <button
+                                                                    class="w-16 h-16 rounded-full bg-gray-400 text-white text-2xl focus:outline-0"
+                                                                    onClick={() => { setSelectedDay(item) }}
+                                                                >
+                                                                    {item}
+                                                                </button>
+                                                            )
+                                                        }
+                                                    })}
+                                                </div>
+                                                {dayMes == "" ?
+                                                    (<div class="text-red-500 font-ltest h-8"></div>) :
+                                                    (<div class="text-red-500 font-ltest">{dayMes}</div>)
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button
+                                        class="relative bottom-0 w-full bg-black text-white text-2xl px-4 py-3 rounded-lg font-test "
+                                        onClick={() => { addSchedule() }}
+                                    >
+                                        추가하기
+                                    </button>
+                                </div>
+                            )
+                    }
                 </div>
             </div>
         </div>

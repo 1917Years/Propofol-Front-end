@@ -4,31 +4,32 @@ import logo from "../assets/img/logo_tmp.png";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 
-function Header({}) {
+function Header({ }) {
   const navigate = useNavigate();
   const [checkCreate, setCheckCreate] = useState(false);
   const [portfolioId, setPortfolioId] = useState("");
   const [userMove, setUserMove] = useState(false);
-
-  useEffect(() => {
-    console.log("이친구 왜 실행이 안될까...........?");
-    axios
-      .get(SERVER_URL + "/ptf-service/api/v1/portfolio/checkPortfolio")
-      .then((res) => {
-        console.log("기존에 포폴 있는지 조회하기");
-        console.log(res);
-
-        if (res.data.data == "no") setCheckCreate(false);
-        else {
-          setCheckCreate(true);
-          setPortfolioId(res.data.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [userMove]);
-
+  /*
+   useEffect(() => {
+    
+     console.log("이친구 왜 실행이 안될까...........?");
+     axios
+       .get(SERVER_URL + "/ptf-service/api/v1/portfolio/checkPortfolio")
+       .then((res) => {
+         console.log("기존에 포폴 있는지 조회하기");
+         console.log(res);
+ 
+         if (res.data.data == "no") setCheckCreate(false);
+         else {
+           setCheckCreate(true);
+           setPortfolioId(res.data.data);
+         }
+       })
+       .catch((err) => {
+         console.log(err);
+       });
+   }, [userMove]);
+ */
   const createTrue = () => {
     navigate("/portfolio/main/" + portfolioId);
     setUserMove(!userMove);
@@ -65,18 +66,18 @@ function Header({}) {
         <button
           class="relative"
           onClick={onMoveMainPage}
-          // onClick={() => {
-          //   navigate("/");
-          // }}
+        // onClick={() => {
+        //   navigate("/");
+        // }}
         >
           메인페이지
         </button>
         <button
           class="relative left-[10%]"
           onClick={onMoveBlog}
-          // onClick={() => {
-          //   navigate("/blog/main/1");
-          // }}
+        // onClick={() => {
+        //   navigate("/blog/main/1");
+        // }}
         >
           블로그
         </button>
@@ -89,18 +90,18 @@ function Header({}) {
         <button
           class="relative left-[30%]"
           onClick={onMoveProject}
-          // onClick={() => {
-          //   navigate("/pm/main");
-          // }}
+        // onClick={() => {
+        //   navigate("/pm/main");
+        // }}
         >
           플젝
         </button>
         <button
           class="relative left-[40%]"
           onClick={onMoveMyPage}
-          // onClick={() => {
-          //   navigate("/mypage");
-          // }}
+        // onClick={() => {
+        //   navigate("/mypage");
+        // }}
         >
           MYPAGE
         </button>

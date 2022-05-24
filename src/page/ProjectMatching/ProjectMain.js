@@ -36,6 +36,7 @@ function ProjectMain() {
   const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [showScheduleDetailModal, setShowScheduleDetailModal] = useState(false);
   const [projectList, setProjectList] = useState([]);
+  const [projectTextList, setProejctTextList] = useState([]);
   //
   const [scheduleStyleList, setScheduleStyleList] = useState([[], [], [], [], [], [], []]);
   //let selectedSchedule = { startTime: "", endTime: "", week: "", id: 0 };
@@ -96,15 +97,17 @@ function ProjectMain() {
         }
       })
       .then((res) => {
-        let tmpProjectList = [];
+        let tmpProjectList = [], tmpTextList = [];
         console.log(res);
         res.data.data.boards.map((item) => {
           tmpProjectList.push(item);
+          tmpTextList.push(htmlDetailToText(item.content));
         })
         tmpProjectList.map((item) => {
           console.log(item);
         })
         setProjectList([...tmpProjectList]);
+        setProejctTextList([...tmpTextList]);
       })
       .catch((err) => {
         console.log(err.response);
@@ -120,9 +123,23 @@ function ProjectMain() {
       timeTable.push(tmpTimeT);
     })
   }
-  function fillTimeTable(time, day) {
 
+  function htmlDetailToText(htmlContent) {
+    let text = htmlContent.replace(/(<([^>]+)>)/ig, "");
+    text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
+      const entityMap = {
+        '&amp;': '&',
+        '&lt;': '<',
+        '&gt;': '>',
+        '&quot;': '"',
+        '&#39;': "'",
+      };
+      return entityMap[s];
+    });
+    console.log(text);
+    return text;
   }
+
   async function deleteSchedule(id) {
     await axios.delete(SERVER_URL + "/user-service/api/v1/timetables/" + id)
       .then((res) => {
@@ -316,7 +333,7 @@ function ProjectMain() {
           </div>
 
           <div class="mt-4 border rounded-lg">
-            {projectList.map((item) => {
+            {projectList.map((item, index) => {
               if (item.image != null) {
                 return (
                   <div
@@ -339,7 +356,7 @@ function ProjectMain() {
                         class="mt-1 py-1 text-black text-xl">
                         {item.title}
                       </button>
-                      <div class="font-ltest min-h-[45px]">{item.content}</div>
+                      <div class="font-ltest min-h-[45px]">{projectTextList[index]}</div>
                       <div class="flex gap-2">
                         {item.tagInfos.map((tags) => {
                           return (
@@ -355,7 +372,7 @@ function ProjectMain() {
                       <div class="w-32 h-32 mb-2">
                         <img
                           src={"data:image/" + item.imgType + ";base64," + item.image}
-                          class="w-full z-full z-40 min-h-[32px] max-h-[32px]"
+                          class="z-40 w-32 h-32"
                         />
                       </div>
                       <div class="w-32 grid grid-rows-2 text-sm ">
@@ -471,19 +488,37 @@ function ProjectMain() {
             </div>
           </div>
 
-          <div class="mt-10 text-2xl font-btest">나의 시간표</div>
+
           <div class="flex ">
-            <div class="basis-3/4">
-              <div class="mr-10 my-4 border border-gray-400 h-[50rem] flex flex-col justify-between p-2 text-center">
-                <div class="w-full h-fit grid grid-cols-8 pb-5 font-ltest">
-                  <div>시간</div>
+            <div class="basis-3/4 mr-10 my-4 h-[50rem] flex flex-col justify-between text-center">
+              <div class="flex justify-between">
+                <div class="mt-10 text-2xl font-btest">나의 시간표</div>
+                <button
+                  class="self-end text-base font-ltest"
+                  onClick={() => {
+                    setShowScheduleModal(true);
+                  }}
+                >
+                  {">"}일정 추가하기
+                </button>
+              </div>
+              <div class="flex flex-col relative border border-gray-400 grow">
+                <div class="w-full h-fit grid grid-cols-8 font-ltest gap-1 text-gray-600 border-b ">
+                  <div class="border-r pt-2 pb-2">시간</div>
                   {day.map((item) => {
-                    return (
-                      <div>{item}</div>
-                    )
+                    if (item == "일") {
+                      return (
+                        <div class="pt-2">{item}</div>
+                      )
+                    }
+                    else {
+                      return (
+                        <div class="pt-2 border-r">{item}</div>
+                      )
+                    }
                   })}
                 </div>
-                <div class="w-full h-full grid grid-cols-8 gap-1">
+                <div class="relative w-full h-[100%] grid grid-cols-8 gap-1">
                   <TimeList />
                   {day.map((week, index) => {
                     return (
@@ -506,20 +541,11 @@ function ProjectMain() {
                     );
                   })}
                 </div>
-                <button
-                  class="self-end text-base font-ltest"
-                  onClick={() => {
-                    setShowScheduleModal(true);
-                  }}
-                >
-                  {">"}일정 추가하기
-                </button>
-              </div>
-            </div>
+              </div></div>
             <div class="basis-1/4">
               <div class="grid grid-rows-2 h-full">
                 <button
-                  onClick={() => navigate("/pm/add")}
+                  onClick={() => navigate("/pm/writing")}
                   class="text-gray-600 rounded-lg border border-slate-300 w-full my-4 py-2">
                   새 프로젝트 모집하기
                 </button>

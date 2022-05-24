@@ -109,7 +109,7 @@ function ProjectEditor(props) {
             <div>
                 <ProejctToolbar />
                 <ReactQuill
-                    class="a"
+                    defaultValue={props.loadedProject.content}
                     modules={modules}
                     onChange={(value) => { props.setContent(value) }}
                     theme="snow"
