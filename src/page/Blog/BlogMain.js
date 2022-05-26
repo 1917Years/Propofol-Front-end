@@ -3,6 +3,7 @@ import { useNavigate, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 import { leafYear, dateToNumber, numberToDate } from "../../utils/date";
+import { htmlDetailToText } from "../../utils/html";
 
 let tmpSt = [];
 
@@ -29,6 +30,7 @@ function BlogMain() {
   const [maxPageCount, setMaxPageCount] = useState(1);
   const [pageList, setPageList] = useState([]);
   const [checkNoPost, setCheckNoPost] = useState(false);
+  const [writingTextList, setWritingTextList] = useState([]);
 
   let isLeafYear;
 
@@ -145,7 +147,7 @@ function BlogMain() {
         // console.log(pageList);
 
         //
-        let tmpWrList = [];
+        let tmpWrList = [], tmpTextList = [];
         res.data.data.boards.map((writing) => {
           let tmpimgtype = null;
           if (writing.imgtype != null) {
@@ -165,15 +167,15 @@ function BlogMain() {
             tag: writing.tags == null ? [] : writing.tags,
           }
           tmpWr.date = tmpWr.date.substring(0, 10) + "   " + tmpWr.date.substring(11, 16);
-
+          tmpTextList.push(htmlDetailToText(writing.content));
           console.log("아이디는 " + tmpWr.id);
           tmpWrList.push(tmpWr);
           setWritingList([...tmpWrList]);
           setTmp(!tmp);
           console.log("tmpWR : ");
           console.log(tmpWr);
-
         });
+        setWritingTextList([...tmpTextList]);
       })
       .catch((err) => {
         console.log(err);
@@ -535,7 +537,7 @@ function BlogMain() {
                 : "hidden"}>{checkNoPost == true ? "아직 아무 글도 작성하지 않았어요 😥" : ""}</div>
             </div>
           }
-          {writingList.map((item) => {
+          {writingList.map((item, index) => {
             if (item.img != null) {
               return (
                 <button
@@ -555,7 +557,7 @@ function BlogMain() {
                       <button class="py-1 text-blue-400 text-lg">
                         {item.title}
                       </button>
-                      <div class="font-ltest">{item.detail.slice(0, 150) + "..."}</div>
+                      <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
                     </div>
                     <div class="flex gap-2">
                       {item.tag.map((item) => {
@@ -600,7 +602,7 @@ function BlogMain() {
                       <button class="py-1 text-blue-400 text-lg">
                         {item.title}
                       </button>
-                      <div class="font-ltest">{item.detail.slice(0, 150) + "..."}</div>
+                      <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
                     </div>
                     <div class="flex gap-2">
                       {item.tag.map((item) => {

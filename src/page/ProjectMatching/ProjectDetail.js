@@ -11,25 +11,7 @@ import { TagModal, ScheduleViewModal } from "../../Component/Modal";
 function ProjectDetail() {
   const navigate = useNavigate();
   const id = useParams().id;
-  const tagList = [
-    "JAVA",
-    "Spring",
-    "C++",
-    "JavaScript",
-    "C#",
-    "C",
-    "Python",
-    "냠냠",
-    "ㅁㄴㅇ",
-    "울랄라",
-    "언어1",
-    "언어2",
-  ];
-  const [isTC, setIsTC] = useState(false);
-  const [isTagChecked, setIsTagChecked] = useState([]);
-  const [isTagFull, setIsTagFull] = useState(false);
-  const [checkedTagList, setCheckedTagList] = useState([]);
-  const [tmp, setTmp] = useState(false);
+  //
   const [project, setProject] = useState({})
   const [content, setContent] = useState();
   //
@@ -37,36 +19,6 @@ function ProjectDetail() {
   const [showTagMoadl, setShowTagModal] = useState(false);
   //
   const [showScheduleViewModal, setShowScheduleViewModal] = useState(false);
-
-  let tmpDetail =
-    "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
-  const onTagButtonClickHandler = (e) => {
-    if (e.target.value == "-1") return;
-    if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
-      setIsTagFull(true);
-      return;
-    }
-    let t = isTagChecked;
-    e.target.checked = true;
-    t[e.target.value] = !t[e.target.value];
-    setIsTagChecked(t);
-    let t_c = checkedTagList;
-    if (isTagChecked[e.target.value] == true) {
-      t_c.push(e.target.name);
-      setCheckedTagList(t_c);
-    } else if (isTagChecked[e.target.value] == false) {
-      setCheckedTagList(t_c.filter((tagname) => tagname !== e.target.name));
-      setIsTagFull(false);
-    }
-    console.log(checkedTagList);
-    setTmp(!tmp);
-  };
-
-  const keyPressHandler = (e) => {
-    if (e.key === "Enter") {
-      navigate("/blog/search");
-    }
-  };
 
   function loadProjectDetail() {
     axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
@@ -91,15 +43,7 @@ function ProjectDetail() {
   }
 
   useEffect(() => {
-    let t = [];
     loadProjectDetail();
-    for (let i = 0; i < tagList.length; i++) {
-      t.push(false);
-    }
-
-    console.log(t);
-    setIsTagChecked(t);
-    console.log(isTagChecked);
   }, []);
 
   return (

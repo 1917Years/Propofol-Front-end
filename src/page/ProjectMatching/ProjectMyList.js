@@ -4,24 +4,10 @@ import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 import ProjectSearchBar from "../../Component/ProjectSearchBar";
 import { TagModal, ApplyingModal } from "../../Component/Modal";
+import { htmlDetailToText } from "../../utils/html";
 
 function ProjectMyList() {
     const navigate = useNavigate();
-    const tagList = [
-        "JAVA",
-        "Spring",
-        "C++",
-        "JavaScript",
-        "C#",
-        "C",
-        "Python",
-        "냠냠",
-        "ㅁㄴㅇ",
-        "울랄라",
-        "언어1",
-        "언어2",
-    ];
-
     //
     const [selectedTagList, setSelectedTagList] = useState([]);
     const [showTagMoadl, setShowTagModal] = useState(false);
@@ -31,7 +17,6 @@ function ProjectMyList() {
     const [showRecruiting, setShowRecruiting] = useState(true);
     const [showJoining, setShowJoining] = useState(false);
     //
-
     function Project(props) { //projectList, projectTextList
         return (
             <div>
@@ -384,25 +369,9 @@ function ProjectMyList() {
         )
     }
     //
-    function htmlDetailToText(htmlContent) {
-        let text = htmlContent.replace(/(<([^>]+)>)/ig, "");
-        text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
-            const entityMap = {
-                '&amp;': '&',
-                '&lt;': '<',
-                '&gt;': '>',
-                '&quot;': '"',
-                '&#39;': "'",
-            };
-            return entityMap[s];
-        });
-        console.log(text);
-        return text;
-    }
 
     useEffect(() => {
-        //loadProject(1);
-        //loadProjectIn(1);
+
     }, []);
 
     return (

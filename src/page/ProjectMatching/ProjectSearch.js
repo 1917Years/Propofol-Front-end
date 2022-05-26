@@ -4,28 +4,10 @@ import { useNavigate, Navigate, useParams, useSearchParams } from "react-router-
 import { SERVER_URL } from "../../utils/SRC";
 import ProjectSearchBar from "../../Component/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
+import { htmlDetailToText } from "../../utils/html";
 
 function ProjectSearch() {
   const navigate = useNavigate();
-  const tagList = [
-    "JAVA",
-    "Spring",
-    "C++",
-    "JavaScript",
-    "C#",
-    "C",
-    "Python",
-    "냠냠",
-    "ㅁㄴㅇ",
-    "울랄라",
-    "언어1",
-    "언어2",
-  ];
-  const [isTC, setIsTC] = useState(false);
-  const [isTagChecked, setIsTagChecked] = useState([]);
-  const [isTagFull, setIsTagFull] = useState(false);
-  const [checkedTagList, setCheckedTagList] = useState([]);
-  const [tmp, setTmp] = useState(false);
   //
   const [searchParams, setSeratchParams] = useSearchParams();
   const keyword = searchParams.get('keyword');
@@ -76,22 +58,6 @@ function ProjectSearch() {
       }
     }
     return result;
-  }
-  //
-  function htmlDetailToText(htmlContent) {
-    let text = htmlContent.replace(/(<([^>]+)>)/ig, "");
-    text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
-      const entityMap = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': "'",
-      };
-      return entityMap[s];
-    });
-    console.log(text);
-    return text;
   }
   //
   async function loadSearchResult(page) {

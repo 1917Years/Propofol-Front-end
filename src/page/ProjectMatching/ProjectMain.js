@@ -6,17 +6,13 @@ import { TagModal } from "../../Component/Modal";
 import { SERVER_URL } from "../../utils/SRC";
 import { fillScheduleStyleList, TimeList } from "../../Component/Schedule";
 import ProjectSearchBar from "../../Component/ProjectSearchBar";
+import { htmlDetailToText } from "../../utils/html";
 
 function ProjectMain() {
   const navigate = useNavigate();
-
-  const [isTagChecked, setIsTagChecked] = useState([]);
-  const [isTagFull, setIsTagFull] = useState(false);
-  const [checkedTagList, setCheckedTagList] = useState([]);
-  const [tmp, setTmp] = useState(false);
-
+  //
   const [selectedTagList, setSelectedTagList] = useState([]);
-
+  //
   const [projectList, setProjectList] = useState([]);
   const [projectTextList, setProejctTextList] = useState([]);
   //
@@ -90,22 +86,6 @@ function ProjectMain() {
       .catch((err) => {
         console.log(err.response);
       })
-  }
-
-  function htmlDetailToText(htmlContent) {
-    let text = htmlContent.replace(/(<([^>]+)>)/ig, "");
-    text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
-      const entityMap = {
-        '&amp;': '&',
-        '&lt;': '<',
-        '&gt;': '>',
-        '&quot;': '"',
-        '&#39;': "'",
-      };
-      return entityMap[s];
-    });
-    console.log(text);
-    return text;
   }
 
   return (
