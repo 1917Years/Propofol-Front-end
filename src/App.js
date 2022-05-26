@@ -10,6 +10,7 @@ import Register from "./page/Register";
 import ProjectWriting from "./page/ProjectMatching/ProjectWriting";
 import ProjectMain from "./page/ProjectMatching/ProjectMain";
 import ProjectMySchedule from "./page/ProjectMatching/ProejctMySchedule";
+import ProjectMyTeamSchedule from "./page/ProjectMatching/ProjectMyTeamSchedule";
 import ProjectMyList from "./page/ProjectMatching/ProjectMyList";
 import ProjectMyDetail from "./page/ProjectMatching/ProjectMyDetail";
 import ProjectDetail from "./page/ProjectMatching/ProjectDetail";
@@ -197,6 +198,7 @@ function App() {
           <Route path="/pm/writing" element={<ProjectWriting />} />
           <Route path="/pm/main" element={<ProjectMain />} />
           <Route path="/pm/myschedule" element={<ProjectMySchedule />} />
+          <Route path="/pm/myteamschedule/:id" element={<ProjectMyTeamSchedule />} />
           <Route path="/pm/myproject/:id" element={<ProjectMyDetail />} />
           <Route path="/pm/mylist" element={<ProjectMyList />} />
           <Route path="/pm/detail/:id" element={<ProjectDetail />} />

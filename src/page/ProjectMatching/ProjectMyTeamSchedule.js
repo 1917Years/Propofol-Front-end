@@ -5,8 +5,9 @@ import { ScheduleModal, ScheduleDetailModal, TagModal } from "../../Component/Mo
 import { SERVER_URL } from "../../utils/SRC";
 import { fillScheduleStyleList, TimeList } from "../../Component/Schedule";
 
-function ProjectMySchedule() {
+function ProjectMyTeamSchedule() {
     const day = ["월", "화", "수", "목", "금", "토", "일"];
+    const teamId = useParams().id;
     let timeTable = []; // day:요일 , time : [0~24 리스트]
     let scheduleList = [];
     //
@@ -19,7 +20,6 @@ function ProjectMySchedule() {
     const [showScheduleModal, setShowScheduleModal] = useState(false);
     const [showScheduleDetailModal, setShowScheduleDetailModal] = useState(false);
     //
-
     function makeTimeTalbe() {
         day.map((item) => {
             let tmpTimeT = { day: item, time: [] };
@@ -30,11 +30,11 @@ function ProjectMySchedule() {
         })
     }
     async function loadSchedule() {
-        await axios.get(SERVER_URL + "/user-service/api/v1/timetables")
+        await axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + teamId + "/timetables")
             .then((res) => {
                 console.log(res);
                 let tmpScheduleList = [];
-                res.data.data.timeTables.map((item) => {
+                res.data.data.data.map((item) => {
                     tmpScheduleList.push(item);
                 })
                 scheduleList = tmpScheduleList;
@@ -48,14 +48,13 @@ function ProjectMySchedule() {
     }
 
     async function postSchedule() {
-        //if (checkSchedule()) return;
         let data = {
             week: selectedWeek,
             startTime: startTime,
             endTime: endTime
         }
         console.log(data);
-        await axios.post(SERVER_URL + "/user-service/api/v1/timetables", data)
+        await axios.post(SERVER_URL + "/matching-service/api/v1/matchings/" + teamId + "/timeTable", data)
             .then((res) => {
                 console.log(res);
                 loadSchedule();
@@ -64,8 +63,8 @@ function ProjectMySchedule() {
                 console.log(err.response);
             })
     }
-    async function deleteSchedule(id) {
-        await axios.delete(SERVER_URL + "/user-service/api/v1/timetables/" + id)
+    async function deleteSchedule(id) { //id에 해당하는 일정 삭제 
+        await axios.delete(SERVER_URL + "/matching-service/api/v1/matchings/" + teamId + "/" + id)
             .then((res) => {
                 console.log(res);
                 //setScheduleStyleList([[], [], [], [], [], [], []]);
@@ -75,6 +74,7 @@ function ProjectMySchedule() {
                 console.log(err.response);
             })
     }
+
 
     //
     useEffect(() => {
@@ -108,7 +108,7 @@ function ProjectMySchedule() {
             <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
                 <div class="w-3/4 mx-auto h-[50rem] flex flex-col gap-8 justify-between text-center">
                     <div class="flex justify-between">
-                        <div class="mt-10 text-4xl font-btest">나의 시간표⏱</div>
+                        <div class="mt-10 text-4xl font-btest">팀 시간표⏱</div>
                         <button
                             class="self-end text-lg font-ltest bg-gray-100"
                             onClick={() => {
@@ -164,4 +164,4 @@ function ProjectMySchedule() {
     )
 }
 
-export default ProjectMySchedule;
+export default ProjectMyTeamSchedule;

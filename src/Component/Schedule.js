@@ -30,11 +30,10 @@ export function fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, s
                     startTime: item.startTime,
                     endTime: item.endTime,
                 });
-                setScheduleStyleList([...tmpScheduleStyleList_t]);
             }
         })
-
     })
+    setScheduleStyleList([...tmpScheduleStyleList_t]);
 }
 
 export function TimeList() {

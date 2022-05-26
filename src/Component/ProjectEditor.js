@@ -13,7 +13,7 @@ const modules = {
     },
 };
 
-function ProejctToolbar() {
+function ProejctToolbar(props) {
     //Custom Toolbar
     return (
         <div
@@ -104,12 +104,15 @@ Size.whitelist = [
 Quill.register(Size, true);
 
 function ProjectEditor(props) {
+    useEffect(() => {
+        console.log(props.content);
+    }, [])
     return (
         <div>
             <div>
                 <ProejctToolbar />
                 <ReactQuill
-                    defaultValue={props.loadedProject.content}
+                    defaultValue={props.content}
                     modules={modules}
                     onChange={(value) => { props.setContent(value) }}
                     theme="snow"
