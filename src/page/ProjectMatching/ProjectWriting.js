@@ -13,27 +13,9 @@ function ProjectWriting() {
   const [loadingComplete, setLoadingComplete] = useState(false);
   const writingNo = searchParams.get('No');
   const navigate = useNavigate();
-  const tagList = [
-    "JAVA",
-    "Spring",
-    "C++",
-    "JavaScript",
-    "C#",
-    "C",
-    "Python",
-    "냠냠",
-    "ㅁㄴㅇ",
-    "울랄라",
-    "언어1",
-    "언어2",
-  ];
+
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [isTagChecked, setIsTagChecked] = useState([]);
-  const [isTagFull, setIsTagFull] = useState(false);
-  const [checkedTagList, setCheckedTagList] = useState([]);
-  const [tmp, setTmp] = useState(false);
-
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [recruit, setRecruit] = useState("");
@@ -266,7 +248,7 @@ function ProjectWriting() {
         formData_Save.append('content', content);
       }
     }
-    console.log(formData_Image.get('content'));
+    console.log(formData_Save.get('content'));
     await axios
       .post(SERVER_URL + "/matching-service/api/v1/matchings/" + project.id, formData_Save)
       .then((res) => {
@@ -363,28 +345,6 @@ function ProjectWriting() {
       });
   }
 
-  const onTagButtonClickHandler = (e) => {
-    if (e.target.value == "-1") return;
-    if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
-      setIsTagFull(true);
-      return;
-    }
-    let t = isTagChecked;
-    e.target.checked = true;
-    t[e.target.value] = !t[e.target.value];
-    setIsTagChecked(t);
-    let t_c = checkedTagList;
-    if (isTagChecked[e.target.value] == true) {
-      t_c.push(e.target.name);
-      setCheckedTagList(t_c);
-    } else if (isTagChecked[e.target.value] == false) {
-      setCheckedTagList(t_c.filter((tagname) => tagname !== e.target.name));
-      setIsTagFull(false);
-    }
-    console.log(checkedTagList);
-    setTmp(!tmp);
-  };
-
   const keyPressHandler = (e) => {
     let keyword = e.currentTarget.value;
     let taglist = "";
@@ -431,15 +391,7 @@ function ProjectWriting() {
         //console.log(wrInfo);
       }
     }
-    let t = [];
-    for (let i = 0; i < tagList.length; i++) {
-      t.push(false);
-    }
-    console.log(t);
-    setIsTagChecked(t);
-    console.log(isTagChecked);
   }, []);
-
 
   return (
     <div class="bg-white w-full font-test">
