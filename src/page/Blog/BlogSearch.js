@@ -2,6 +2,9 @@ import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams, useLocation, useSearchParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
+import BlogSearchBar from "../../Component/BlogSearchBar";
+import { TagModal } from "../../Component/Modal";
+import { Page } from "../../utils/page";
 
 function BlogSearch(props) {
   //const keyword = useParams().keyword;
@@ -18,8 +21,19 @@ function BlogSearch(props) {
   const [searchParams, setSeratchParams] = useSearchParams();
   const keyword = searchParams.get('keyword');
   const option = searchParams.get('option');
-
-
+  const tag = searchParams.get('tag');
+  //
+  const [showTagMoadl, setShowTagModal] = useState(false);
+  const [selectedTagList, setSelectedTagList] = useState([]);
+  //
+  const [totalPage, setTotalPage] = useState(0);
+  const [startPage, setStartPage] = useState(1);
+  const [selected, setSelected] = useState(1);
+  //
+  function pageHandler() {
+    navigate("");
+  }
+  //
   const onTagButtonClickHandler = (e) => {
     if (e.target.value == "-1") return;
     if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
@@ -47,20 +61,26 @@ function BlogSearch(props) {
       navigate('/blog/search');
     }
   };
-  useEffect(() => {
-    console.log(keyword);
-    console.log("option : " + option);
-    let t = [];
-    for (let i = 0; i < tagList.length; i++) {
-      t.push(false);
-    }
-    console.log(t);
-    setIsTagChecked(t);
-    console.log(isTagChecked);
 
-
+  async function loadSearchResult(page) {
+    //
+    let taglist = tag.split(" ").slice(1);
+    let tmptaglist = [];
+    let tagIdlist = [];
+    taglist.map((item) => {
+      tmptaglist.push({ name: item.split("_")[1], id: item.split("_")[0] });
+      tagIdlist.push(item.split("_")[0]);
+    })
+    setSelectedTagList([...tmptaglist]);
+    const params = new URLSearchParams();
+    params.append('keyword', keyword);
+    params.append('page', page);
+    tagIdlist.map((item) => {
+      params.append('tagId', item);
+    });
+    //
     if (option == '제목') {
-      axios.get(SERVER_URL + "/til-service/api/v1/boards/search/title/" + keyword + "?page=1")
+      await axios.get(SERVER_URL + "/til-service/api/v1/boards/search/title/" + keyword + "?page=1")
         .then((res) => {
           console.log(res);
           let pageCount = res.data.data.pageCount;
@@ -97,14 +117,35 @@ function BlogSearch(props) {
           console.log(err);
         })
     }
+  }
 
+  useEffect(() => {
+    console.log(keyword);
+    console.log("option : " + option);
+    loadSearchResult(1);
   }, []);
-  let tmpDetail =
-    "글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~글내용123123218979ㅁㄴㅇsadaslkdjasdljsakldjjqwe~~~~~~";
 
   return (
     <div class="bg-white w-full h-screen font-test">
+      {showTagMoadl ?
+        (
+          <TagModal
+            setShowTagModal={setShowTagModal}
+            selectedTagList={selectedTagList}
+            setSelectedTagList={setSelectedTagList}
+          />
+        )
+        :
+        (null)
+      }
       <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2 ">
+        <div class="mt-10">
+          <BlogSearchBar
+            setShowTagModal={setShowTagModal}
+            selectedTagList={selectedTagList}
+            keyword={keyword}
+          />
+        </div>
         <div class="relative mt-10 border-b border-slate-300 pb-10">
           <div class="h-12">
             <div class="flex gap-2 content-center bg-gray-50 rounded-lg border border-slate-300 px-2 py-2 ">
@@ -119,22 +160,6 @@ function BlogSearch(props) {
                 <option value="작성자" class="text-center">작성자</option>
               </select>
               <div class="h-6 my-auto border-l border-gray-300 z-10"></div>
-              {tagList.map((tag, index) => {
-                if (isTagChecked[index]) {
-                  return (
-                    <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
-                      <div>{tag}</div>
-                      <button
-                        class="ml-2"
-                        name={tag}
-                        value={index}
-                        onClick={onTagButtonClickHandler}
-                      >x</button>
-                    </div>
-                  );
-                }
-              }
-              )}
               <input
                 class="bg-gray-50 grow focus:outline-0"
                 type="text"
@@ -144,38 +169,7 @@ function BlogSearch(props) {
           </div>
           <div class="flex content-center gap-4 font-ltest mt-3 h-10 ml-3">
             <div class="mr-1 self-center">#태그</div>
-            {tagList.slice(0, 7).map((tag, index) => {
-              return (
-                <button
-                  class={isTagChecked[index] == true ? "border text-base rounded-lg w-[6rem] bg-develbg border-bluepurple text-bluepurple" : "border text-md rounded-lg w-[6rem]"}
-                  name={tag}
-                  value={index}
-                  onClick={onTagButtonClickHandler}
-                >
-                  {tag}
-                </button>
-              );
-            }
-            )}
-            <select
-              class="border text-md rounded-lg w-[6rem]"
-              onChange={onTagButtonClickHandler}
-            >
-              <option value="-1" class="hover:bg-gray-100 dark:hover:bg-gray-600 text-center">
-                선택
-              </option>
-              {tagList.slice(8, tagList.length).map((tag, index) => {
-                return (
-                  <option
-                    class="text-center"
-                    name={tag}
-                    value={index + 8}
-                  >{tag}</option>
-                );
-              })}
-            </select>
           </div>
-          {isTagFull ? (<div class="text-sm font-ltest ml-2 mt-2 text-bluepurple">태그는 최대 3개까지 선택할 수 있습니다.</div>) : null}
         </div>
 
         <div class="mt-10 border rounded-lg">
@@ -266,13 +260,13 @@ function BlogSearch(props) {
 
         </div>
         <div class="flex justify-center mt-5 gap-2 font-ltest">
-          <button>{"<"}</button>
-          <button>1</button>
-          <button>2</button>
-          <button>3</button>
-          <button>4</button>
-          <button>5</button>
-          <button>{">"}</button>
+          <Page
+            startPage={startPage}
+            totalPage={totalPage}
+            setSelected={setSelected}
+            load={pageHandler}
+            selected={selected}
+          />
         </div>
       </div>
     </div>

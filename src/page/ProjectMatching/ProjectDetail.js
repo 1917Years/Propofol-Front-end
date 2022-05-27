@@ -20,12 +20,55 @@ function ProjectDetail() {
   //
   const [showScheduleViewModal, setShowScheduleViewModal] = useState(false);
 
+  //
+  async function loadImage(content_before) {
+    let tmpimgsrc = [];
+    let tmpimgsrctype = [];
+    let tmploadbyte = [];
+    let start = 0;
+    let end = 0;
+    let k = 0;
+
+    while (content_before.indexOf("<img src=\"http://", end) != -1) {
+      start = content_before.indexOf("<img src=\"http://");
+      end = content_before.indexOf(">", start);
+      tmpimgsrc.push(content_before.slice(start + 10, end - 1));
+      tmpimgsrctype.push(tmpimgsrc[k].slice(-3));
+      console.log("저는 이미지소스에용");
+      console.log(start);
+      console.log(end);
+      console.log(tmpimgsrc[k]);
+      console.log(tmpimgsrctype[k]);
+      k++;
+    }
+    for (let i = 0; i < tmpimgsrc.length; i++) {
+      await axios.get(tmpimgsrc[i])
+        .then((res) => {
+          console.log("이미지 바이트를 가져왔어요~");
+          console.log(res);
+          tmploadbyte.push("data:image/" + tmpimgsrctype[i] + ";base64," + res.data);
+          console.log(tmploadbyte[i]);
+        })
+        .catch((err) => {
+          console.log("이미지 바이트를 가져오려고 했는데 에러가 났네요~");
+          console.log(err);
+        });
+    }
+    for (let i = 0; i < tmpimgsrc.length; i++) {
+      content_before = content_before.replace(tmpimgsrc[i], tmploadbyte[i]);
+    }
+    setContent(content_before);
+    console.log("달라진 디테일은~");
+    console.log(content_before);
+  }
+  //
   function loadProjectDetail() {
     axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
       .then((res) => {
         console.log(res);
         setProject(res.data.data);
-        setContent(res.data.data.content);
+        //setContent(res.data.data.content);
+        loadImage(res.data.data.content);
       })
       .catch((err) => {
         console.log(err.response);
@@ -105,17 +148,23 @@ function ProjectDetail() {
                 >
                   <div class="w-[47rem]">
                     <div class="flex">
-                      <div>
-                        <div class="bg-gray-300 w-56 h-72 mb-2">사진</div>
-                      </div>
-                      <div class="ml-10 flex flex-col gap-2 items-start">
+                      {project.imageTypes == 0 ? (null)
+                        :
+                        (<div>
+                          <img
+                            class="w-56 h-72 mb-2 mr-5"
+                            src={"data:image/" + project.imageTypes[0] + ";base64," + project.imageStrings[0]}
+                          />
+                        </div>)
+                      }
+                      <div class="ml-5 flex flex-col gap-2 items-start">
                         <div class="flex items-center gap-2">
                           <div class="text-bluepurple text-lg mr-2">사용 기술</div>
-                          {project.tags == null ?
+                          {project.tagInfos == null ?
                             (<div>로딩중.</div>)
                             :
                             (
-                              project.tags.map((item) => {
+                              project.tagInfos.map((item) => {
                                 return (
                                   <div class="text-base font-ltest text-black bg-gray-200 px-1">
                                     {item.name}
@@ -130,10 +179,10 @@ function ProjectDetail() {
                         </div>
                         <div class="flex items-center gap-3">
                           <div class="text-bluepurple text-lg">모집 인원</div>
-                          {project.rescruit == null ?
+                          {project.recruit == null ?
                             (<div>로딩중.</div>)
                             :
-                            (<div class="text-md text-gray-600 font-ltest">{project.rescruit}명</div>)
+                            (<div class="text-md text-gray-600 font-ltest">{project.recruit}명</div>)
                           }
 
                         </div>
@@ -175,11 +224,6 @@ function ProjectDetail() {
                     </div>
                     <div class="ml-4 my-auto text-2xl font-btest">{project.nickName}</div>
                   </div>
-                  <div class="mt-4 text-sm font-ltest">안녕하세요.
-                    저는 개발자 이지원입니다. 개발을 저의 인생 모토로 삼아 일일 공부를
-                    목표로 하여 TIL 블로그를 운영하고 있습니다. 사람들에게 더 편리한
-                    UI를 제공하는 것을 목표로 삼아 멋진 디자인을 만드는 프론트엔드
-                    디자이너가 되기 위해 오늘도 달리는 중입니다. :D</div>
                 </div>
                 <button class="ml-6 mt-4 font-ltest text-sm"> 팀장의 포트폴리오 확인하기 {">"}</button>
                 <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>

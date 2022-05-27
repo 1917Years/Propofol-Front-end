@@ -10,6 +10,7 @@
     "axios": "^0.26.1",
     "cors": "^2.8.5",
     "date-streaks": "^1.2.1",
+    "eventsource": "^2.0.2",
     "highlight.js": "^11.5.1",
     "http-proxy-middleware": "^2.0.6",
     "qs": "^6.10.3",
@@ -23,6 +24,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.0",
     "react-scroll": "^1.8.7",
+    "react-use": "^17.4.0",
     "tailwindcss": "^3.0.23",
     "universal-cookie": "^4.0.4",
     "web-vitals": "^2.1.4"
