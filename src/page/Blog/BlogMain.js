@@ -3,6 +3,9 @@ import { useNavigate, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 import { leafYear, dateToNumber, numberToDate } from "../../utils/date";
+import { htmlDetailToText } from "../../utils/html";
+import { TagModal } from "../../Component/Modal";
+import BlogSearchBar from "../../Component/BlogSearchBar";
 
 let tmpSt = [];
 
@@ -29,7 +32,11 @@ function BlogMain() {
   const [maxPageCount, setMaxPageCount] = useState(1);
   const [pageList, setPageList] = useState([]);
   const [checkNoPost, setCheckNoPost] = useState(false);
-
+  const [writingTextList, setWritingTextList] = useState([]);
+  //
+  const [selectedTagList, setSelectedTagList] = useState([]);
+  const [showTagMoadl, setShowTagModal] = useState(false);
+  //
   let isLeafYear;
 
   function putNumberToStreak(year, IsLeafYear) {
@@ -145,7 +152,7 @@ function BlogMain() {
         // console.log(pageList);
 
         //
-        let tmpWrList = [];
+        let tmpWrList = [], tmpTextList = [];
         res.data.data.boards.map((writing) => {
           let tmpimgtype = null;
           if (writing.imgtype != null) {
@@ -165,15 +172,15 @@ function BlogMain() {
             tag: writing.tags == null ? [] : writing.tags,
           }
           tmpWr.date = tmpWr.date.substring(0, 10) + "   " + tmpWr.date.substring(11, 16);
-
+          tmpTextList.push(htmlDetailToText(writing.content));
           console.log("아이디는 " + tmpWr.id);
           tmpWrList.push(tmpWr);
           setWritingList([...tmpWrList]);
           setTmp(!tmp);
           console.log("tmpWR : ");
           console.log(tmpWr);
-
         });
+        setWritingTextList([...tmpTextList]);
       })
       .catch((err) => {
         console.log(err);
@@ -281,7 +288,22 @@ function BlogMain() {
 
   return (
     <div class="bg-white w-full h-screen font-test">
+      {showTagMoadl ?
+        (<TagModal
+          setShowTagModal={setShowTagModal}
+          selectedTagList={selectedTagList}
+          setSelectedTagList={setSelectedTagList}
+        />)
+        :
+        (null)
+      }
       <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2 ">
+        <div class="mt-10">
+          <BlogSearchBar
+            setShowTagModal={setShowTagModal}
+            selectedTagList={selectedTagList}
+          />
+        </div>
         <div class="relative mt-10 border-b border-slate-300 pb-10">
           <div class="h-12">
             <div class="flex gap-2 content-center bg-gray-50 rounded-lg border border-slate-300 px-2 py-2 ">
@@ -301,20 +323,18 @@ function BlogMain() {
                 <option value="작성자" class="text-center">작성자</option>
               </select>
               <div class="h-6 my-auto border-l border-gray-300 z-10"></div>
-              {tagList.map((tag, index) => {
-                if (isTagChecked[index]) {
-                  return (
-                    <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
-                      <div>{tag}</div>
-                      <button
-                        class="ml-2"
-                        name={tag}
-                        value={index}
-                        onClick={onTagButtonClickHandler}
-                      >x</button>
-                    </div>
-                  );
-                }
+              {selectedTagList.map((tag, index) => {
+                return (
+                  <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
+                    <div>{tag}</div>
+                    <button
+                      class="ml-2"
+                      name={tag}
+                      value={index}
+                      onClick={onTagButtonClickHandler}
+                    >x</button>
+                  </div>
+                );
               }
               )}
               <input
@@ -326,36 +346,12 @@ function BlogMain() {
           </div>
           <div class="flex content-center gap-4 font-ltest mt-3 h-10 ml-3">
             <div class="mr-1 self-center">#태그</div>
-            {tagList.slice(0, 7).map((tag, index) => {
-              return (
-                <button
-                  class={isTagChecked[index] == true ? "border text-base rounded-lg w-[6rem] bg-develbg border-bluepurple text-bluepurple" : "border text-md rounded-lg w-[6rem]"}
-                  name={tag}
-                  value={index}
-                  onClick={onTagButtonClickHandler}
-                >
-                  {tag}
-                </button>
-              );
-            }
-            )}
-            <select
-              class="border text-md rounded-lg w-[6rem]"
-              onChange={onTagButtonClickHandler}
+            <button
+              class="border border-gray-300 bg-gray-50 rounded-lg w-fit min-w-[15%] px-2"
+              onClick={() => { setShowTagModal(true) }}
             >
-              <option value="-1" class="hover:bg-gray-100 dark:hover:bg-gray-600 text-center">
-                선택
-              </option>
-              {tagList.slice(8, tagList.length).map((tag, index) => {
-                return (
-                  <option
-                    class="text-center"
-                    name={tag}
-                    value={index + 8}
-                  >{tag}</option>
-                );
-              })}
-            </select>
+              +
+            </button>
           </div>
           {isTagFull ? (<div class="absolute text-sm font-ltest ml-3 mt-2 text-bluepurple">태그는 최대 3개까지 선택할 수 있습니다.</div>) : null}
         </div>
@@ -535,7 +531,7 @@ function BlogMain() {
                 : "hidden"}>{checkNoPost == true ? "아직 아무 글도 작성하지 않았어요 😥" : ""}</div>
             </div>
           }
-          {writingList.map((item) => {
+          {writingList.map((item, index) => {
             if (item.img != null) {
               return (
                 <button
@@ -555,7 +551,7 @@ function BlogMain() {
                       <button class="py-1 text-blue-400 text-lg">
                         {item.title}
                       </button>
-                      <div class="font-ltest">{item.detail.slice(0, 150) + "..."}</div>
+                      <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
                     </div>
                     <div class="flex gap-2">
                       {item.tag.map((item) => {
@@ -600,7 +596,7 @@ function BlogMain() {
                       <button class="py-1 text-blue-400 text-lg">
                         {item.title}
                       </button>
-                      <div class="font-ltest">{item.detail.slice(0, 150) + "..."}</div>
+                      <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
                     </div>
                     <div class="flex gap-2">
                       {item.tag.map((item) => {

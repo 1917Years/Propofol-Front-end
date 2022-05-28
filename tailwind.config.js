@@ -99,9 +99,11 @@ module.exports = {
       },
 
       fontSize: {
-        xs: ".75rem",
-        tiny: ".875rem",
-        baselg: "1.075rem",
+        "xxs": ".55rem",
+        "xs": ".75rem",
+        "tinysm": ".825rem",
+        "tiny": ".875rem",
+        "baselg": "1.075rem",
         "3xl": "1.875rem",
         "4xl": "2.25rem",
         "5xl": "3rem",

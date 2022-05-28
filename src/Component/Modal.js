@@ -4,6 +4,244 @@ import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../utils/SRC";
 import { fillScheduleStyleList, TimeList } from "./Schedule";
 
+export function ApplyingModal(props) { // props-> setShowApplyingModal, applying
+    const navigate = useNavigate();
+    const [projectList, setProjectList] = useState([]);
+    //
+    const [totalPage, setTotalPage] = useState(0);
+    const [startPage, setStartPage] = useState(1);
+    const [selected, setSelected] = useState(1);
+    //
+    function Page() {
+        let endPage = (startPage + 9 > totalPage ? totalPage : startPage + 9);
+        const result = [];
+        console.log(totalPage);
+        console.log(endPage);
+        for (let i = startPage; i <= endPage; i++) {
+            if (i == selected) {
+                result.push(
+                    <button
+                        class="text-indigo-500"
+                        onClick={() => {
+                            loadApplying(i);
+                            setSelected(i);
+                        }}
+                    >
+                        {i}
+                    </button>
+                )
+            }
+            else {
+                result.push(
+                    <button
+                        class="text-gray-500"
+                        onClick={() => {
+                            loadApplying(i);
+                            setSelected(i);
+                        }}
+                    >
+                        {i}
+                    </button>
+                );
+            }
+        }
+        return result;
+    }
+    function loadApplying(page) {
+        axios.get(SERVER_URL + "/matching-service/api/v1/members/waiting",
+            {
+                params: { page: page }
+            })
+            .then((res) => {
+                console.log(res);
+                setTotalPage(res.data.data.pageTotalCount);
+                setProjectList([...res.data.data.boards]);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            })
+    }
+    function cancleProject(projectId) {
+        axios.delete(SERVER_URL + "/matching-service/api/v1/members/" + projectId + "/cancel")
+            .then((res) => {
+                console.log(res);
+                loadApplying(1);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            })
+    }
+
+    useEffect(() => {
+        console.log(projectList);
+    }, [projectList])
+
+    useEffect(() => {
+        loadApplying(1);
+    }, [])
+
+    return (
+        <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
+            <div class="bg-white w-[41%] min-w-[45rem] min-h-[40rem] h-[65%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
+                <div class="flex justify-between border-b border-gray-300 pb-3">
+                    <div class="ml-2 text-3xl font-sbtest">
+                        신청 중인 프로젝트 목록
+                    </div>
+                    <button class="text-2xl"
+                        onClick={() => { props.setShowApplyingModal(false) }}
+                    >x
+                    </button>
+                </div>
+                <div class="w-full mt-10 flex flex-col border-t border-gray-300">
+                    {projectList.map((item) => {
+                        console.log("뭐야시발");
+                        return (
+                            <div class="flex gap-2 items-center border-b py-1">
+                                <div class="px-3 py-2 w-4/5 break-all">
+                                    <div class=" font-sbtest text-lg">{item.title}</div>
+                                    <div class="flex mt-2 gap-3">
+                                        <div class="bg-gray-100 font-ltest text-gray-700 text-sm">참여 인원 : {item.recruited}/{item.recruit}</div>
+                                        <div class="bg-gray-100 font-ltest text-gray-700 text-sm">{item.startDate} ~{item.endDate}</div>
+                                    </div>
+                                    <div class="flex mt-1">
+                                        {item.tagInfos.map((tag) => {
+                                            return (
+                                                <div class="bg-gray-100 font-ltest text-gray-700 text-sm">
+                                                    #{tag.name}
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                </div>
+                                <div class="grow mr-3 flex flex-col gap-2">
+                                    <button
+                                        class="bg-white border border-gray-300 text-gray-600 text-lg font-ltest w-full"
+                                        value={item.id}
+                                        onClick={(e) => { navigate("/pm/detail/" + e.target.value) }}
+                                    >
+                                        상세 보기
+                                    </button>
+                                    <button
+                                        class="bg-white border border-gray-300 text-gray-600 text-lg font-ltest w-full"
+                                        value={item.id}
+                                        onClick={(e) => { cancleProject(e.target.value) }}
+                                    >
+                                        신청 취소
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+                <div class="flex gap-2 justify-center w-full px-2">
+                    <button
+                        class="text-gray-500"
+                        onClick={() => {
+                            if (startPage - 10 >= 1) {
+                                setStartPage(startPage - 10);
+                                loadApplying(startPage - 10);
+                                setSelected(startPage - 10);
+                            }
+                        }}
+                    >{"<"}
+                    </button>
+                    <Page />
+                    <button
+                        class="text-gray-500"
+                        onClick={() => {
+                            if (startPage + 10 <= totalPage) { //totalPage를 넘어가지 않을 경우에만 작동
+                                setStartPage(startPage + 10);
+                                loadApplying(startPage + 10);
+                                setSelected(startPage + 10);
+                            }
+                        }}
+                    >{">"}
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+export function ScheduleViewModal(props) {// props -> setShowScheduleViewModal
+    let scheduleList = [];
+    const day = ["월", "화", "수", "목", "금", "토", "일"];
+    //const [scheduleList, setScheduleList] = useState([]);
+    const [scheduleStyleList, setScheduleStyleList] = useState([[], [], [], [], [], [], []]);
+    const [selectedSchedule, setSelectedSchedule] = useState({ startTime: "", endTime: "", week: "" });
+    function loadPropsSchedule() {
+        let tmpScheduleList = [];
+        props.timeTables.map((item) => {
+            tmpScheduleList.push(item);
+        })
+        scheduleList = tmpScheduleList;
+        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, scheduleList);
+    }
+    return (
+        <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
+            <div class="bg-white w-[38%] min-w-[46rem] min-h-[49rem] h-[60%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
+                <div class="flex justify-between border-b border-gray-300 pb-3">
+                    <div class="ml-2 text-3xl font-sbtest">
+                        시간표
+                    </div>
+                    <button class="text-2xl"
+                        onClick={() => { props.setShowScheduleViewModal(false) }}
+                    >x
+                    </button>
+                </div>
+                <div class="relative h-[100%] mt-5 mb-2">
+                    <div class="h-[100%] w-full flex flex-col justify-start text-center border border-gray-300">
+                        <div class="w-full h-fit grid grid-cols-8 font-ltest text-gray-600 border-b gap-1">
+                            <div class="border-r pt-2 pb-2">시간</div>
+                            {day.map((item) => {
+                                if (item == "일") {
+                                    return (
+                                        <div class="pt-2">{item}</div>
+                                    )
+                                }
+                                else {
+                                    return (
+                                        <div class="pt-2 border-r">{item}</div>
+                                    )
+                                }
+                            })}
+                        </div>
+                        <div class="relative h-[100%]">
+                            <div class="h-full w-full grow grid grid-cols-8 gap-1 text-sm">
+                                <TimeList />
+                                {day.map((week, index) => {
+                                    return (
+                                        <div class="h-full relative">
+                                            <div>
+                                                {scheduleStyleList.length == 0 ?
+                                                    (
+                                                        <div>로딩중.</div>
+                                                    )
+                                                    :
+                                                    (
+                                                        scheduleStyleList[index].map((item) => {
+                                                            return (
+                                                                <div
+                                                                    style={item.style}
+                                                                >
+                                                                </div>
+                                                            )
+                                                        })
+                                                    )}
+
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
+
 export function ScheduleDetailModal(props) { // props -> setShowScheduleDetailModal, selectedSchedule, deleteSchedule
     const day = ["월", "화", "수", "목", "금", "토", "일"];
     return (
@@ -80,6 +318,7 @@ export function ScheduleDetailModal(props) { // props -> setShowScheduleDetailMo
 }
 
 export function TeamScheduleModal(props) {
+    let order = 0;
     const day = ["월", "화", "수", "목", "금", "토", "일"];
     const [selectedDay, setSelectedDay] = useState("");
     const [dayMes, setDayMes] = useState("");
@@ -155,11 +394,26 @@ export function TeamScheduleModal(props) {
                 startTime: startTime,
                 endTime: endTime,
                 week: selectedDay,
+                id: ++order,
             }
         );
         setScheduleList([...tmpScheduleList]);
         props.setTeamScheduleList([...tmpScheduleList]);
         fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, scheduleList);
+    }
+    function deleteSchedule(id) {
+        let tmpScheduleList = scheduleList;
+        for (let i = 0; i < tmpScheduleList.length; i++) {
+            if (tmpScheduleList.id == id) {
+                tmpScheduleList.splice(i, 1);
+                console.log("지워짐!");
+                break;
+            }
+        }
+        setScheduleList([...tmpScheduleList]);
+        console.log(tmpScheduleList);
+        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, tmpScheduleList);
+        setSelectedSchedule({ startTime: "", endTime: "", week: "" });
     }
     return (
         <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
@@ -304,7 +558,7 @@ export function TeamScheduleModal(props) {
                                                 <input
                                                     class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
                                                     placeholder="hh:mm"
-                                                    value={startTime}
+                                                    value={selectedSchedule.startTime}
                                                     onChange={(e) => { setStartTime(e.target.value) }}
                                                 />
                                                 {startTimeMes == "" ?
@@ -317,7 +571,7 @@ export function TeamScheduleModal(props) {
                                                 <input
                                                     class="border rounded-lg border-gray-300 text-xl pl-3 font-ltest py-2"
                                                     placeholder="hh:mm"
-                                                    value={endTime}
+                                                    value={selectedSchedule.endTime}
                                                     onChange={(e) => { setEndTime(e.target.value) }}
                                                 />
                                                 {endTimeMes == "" ?
@@ -359,9 +613,12 @@ export function TeamScheduleModal(props) {
                                     </div>
                                     <button
                                         class="relative bottom-0 w-full bg-black text-white text-2xl px-4 py-3 rounded-lg font-test "
-                                        onClick={() => { addSchedule() }}
+                                        onClick={() => {
+                                            //addSchedule() 
+                                            deleteSchedule(selectedSchedule.id)
+                                        }}
                                     >
-                                        추가하기
+                                        삭제하기
                                     </button>
                                 </div>
                             )
@@ -382,17 +639,23 @@ export function ScheduleModal(props) { // props -> postSchedule, setShowSchedule
     const day = ["월", "화", "수", "목", "금", "토", "일"];
     useEffect(() => {
         if (startTime.length === 4) {
+            let st = startTime.replace(/(\d{2})(\d{2})/, "$1:$2");
             setStartTime(
-                startTime
-                    .replace(/(\d{2})(\d{2})/, "$1:$2")
+                st
+            );
+            props.setStartTime(
+                st
             );
         }
     }, [startTime]);
     useEffect(() => {
         if (endTime.length === 4) {
+            let et = endTime.replace(/(\d{2})(\d{2})/, "$1:$2");
             setEndTime(
-                endTime
-                    .replace(/(\d{2})(\d{2})/, "$1:$2")
+                et
+            );
+            props.setEndTime(
+                et
             );
         }
     }, [endTime]);
@@ -534,7 +797,6 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
     const [loadingComplete, setLoadingComplete] = useState(false);
     const [tagList, setTagList] = useState({ tag: [], page: 0 });
     const [err, setErr] = useState("");
-    //let totalPage;
     const [totalPage, setTotalPage] = useState(0);
     const [startPage, setStartPage] = useState(1);
     const [selected, setSelected] = useState(1);
@@ -549,17 +811,14 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
             })
             .then((res) => {
                 let tmptaglist = { tag: [], page: page };
-                console.log("태그리스트 받아왔어요~");
-                console.log(res);
-
+                // console.log("태그리스트 받아왔어요~");
+                // console.log(res);
                 res.data.data.tags.map((item) => {
                     tmptaglist.tag.push(item);
                 })
                 setTagList(tmptaglist);
                 console.log("최대 페이지 수는 " + res.data.data.pageTotalCount);
                 setTotalPage(res.data.data.pageTotalCount);
-                //totalPage = res.data.data.pageTotalCount * 1;
-                //console.log(totalPage);
                 setLoadingComplete(true);
             })
             .catch((err) => {
@@ -608,11 +867,6 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
                     </button>
                 );
             }
-            /*
-            return (
-                <div class="border-r pr-2">{i}</div>
-            )
-            */
         }
         return result;
     }
@@ -711,7 +965,8 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
                                             setSelected(startPage - 10);
                                         }
                                     }}
-                                >{"<"}</button>
+                                >{"<"}
+                                </button>
                                 <Page />
                                 <button
                                     class="text-gray-500"
@@ -722,7 +977,8 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
                                             setSelected(startPage + 10);
                                         }
                                     }}
-                                >{">"}</button>
+                                >{">"}
+                                </button>
                             </div>
                         </div>
                     ) : (
