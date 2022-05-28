@@ -3,11 +3,8 @@ import { SERVER_URL } from "../utils/SRC";
 import logo from "../assets/img/logo_tmp.png";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
-<<<<<<< HEAD
 import { getCookie } from "../utils/cookie";
-=======
 import See from "../utils/sse";
->>>>>>> 6f0ccf77bb9fc7c72251c713c6fbd7afcf855844
 
 function Header({}) {
   const navigate = useNavigate();
@@ -67,9 +64,8 @@ function Header({}) {
           MYPAGE
         </button>
         <div class="">
-            <See />
-          </div>
-     
+          <See />
+        </div>
       </div>
       <div class="h-14"></div>
     </div>

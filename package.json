@@ -28,12 +28,7 @@
     "react-router-dom": "^6.3.0",
     "react-scripts": "^5.0.0",
     "react-scroll": "^1.8.7",
-<<<<<<< HEAD
-    "react-to-print": "^2.14.7",
-    "styled-components": "^5.3.5",
-=======
     "react-use": "^17.4.0",
->>>>>>> 6f0ccf77bb9fc7c72251c713c6fbd7afcf855844
     "tailwindcss": "^3.0.23",
     "universal-cookie": "^4.0.4",
     "web-vitals": "^2.1.4"
