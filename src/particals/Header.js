@@ -26,45 +26,65 @@ function Header({}) {
 
   return (
     <div>
-      <div class="w-full h-14 fixed bg-black text-white z-50 font-ltest py-4 px-6">
-        <button
-          class="relative"
-          onClick={() => {
-            navigate("/");
-            setUserMove(!userMove);
-          }}
-        >
-          메인페이지
-        </button>
-        <button
-          class="relative left-[10%]"
-          onClick={() => {
-            navigate("/blog/main/1");
-          }}
-        >
-          블로그
-        </button>
-        <button class="relative left-[20%]" onClick={() => checkPtf()}>
-          포폴
-        </button>
-        <button
-          class="relative left-[30%]"
-          onClick={() => {
-            navigate("/pm/main");
-          }}
-        >
-          플젝
-        </button>
-        <button
-          class="relative left-[40%]"
-          onClick={() => {
-            navigate("/mypage");
-          }}
-        >
-          MYPAGE
-        </button>
-        <div class="">
-          <See />
+      <div class="w-full px-32 bg-opacity-100 h-16 fixed flex justify-between border-b border-gray-300 shadow-md bg-white text-black z-50 font-test text-lg py-4 px-6">
+        <div class="flex items-center w-1/3 justify-between">
+          <button
+            class="relative font-rumpi text-2xl font-semibold"
+            onClick={() => {
+              navigate("/");
+              setUserMove(!userMove);
+            }}
+          >
+            Propofol
+          </button>
+          <button
+            class="relative font-ltest"
+            onClick={() => {
+              navigate("/blog/main/1");
+            }}
+          >
+            블로그
+          </button>
+          <button class="relative font-ltest" onClick={() => checkPtf()}>
+            포트폴리오
+          </button>
+          <button
+            class="relative font-ltest"
+            onClick={() => {
+              navigate("/pm/main");
+            }}
+          >
+            프로젝트
+          </button>
+        </div>
+        <div class="flex w-[25%] justify-between">
+          <button
+            class="relative font-ltest"
+            onClick={() => {
+              navigate("/login");
+            }}
+          >
+            로그인
+          </button>
+          <button
+            class="relative font-ltest"
+            onClick={() => {
+              navigate("/register");
+            }}
+          >
+            회원가입
+          </button>
+          <button
+            class="relative font-ltest"
+            onClick={() => {
+              navigate("/mypage");
+            }}
+          >
+            MYPAGE
+          </button>
+          <div class="">
+            <See />
+          </div>
         </div>
       </div>
       <div class="h-14"></div>

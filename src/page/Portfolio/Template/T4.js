@@ -58,7 +58,7 @@ function T4() {
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.data.profileType);
-            setProfileImg(res.data.data.profileBytes);
+            setProfileImg(res.data.data.profileString);
             console.log(profileType);
             console.log(profileType);
             setCheckProfile(true);
@@ -132,7 +132,7 @@ function T4() {
                 <div class="font-sbtest text-black text-4xl text-center">
                   {portfolioInfo.username}
                 </div>
-                {portfolioInfo.job ? (
+                {portfolioInfo.job.length != 0 ? (
                   <div class="font-timeless font-semibold">
                     {portfolioInfo.job}
                   </div>
@@ -166,14 +166,14 @@ function T4() {
                     <a class="mr-3 font-sbtest">이메일</a> {portfolioInfo.email}
                   </div>
                   <div>
-                    {portfolioInfo.github ? (
+                    {portfolioInfo.github.length != 0 ? (
                       <>
                         <a class="mr-3 font-sbtest">Github</a>{" "}
                         {portfolioInfo.github}
                       </>
                     ) : null}
                   </div>
-                  {portfolioInfo.content ? (
+                  {portfolioInfo.content.length != 0 ? (
                     <>
                       <div class="mt-3 mb-5 mx-auto h-0.25 bg-black"></div>{" "}
                       {portfolioInfo.content}
@@ -182,7 +182,7 @@ function T4() {
                 </div>
 
                 <div className="skills">
-                  {portfolioInfo.skills ? (
+                  {portfolioInfo.skills.length != 0 ? (
                     <>
                       <div class="mb-5 mt-5 mx-auto h-0.5 bg-black"></div>
                       <div class="font-timelessB text-3xl">SKILLS</div>
@@ -204,7 +204,7 @@ function T4() {
                 </div>
 
                 <div className="award">
-                  {portfolioInfo.awards ? (
+                  {portfolioInfo.awards.length != 0 ? (
                     <>
                       <div class="mb-5 mt-10 mx-auto h-0.5 bg-black"></div>
                       <div class="font-timelessB text-3xl">AWARD</div>
@@ -225,7 +225,7 @@ function T4() {
                   ) : null}
                 </div>
 
-                {portfolioInfo.careers ? (
+                {portfolioInfo.careers.length != 0 ? (
                   <div className="workExperience" class="mb-10">
                     <div class="mb-5 mt-10 mx-auto h-0.5 bg-black"></div>
                     <div class="font-timelessB text-3xl">WORK EXPERIENCE</div>
@@ -256,7 +256,7 @@ function T4() {
               </div>
             </div>
             <div class="basis-1/2">
-              {portfolioInfo.projects ? (
+              {portfolioInfo.projects.length != 0 ? (
                 <div className="project" class="w-3/4">
                   <div class="mt-10 mx-auto h-0.5 bg-black"></div>
                   <div class="mt-4 font-timelessB text-3xl">PROJECT</div>
@@ -324,7 +324,7 @@ function T4() {
                 </div>
               ) : null}
 
-              {portfolioInfo.boards ? (
+              {portfolioInfo.boards.length != 0 ? (
                 <div className="blog" class="w-3/4 mt-10 mb-10">
                   <div class="mt-10 mx-auto h-0.5 bg-black"></div>
                   <div class="mt-4 font-timelessB text-3xl">BLOG</div>

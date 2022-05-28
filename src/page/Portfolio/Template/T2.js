@@ -65,9 +65,8 @@ function T2() {
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.data.profileType);
-            setProfileImg(res.data.data.profileBytes);
-            console.log(profileType);
-            console.log(profileType);
+            setProfileImg(res.data.data.profileString);
+
             setCheckProfile(true);
             // setLoadingComplete(true);
           }
@@ -150,12 +149,12 @@ function T2() {
                 />
               </div>
               <div class="mt-10 text-3xl text-gray-900 z-20 font-btest text-center">
-                {portfolioInfo.job ? (
+                {portfolioInfo.job.length != 0 ? (
                   <div class="text-xl text-ltest">{portfolioInfo.job}</div>
                 ) : null}
 
                 <div class="text-4xl">개발자 {portfolioInfo.username}</div>
-                {portfolioInfo.job ? (
+                {portfolioInfo.job.length != 0 ? (
                   <div class="mt-2 text-2xl">{portfolioInfo.content}</div>
                 ) : null}
               </div>
@@ -182,7 +181,7 @@ function T2() {
                       <a class="bg-blue-100 p-1 mr-3 font-sbtest">이메일</a>{" "}
                       {portfolioInfo.email}
                     </div>
-                    {portfolioInfo.github ? (
+                    {portfolioInfo.github.length != 0 ? (
                       <div>
                         <a class="bg-blue-100 p-1 mr-3 font-sbtest">Github</a>{" "}
                         {portfolioInfo.github}
@@ -190,7 +189,7 @@ function T2() {
                     ) : null}
                   </div>
                 </div>
-                {portfolioInfo.skills ? (
+                {portfolioInfo.skills.length != 0 ? (
                   <div class="w-1/2 px-10">
                     <div class="w-full flex items-center gap-5">
                       <div class="text-gray-600 text-4xl font-btest text-center ">
@@ -215,7 +214,7 @@ function T2() {
             </div>
           </section>
 
-          {portfolioInfo.projects ? (
+          {portfolioInfo.projects.length != 0 ? (
             <section class="relative bg-gray-100" id="project">
               <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-gray-300 z-40"></div>
               <div class="w-[60%] mx-auto px-4 z-30 py-16 ">
@@ -296,7 +295,7 @@ function T2() {
             </section>
           ) : null}
 
-          {portfolioInfo.awards ? (
+          {portfolioInfo.awards.length != 0 ? (
             <section class="relative bg-white" id="award">
               <div class="absolute w-full h-[85%] top-[7.5%] xl:border-b xl:border-t xl:border-t border-indigo-100 mix-blend-multiply z-40"></div>
               <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-indigo-100 z-40"></div>
@@ -329,7 +328,7 @@ function T2() {
             </section>
           ) : null}
 
-          {portfolioInfo.careers ? (
+          {portfolioInfo.careers.length != 0 ? (
             <section class="relative bg-indigo-100" id="workExperience">
               <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-indigo-200 z-40"></div>
               <div class="w-[60%] mx-auto px-4 z-30 py-24">
@@ -364,7 +363,7 @@ function T2() {
             </section>
           ) : null}
 
-          {portfolioInfo.boards ? (
+          {portfolioInfo.boards.length != 0 ? (
             <section class="relative bg-yellow-50" id="blog">
               <div class="absolute w-[60%] h-full left-[20%] xl:border-l xl:border-r border-[#f1e7d0] z-40"></div>
               <div class="w-[60%] mx-auto px-4 z-30 py-24">
