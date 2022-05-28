@@ -3,6 +3,8 @@ import axios from "axios";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
 import profileImage from "../../assets/img/profile.jpg";
+import { TagModal, TeamScheduleModal } from "../../Component/Modal";
+import { isCompositeComponent } from "react-dom/test-utils";
 
 let tmpSkillList = [];
 let tmpWorkList = [];
@@ -48,8 +50,10 @@ function PortfolioMain() {
   const [openTemplate, setOpenTemplate] = useState(false);
   const [template, setTemplate] = useState(null);
 
-  const [workStartMsg, setWorkStartMsg] = useState("");
-  const [workStartValid, setWorkStartValid] = useState(true);
+  const [showTagModal, setShowTagModal] = useState(false);
+  const [selectedTagList, setSelectedTagList] = useState([]);
+  const [showSkillModal, setShowSkillModal] = useState(false);
+  const [selectedSkillList, setSelectedSkillList] = useState([]);
 
   const [checkCreate, setCheckCreate] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
@@ -66,9 +70,30 @@ function PortfolioMain() {
   const [awardIndex, setAwardIndex] = useState(0);
   const [firstProjectInfo, setFirstProjectInfo] = useState([]);
   const [projectIndex, setProjectIndex] = useState(0);
+  const [axiosFinish, setAxiosFinish] = useState(false);
+
+  const [topRecommendPost, setTopRecommendPost] = useState([]);
+  const [contentAfter, setContentAfter] = useState([]);
+  const [dateAfter, setDateAfter] = useState([]);
+  const [checkTopPost, setCheckTopPost] = useState(false);
 
   const navigate = useNavigate();
   const id = useParams().id;
+
+  function htmlDetailToText(htmlContent) {
+    let text = htmlContent.replace(/(<([^>]+)>)/gi, "");
+    text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, (s) => {
+      const entityMap = {
+        "&amp;": "&",
+        "&lt;": "<",
+        "&gt;": ">",
+        "&quot;": '"',
+        "&#39;": "'",
+      };
+      return entityMap[s];
+    });
+    return text;
+  }
 
   async function onWorkInputHandler() {
     if (checkCreate) {
@@ -145,6 +170,7 @@ function PortfolioMain() {
       setAwardName(null);
       setAwardDate(null);
       setAwardAdd(false);
+      onAwardGetHandler();
     } else {
       let tmpAward = {
         id: awardIndex,
@@ -174,8 +200,8 @@ function PortfolioMain() {
         job: prjDev,
         startTerm: prjDevStart,
         endTerm: prjDevEnd,
-        // projectSkills: prjSkillsList,
-        // image: prjImg,
+        projectSkills: selectedTagList,
+        image: prjImg,
       };
       tmpPrjList = tmpProject;
       console.log(tmpProject);
@@ -187,14 +213,18 @@ function PortfolioMain() {
       formData.append("startTerm", tmpProject.startTerm);
       formData.append("endTerm", tmpProject.endTerm);
 
-      // 우선 임시로 해둠
-      formData.append("skillCount", "0");
-      formData.append("skills", "hello");
+      let tmpTag = [];
+      selectedTagList.map((tag) => {
+        tmpTag.push(tag.id);
+      });
+      formData.append("skills", tmpTag);
 
-      console.log("음........................");
       prjImageList.map((image) => {
         formData.append("file", image);
       });
+
+      console.log("이미지 리스트 확인~~");
+      console.log(prjImageList);
 
       await axios
         .post(
@@ -215,6 +245,9 @@ function PortfolioMain() {
       setPrjDevEnd(null);
       setPrjSkillsList([]);
       setPrjDetailInput(null);
+      setPrjImageList(null);
+      tmpPrjImgList = [];
+
       // setPrjImg(null);
       // tmpPrjList = [];
 
@@ -227,13 +260,21 @@ function PortfolioMain() {
         job: prjDev,
         startTerm: prjDevStart,
         endTerm: prjDevEnd,
-        projectSkills: prjSkillsList,
-        projectSkillsCount: prjSkillsList.length,
+        projectSkills: selectedTagList,
+        projectSkillsCount: selectedTagList.length,
+        // projectSkills: prjSkillsList,
+        // projectSkillsCount: prjSkillsList.length,
         image: prjImg,
       };
 
+      console.log("태그가 잘 들어갔는지...?");
+      // console.log(selectedTagList);
+      // console.log(tmpProject.projectSkills);
+      // console.log(tmpProject.projectSkillsCount);
+
       tmpPrjList.push(tmpProject);
       setFirstProjectInfo(tmpPrjList);
+
       setProjectAdd(false);
       setPrjName(null);
       setPrjDev(null);
@@ -400,6 +441,30 @@ function PortfolioMain() {
       setPrjDevEnd(e.target.value);
     }
   };
+
+  async function onUpdateSkillHandler() {
+    console.log("스킬 수정");
+    const formData = new FormData();
+    let tmpSkill = [];
+    selectedSkillList.map((skill) => {
+      tmpSkill.push(skill.id);
+    });
+    formData.append("skills", tmpSkill);
+
+    await axios
+      .post(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/skill",
+        formData
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    onSkillGetHandler();
+  }
 
   async function onUpdateCareerHandler(params, title, content, start, end, e) {
     console.log("경력 수정");
@@ -717,6 +782,51 @@ function PortfolioMain() {
     }
   }
 
+  async function onUpdateBlogHandler() {
+    console.log("블로그 글 목록 확인");
+    const formData = new FormData();
+
+    let tmpId = [];
+    let tmpTitle = [];
+    let tmpContent = [];
+    let tmpRecommend = [];
+    let tmpDate = [];
+
+    topRecommendPost.map((post, index) => {
+      tmpId.push(post.id);
+      tmpTitle.push(post.title);
+      tmpRecommend.push(post.recommend);
+    });
+
+    contentAfter.map((content) => {
+      tmpContent.push(content);
+    });
+
+    dateAfter.map((date) => {
+      tmpDate.push(date);
+    });
+
+    console.log(tmpContent);
+
+    formData.append("boardId", tmpId);
+    formData.append("content", tmpContent);
+    formData.append("date", tmpDate);
+    formData.append("title", tmpTitle);
+    formData.append("recommend", tmpRecommend);
+
+    axios
+      .post(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/blog",
+        formData
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   /****************/
 
   const onUpdateWorknameInput = (params, title, e) => {
@@ -857,22 +967,13 @@ function PortfolioMain() {
 
   const onPortfolioCreateHandler = (e) => {
     const formData = new FormData();
-    // let portfolio = {
-    //   template: template,
-    //   github: githubInput,
-    //   job: jobInput,
-    //   content: introInput,
-    //   // awards: tmpAwardList,
-    //   // careers: tmpWorkList,
-    //   // projects: tmpPrjList,
-    //   awards: firstAwardInfo,
-    //   careers: firstCareerInfo,
-    //   projects: firstProjectInfo,
-    //   // files: prjImageList,
-    //   projectId: null,
-    // };
 
-    // formData.append("portfolio", portfolio);
+    let tempSkillList = [];
+    selectedSkillList.map((skill) => {
+      tempSkillList.push(skill.id);
+    });
+
+    formData.append("skills", tempSkillList);
 
     formData.append("template", template);
     formData.append("github", githubInput);
@@ -910,6 +1011,7 @@ function PortfolioMain() {
     let tempPrjETerm = [];
     let tempPrjSCount = [];
     let tempPrjSkill = [];
+
     firstProjectInfo.map((prj) => {
       tempPrjTitle.push(prj.title);
       tempPrjContent.push(prj.content);
@@ -917,7 +1019,10 @@ function PortfolioMain() {
       tempPrjSTerm.push(prj.startTerm);
       tempPrjETerm.push(prj.endTerm);
       tempPrjSCount.push(prj.projectSkillsCount);
-      tempPrjSkill.push(prj.projectSkills);
+
+      prj.projectSkills.map((skill) => {
+        tempPrjSkill.push(skill.id);
+      });
     });
 
     formData.append("prjTitles", tempPrjTitle);
@@ -932,23 +1037,62 @@ function PortfolioMain() {
       formData.append("files", image);
     });
 
-    // formData.append("projectId", null);
+    console.log("포트폴리오 생성 정보 확인");
+    console.log(tempAwardName);
+    console.log(tempAwardDate);
+    console.log(tempCareerTitle);
+    console.log(tempCareerContent);
+    console.log(tempCareerSTerm);
+    console.log(tempCareerETerm);
+    console.log(tempPrjTitle);
+    console.log(tempPrjContent);
+    console.log(tempPrjJob);
+    console.log(tempPrjSTerm);
+    console.log(tempPrjETerm);
+    console.log(tempPrjSCount);
+    console.log(tempPrjSkill);
+    console.log(prjImageList);
 
-    console.log("포트폴리오 생성");
     axios
       .post(SERVER_URL + "/ptf-service/api/v1/portfolio", formData)
       .then((res) => {
         console.log(res);
+        setAxiosFinish(true);
       })
       .catch((err) => {
         console.log(err);
       });
 
-    if (template == "TYPE_1") navigate("/portfolio/template/t1");
-    else if (template == "TYPE_2") navigate("/portfolio/template/t2");
-    else if (template == "TYPE_3") navigate("/portfolio/template/t3");
-    else if (template == "TYPE_4") navigate("/portfolio/template/t4");
+    if (axiosFinish) {
+      if (template == "TYPE_1") navigate("/portfolio/template/t1");
+      else if (template == "TYPE_2") navigate("/portfolio/template/t2");
+      else if (template == "TYPE_3") navigate("/portfolio/template/t3");
+      else if (template == "TYPE_4") navigate("/portfolio/template/t4");
+    }
   };
+
+  async function onSkillGetHandler() {
+    await axios
+      .get(SERVER_URL + "/ptf-service/api/v1/portfolio/myPortfolio/skills")
+      .then((res) => {
+        console.log("스킬 정보 가져오기~~");
+        let tmp = res.data.data;
+        console.log(tmp);
+
+        let newSkill = [];
+        tmp.map((skill) => {
+          let tmpSkill = {
+            id: skill.id,
+            name: skill.name,
+          };
+          newSkill.push(tmpSkill);
+        });
+        setSelectedSkillList(newSkill);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
 
   async function onCareerGetHandler() {
     await axios
@@ -993,17 +1137,7 @@ function PortfolioMain() {
   }
 
   async function onPortfolioCheckHandler() {
-    let template = null;
-    await axios
-      .get(SERVER_URL + "/ptf-service/api/v1/portfolio/myPortfolio/template")
-      .then((res) => {
-        console.log(res);
-        template = res.data.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
+    console.log("템플릿 조회");
     console.log(template);
     if (template == "TYPE_1") navigate("/portfolio/template/t1");
     else if (template == "TYPE_2") navigate("/portfolio/template/t2");
@@ -1029,7 +1163,10 @@ function PortfolioMain() {
         });
     } else {
       tmpWorkList = tmpWorkList.filter((career) => career.id !== params);
-      setCareerInfo(tmpWorkList);
+      setFirstCareerInfo(tmpWorkList);
+
+      console.log("엥...?");
+      console.log(tmpWorkList);
     }
   }
 
@@ -1051,7 +1188,10 @@ function PortfolioMain() {
         });
     } else {
       tmpAwardList = tmpAwardList.filter((award) => award.id !== params);
-      setAwardInfo(tmpAwardList);
+      setFirstAwardInfo(tmpAwardList);
+
+      console.log("수상경력...");
+      console.log(tmpAwardList);
     }
   }
 
@@ -1073,8 +1213,23 @@ function PortfolioMain() {
         });
     } else {
       tmpPrjList = tmpPrjList.filter((prj) => prj.id !== params);
-      setPortfolioInfo(tmpPrjList);
+      setFirstProjectInfo(tmpPrjList);
+
+      console.log("프로젝트...");
+      console.log(tmpPrjList);
     }
+  }
+
+  function onTopPostDeleteHandler(params, e) {
+    let tmpPost = [...topRecommendPost];
+    let tmpContent = [...contentAfter];
+    let tmpDate = [...dateAfter];
+    tmpPost.splice(params, 1);
+    tmpContent.splice(params, 1);
+    tmpDate.splice(params, 1);
+    setTopRecommendPost(tmpPost);
+    setContentAfter(tmpContent);
+    setDateAfter(tmpDate);
   }
 
   const onUpdateBasicInfoHandler = () => {
@@ -1162,22 +1317,50 @@ function PortfolioMain() {
           .then((res) => {
             console.log("서버에서 보내준 값");
             console.log(res);
+
             tmpCm = {
-              email: res.data.email,
-              phone: res.data.phoneNumber,
-              username: res.data.username,
-              content: res.data.portfolio.content,
-              github: res.data.portfolio.github,
-              job: res.data.portfolio.job,
-              awards: res.data.portfolio.awards,
-              careers: res.data.portfolio.careers,
-              projects: res.data.portfolio.projects,
-              template: res.data.portfolio.template,
+              email: res.data.data.email,
+              phone: res.data.data.phoneNumber,
+              username: res.data.data.username,
+              content: res.data.data.portfolio.content,
+              github: res.data.data.portfolio.github,
+              job: res.data.data.portfolio.job,
+              skills: res.data.data.portfolio.skills,
+              awards: res.data.data.portfolio.awards,
+              careers: res.data.data.portfolio.careers,
+              projects: res.data.data.portfolio.projects,
+              template: res.data.data.portfolio.template,
+              boards: res.data.data.portfolio.boards,
             };
             console.log("포트폴리오 정보 조회하기~~~");
             console.log(tmpCm);
             setPortfolioInfo(tmpCm);
 
+            if (tmpCm.boards.length == 0) {
+              console.log("한번도 수정한적없음");
+              updateTopPost();
+            } else {
+              console.log("한번이라도 수정한적 있삼");
+              setTopRecommendPost([...tmpCm.boards]);
+              let tmpContentAfter = [];
+              let tmpDate = [];
+              tmpCm.boards.map((item) => {
+                tmpContentAfter.push(
+                  htmlDetailToText(item.content).substring(0, 300) + "..."
+                );
+                tmpDate.push(item.date);
+              });
+
+              let tmpDateAfter = [];
+              tmpDate.map((item) => {
+                tmpDateAfter.push(item.substring(0, 10));
+              });
+
+              setContentAfter([...tmpContentAfter]);
+              setDateAfter([...tmpDateAfter]);
+            }
+
+            let newSkill = [];
             let newCareer = [];
             let newAward = [];
             let newProject = [];
@@ -1188,6 +1371,25 @@ function PortfolioMain() {
               job: tmpCm.job,
               update: false,
             };
+
+            tmpCm.skills.map((skill) => {
+              let tmpSkill = {
+                id: skill.id,
+                name: skill.name,
+              };
+              newSkill.push(tmpSkill);
+            });
+
+            tmpCm.awards.map((award) => {
+              let tmpAward = {
+                id: award.id,
+                name: award.name,
+                date: award.date,
+                update: false,
+                delete: false,
+              };
+              newAward.push(tmpAward);
+            });
 
             tmpCm.careers.map((car) => {
               let tmpCareer = {
@@ -1202,17 +1404,6 @@ function PortfolioMain() {
               newCareer.push(tmpCareer);
             });
 
-            tmpCm.awards.map((award) => {
-              let tmpAward = {
-                id: award.id,
-                name: award.name,
-                date: award.date,
-                update: false,
-                delete: false,
-              };
-              newAward.push(tmpAward);
-            });
-
             tmpCm.projects.map((pro) => {
               let tmpProject = {
                 id: pro.id,
@@ -1223,13 +1414,14 @@ function PortfolioMain() {
                 job: pro.job,
                 imageBytes: pro.imageBytes,
                 imageType: pro.imageType,
-                // projectSkills: pro.projectSkills,
+                tagId: pro.tagId,
                 update: false,
                 delete: false,
               };
               newProject.push(tmpProject);
             });
 
+            setSelectedSkillList(newSkill);
             setBasicInfo(tmpBasic);
             setCareerInfo(newCareer);
             setAwardInfo(newAward);
@@ -1238,6 +1430,7 @@ function PortfolioMain() {
           .catch((err) => {
             console.log(err);
           });
+
         setCheckCreate(true);
         setLoadingComplete(true);
         setTemplate(tmpCm.template);
@@ -1249,8 +1442,51 @@ function PortfolioMain() {
     fetchData3();
   }, []);
 
+  async function updateTopPost() {
+    await axios
+      .get(SERVER_URL + "/til-service/api/v1/boards/portfolio/myBoards")
+      .then((res) => {
+        console.log("추천수 높은 글을 가져올거예요~~~^^");
+        console.log(res);
+        setTopRecommendPost([...res.data.data]);
+        let tmpContentAfter = [];
+        let tmpDate = [];
+        res.data.data.map((item) => {
+          tmpContentAfter.push(
+            htmlDetailToText(item.content).substring(0, 300) + "..."
+          );
+          tmpDate.push(item.createdDate);
+        });
+
+        let tmpDateAfter = [];
+        tmpDate.map((item) => {
+          tmpDateAfter.push(item.substring(0, 10));
+        });
+
+        setContentAfter([...tmpContentAfter]);
+        setDateAfter([...tmpDateAfter]);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   return (
     <div class="bg-white font-test">
+      {showTagModal ? (
+        <TagModal
+          setShowTagModal={setShowTagModal}
+          selectedTagList={selectedTagList}
+          setSelectedTagList={setSelectedTagList}
+        />
+      ) : null}
+      {showSkillModal ? (
+        <TagModal
+          setShowTagModal={setShowSkillModal}
+          selectedTagList={selectedSkillList}
+          setSelectedTagList={setSelectedSkillList}
+        />
+      ) : null}
       {loadingComplete ? (
         <>
           <div class="w-2/3 mt-10 mx-auto border rounded-lg">
@@ -1285,7 +1521,7 @@ function PortfolioMain() {
               <div class="relative mx-auto p-4 w-full max-w-2xl h-full md:h-auto">
                 <div class="relative bg-white rounded-lg shadow dark:bg-gray-300">
                   <div class="flex p-4 rounded-t border dark:border-gray-300">
-                    <div class="text-lg font-ltest font-semibold text-gray-900 dark:text-white">
+                    <div class="text-lg font-ltest font-semibold text-gray-900 dark:text-white align-middle">
                       {checkCreate ? "🖼 템플릿 수정하기" : "🖼 템플릿 선택하기"}
                     </div>
                     <button
@@ -1308,9 +1544,20 @@ function PortfolioMain() {
                     </button>
                   </div>
                   <div class="p-6 space-y-6">
+                    <div class="flex justify-center font-test">
+                      각 템플릿의 대표 색상이에요. 색깔을 클릭하면 샘플 템플릿을
+                      볼 수 있어요.
+                    </div>
                     <div class="flex gap-4 justify-center">
                       <div>
-                        <div class="w-28 h-56 bg-white border border-gray-300"></div>
+                        <button
+                          class="w-28 h-56 bg-white border border-gray-300"
+                          onClick={() =>
+                            navigate("/portfolio/template/samplet1")
+                          }
+                        >
+                          　
+                        </button>
                         <button
                           class={
                             template == "TYPE_1"
@@ -1323,7 +1570,14 @@ function PortfolioMain() {
                         </button>
                       </div>
                       <div>
-                        <div class="w-28 h-56 bg-black">　</div>
+                        <button
+                          class="w-28 h-56 bg-black"
+                          onClick={() =>
+                            navigate("/portfolio/template/samplet2")
+                          }
+                        >
+                          　
+                        </button>
                         <button
                           class={
                             template == "TYPE_2"
@@ -1336,7 +1590,14 @@ function PortfolioMain() {
                         </button>
                       </div>
                       <div>
-                        <div class="w-28 h-56 bg-indigo-300">　</div>
+                        <button
+                          class="w-28 h-56 bg-indigo-300"
+                          onClick={() =>
+                            navigate("/portfolio/template/samplet3")
+                          }
+                        >
+                          　
+                        </button>
                         <button
                           class={
                             template == "TYPE_3"
@@ -1349,7 +1610,14 @@ function PortfolioMain() {
                         </button>
                       </div>
                       <div>
-                        <div class="w-28 h-56 bg-bg7">　</div>
+                        <button
+                          class="w-28 h-56 bg-bg7"
+                          onClick={() =>
+                            navigate("/portfolio/template/samplet4")
+                          }
+                        >
+                          　
+                        </button>
                         <button
                           class={
                             template == "TYPE_4"
@@ -1537,7 +1805,7 @@ function PortfolioMain() {
                 </table>
                 {checkCreate ? (
                   <div class="flex justify-end">
-                    {basicInfo.update ? (
+                    {basicInfo && basicInfo.update ? (
                       <button
                         class="ml-full py-3 mt-2 border border-gray-300 px-6 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
                         onClick={() => {
@@ -1567,41 +1835,62 @@ function PortfolioMain() {
                 <table class="w-full table-auto border-collapse border border-slate-400">
                   <tbody>
                     <tr>
-                      {/** 사용 기술 부분은 목록형으로 나중에 바꾸기*/}
                       <td class="pl-2 bg-indigo-100 border border-slate-300">
                         사용 기술
                       </td>
                       <td class="border border-slate-300">
-                        <div class="flex items-center gap-5">
-                          {tmpSkillList.map((item) => {
-                            return (
-                              <div class="w-1/6 py-2 px-4 bg-gray-50 text-lg font-ltest min-w-[8rem]">
-                                {item}
+                        {checkCreate ? (
+                          <>
+                            <div class="flex">
+                              <div class="flex flex-wrap items-center gap-3">
+                                {selectedSkillList.map((item) => {
+                                  return (
+                                    <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
+                                      {item.name}
+                                    </div>
+                                  );
+                                })}
                               </div>
-                            );
-                          })}
-                          {skillsAdd ? (
-                            <div>
-                              <input
-                                class="w-1/6 mt-2 py-2 px-4 bg-white focus:outline-0 text-lg font-ltest min-w-[8rem]"
-                                placeholder="내 스킬정보(til에서 만들어짐)"
-                                onKeyPress={(e) => onKeyPress(e)}
-                                onChange={(e) =>
-                                  setSkillInput(e.currentTarget.value)
-                                }
-                              />
+                              <div class="flex flex-col ml-auto">
+                                <button
+                                  class="w-full py-2 px-6 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[8rem]"
+                                  onClick={() => {
+                                    setShowSkillModal(true);
+                                  }}
+                                >
+                                  수정하기
+                                </button>
+                                <button
+                                  class="w-full py-2 px-4 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest"
+                                  onClick={() => {
+                                    onUpdateSkillHandler();
+                                    // setShowSkillModal(true);
+                                  }}
+                                >
+                                  수정완료
+                                </button>
+                              </div>
                             </div>
-                          ) : (
+                          </>
+                        ) : (
+                          <div class="flex flex-wrap items-center gap-3">
+                            {selectedSkillList.map((item) => {
+                              return (
+                                <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
+                                  {item.name}
+                                </div>
+                              );
+                            })}
                             <button
-                              class="w-1/6 py-2 px-4 border border-gray-300 bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[8rem]"
+                              class="rounded-lg w-1/6 py-2 px-4 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest"
                               onClick={() => {
-                                setSkillsAdd(true);
+                                setShowSkillModal(true);
                               }}
                             >
                               +
                             </button>
-                          )}
-                        </div>
+                          </div>
+                        )}
                       </td>
                     </tr>
                     <tr>
@@ -1611,7 +1900,8 @@ function PortfolioMain() {
                       <td class="border border-slate-300">
                         <div>
                           {checkCreate
-                            ? careerInfo.map((item) => {
+                            ? careerInfo &&
+                              careerInfo.map((item) => {
                                 return (
                                   <div>
                                     {item.delete ? null : (
@@ -1944,9 +2234,9 @@ function PortfolioMain() {
                                                     ...copyCareer[findIndex],
                                                     delete: true,
                                                   };
-                                                  setFirstCareerInfo(
-                                                    copyCareer
-                                                  );
+                                                  // setFirstCareerInfo(
+                                                  //   copyCareer
+                                                  // );
                                                 }}
                                               >
                                                 삭제하기
@@ -2006,7 +2296,7 @@ function PortfolioMain() {
                             </div>
                           ) : (
                             <button
-                              class="border-t border-gray-300 w-full py-2 px-4 bg-gray-50 focus:outline-0 text-base font-test min-w-[20rem]"
+                              class="w-full py-2 px-4 bg-gray-50 focus:outline-0 text-base font-test min-w-[20rem]"
                               onClick={() => {
                                 setWorkAdd(true);
                               }}
@@ -2023,7 +2313,8 @@ function PortfolioMain() {
                       </td>
                       <td class="border border-slate-300">
                         {checkCreate
-                          ? awardInfo.map((item) => {
+                          ? awardInfo &&
+                            awardInfo.map((item) => {
                               return (
                                 <div class="xl:flex justify-between w-full">
                                   {item.delete ? null : (
@@ -2183,7 +2474,7 @@ function PortfolioMain() {
                                         <>
                                           <div class="w-[40%]">
                                             <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                              class="px-2 text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
                                               placeholder={item.date}
                                               type="text"
                                               disabled
@@ -2191,7 +2482,7 @@ function PortfolioMain() {
                                           </div>
                                           <div class="w-[60%]">
                                             <input
-                                              class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                              class="px-2 text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
                                               placeholder={item.name}
                                               type="text"
                                               disabled
@@ -2233,7 +2524,7 @@ function PortfolioMain() {
                                                 ...copyAward[findIndex],
                                                 delete: true,
                                               };
-                                              setFirstAwardInfo(copyAward);
+                                              // setFirstAwardInfo(copyAward);
                                             }}
                                           >
                                             삭제하기
@@ -2250,14 +2541,14 @@ function PortfolioMain() {
                           <div class="xl:flex justify-between w-full">
                             <div class="w-[30%]">
                               <input
-                                class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                class="text-gray-500 px-2 py-2 w-full h-full border-r border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
                                 placeholder="수상 일자(yyyy.mm)"
                                 onChange={onAwardDateInputHandler}
                               />
                             </div>
                             <div class="w-[60%]">
                               <input
-                                class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                class="text-gray-500 px-2 py-2 w-full h-full  focus:outline-0 text-base font-ltest min-w-[20rem]"
                                 placeholder="수상한 상 이름"
                                 onChange={(e) =>
                                   setAwardName(e.currentTarget.value)
@@ -2265,7 +2556,7 @@ function PortfolioMain() {
                               />
                             </div>
                             <button
-                              class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-ltest min-w-[5rem]"
+                              class="rounded-lg py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-ltest min-w-[5rem]"
                               onClick={onAwardInputHandler}
                             >
                               추가하기
@@ -2273,7 +2564,7 @@ function PortfolioMain() {
                           </div>
                         ) : (
                           <button
-                            class="border-t border-gray-300 w-full py-2 px-4 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                            class="w-full py-2 px-4 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
                             onClick={() => {
                               setAwardAdd(true);
                             }}
@@ -2290,75 +2581,46 @@ function PortfolioMain() {
                       <td class="border border-slate-300">
                         {checkCreate ? (
                           <>
-                            {projectInfo.map((item) => {
-                              return (
-                                <>
-                                  {item.delete ? null : (
-                                    <div
-                                      class={
-                                        item.update
-                                          ? "text-base font-test rounded-xl border border-gray-300 px-10 pt-8 pb-4"
-                                          : "text-base font-test bg-gray-100 rounded-xl border border-gray-300 px-10 pt-8 pb-4"
-                                      }
-                                    >
-                                      {item.update ? (
-                                        <input
-                                          class="w-full border-b border-gray-300 pb-2 font-test text-base mb-2 text-gray-700 focus:outline-0"
-                                          placeholder={item.title}
-                                          onChange={(e) => {
-                                            onUpdatePrjNameInput(
-                                              e.currentTarget.value,
-                                              item.title,
-                                              e
-                                            );
-                                          }}
-                                        />
-                                      ) : (
-                                        <input
-                                          class=" text-gray-500 w-full border-b border-gray-300 pb-2 font-test text-lg mb-2 bg-inherit  focus:outline-0"
-                                          placeholder={item.title}
-                                          type="text"
-                                          disabled
-                                        />
-                                      )}
+                            {projectInfo &&
+                              projectInfo.map((item) => {
+                                return (
+                                  <>
+                                    {item.delete ? null : (
+                                      <div
+                                        class={
+                                          item.update
+                                            ? "text-base font-test rounded-xl border border-gray-300 px-10 pt-8 pb-4"
+                                            : "text-base font-test bg-gray-100 rounded-xl border border-gray-300 px-10 pt-8 pb-4"
+                                        }
+                                      >
+                                        {item.update ? (
+                                          <input
+                                            class="w-full border-b border-gray-300 pb-2 font-test text-base mb-2 text-gray-700 focus:outline-0"
+                                            placeholder={item.title}
+                                            onChange={(e) => {
+                                              onUpdatePrjNameInput(
+                                                e.currentTarget.value,
+                                                item.title,
+                                                e
+                                              );
+                                            }}
+                                          />
+                                        ) : (
+                                          <input
+                                            class=" text-gray-500 w-full border-b border-gray-300 pb-2 font-test text-lg mb-2 bg-inherit  focus:outline-0"
+                                            placeholder={item.title}
+                                            type="text"
+                                            disabled
+                                          />
+                                        )}
 
-                                      {item.update ? (
-                                        <div class="flex justify-center gap-1 mt-5">
-                                          {prjImg ? (
-                                            <div class="flex flex-col items-center">
-                                              <img
-                                                class="w-40rem h-50rem border border-gray-300"
-                                                src={prjImg}
-                                                style={{
-                                                  minHeight: "12rem",
-                                                  minWidth: "16rem",
-                                                  maxHeight: "12rem",
-                                                  maxWidth: "16rem",
-                                                }}
-                                              />
-                                              <label
-                                                for="input-prjimg"
-                                                class="w-full flex justify-end"
-                                              >
-                                                <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-400 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
-                                                  <div>사진 수정</div>
-                                                </div>
-                                              </label>
-                                            </div>
-                                          ) : (
-                                            <div>
-                                              <label
-                                                for="input-prjimg"
-                                                class=""
-                                              >
+                                        {item.update ? (
+                                          <div class="flex justify-center gap-1 mt-5">
+                                            {prjImg ? (
+                                              <div class="flex flex-col items-center">
                                                 <img
-                                                  class="w-full h-full font-ltest text-base text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
-                                                  src={
-                                                    "data:image/" +
-                                                    item.imageType +
-                                                    ";base64," +
-                                                    item.imageBytes
-                                                  }
+                                                  class="w-40rem h-50rem border border-gray-300"
+                                                  src={prjImg}
                                                   style={{
                                                     minHeight: "12rem",
                                                     minWidth: "16rem",
@@ -2366,248 +2628,262 @@ function PortfolioMain() {
                                                     maxWidth: "16rem",
                                                   }}
                                                 />
-                                              </label>
-                                              <input
-                                                type="file"
-                                                accept="image/*"
-                                                id="input-prjimg"
-                                                class="w-0 h-0"
-                                                onChange={(e) => {
-                                                  if (
-                                                    e.target.value.length > 0
-                                                  ) {
-                                                    let tmpList = prjImgList;
-                                                    let imgTarget =
-                                                      e.target.files[0];
-                                                    tmpList.push(imgTarget);
-                                                    setPrjImgList([...tmpList]);
-                                                    let fileReader =
-                                                      new FileReader();
-                                                    fileReader.readAsDataURL(
-                                                      imgTarget
+                                                <label
+                                                  for="input-prjimg"
+                                                  class="w-full flex justify-end"
+                                                >
+                                                  <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-400 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
+                                                    <div>사진 수정</div>
+                                                  </div>
+                                                </label>
+                                              </div>
+                                            ) : (
+                                              <div>
+                                                <label
+                                                  for="input-prjimg"
+                                                  class=""
+                                                >
+                                                  <img
+                                                    class="w-full h-full font-ltest text-base text-gray-500 rounded-xl border border-dashed border-gray-300 text-center focus:outline-0 flex flex-col justify-center cursor-pointer"
+                                                    src={
+                                                      "data:image/" +
+                                                      item.imageType +
+                                                      ";base64," +
+                                                      item.imageBytes
+                                                    }
+                                                    style={{
+                                                      minHeight: "12rem",
+                                                      minWidth: "16rem",
+                                                      maxHeight: "12rem",
+                                                      maxWidth: "16rem",
+                                                    }}
+                                                  />
+                                                </label>
+                                                <input
+                                                  type="file"
+                                                  accept="image/*"
+                                                  id="input-prjimg"
+                                                  class="w-0 h-0"
+                                                  onChange={(e) => {
+                                                    if (
+                                                      e.target.value.length > 0
+                                                    ) {
+                                                      let tmpList = prjImgList;
+                                                      let imgTarget =
+                                                        e.target.files[0];
+                                                      tmpList.push(imgTarget);
+                                                      setPrjImgList([
+                                                        ...tmpList,
+                                                      ]);
+                                                      let fileReader =
+                                                        new FileReader();
+                                                      fileReader.readAsDataURL(
+                                                        imgTarget
+                                                      );
+                                                      fileReader.onload =
+                                                        function (evt) {
+                                                          /* file을 꺼내서 State로 지정 */
+                                                          // setPrjImg(
+                                                          //   evt.target.result
+                                                          // );
+                                                          onUpdatePrjImgInput(
+                                                            evt.target.result,
+                                                            item.imageBytes,
+                                                            item.imageType
+                                                          );
+                                                        };
+                                                    }
+                                                  }}
+                                                />
+                                              </div>
+                                            )}
+
+                                            <div class="w-full flex flex-col gap-4 px-3 justify-center">
+                                              <div class="mr-3 font-test text-base px-1">
+                                                개발 날짜
+                                                <div class="font-ltest mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
+                                                  <input
+                                                    class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                                                    placeholder={item.startTerm}
+                                                    onChange={(e) =>
+                                                      onUpdatePrjStartInput(
+                                                        e.currentTarget.value,
+                                                        item.startTerm,
+                                                        e
+                                                      )
+                                                    }
+                                                  />
+                                                  <div>~</div>
+                                                  <input
+                                                    class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                                                    onChange={(e) =>
+                                                      onUpdatePrjEndInput(
+                                                        e.currentTarget.value,
+                                                        item.endTerm,
+                                                        e
+                                                      )
+                                                    }
+                                                    placeholder={item.endTerm}
+                                                  />
+                                                </div>
+                                              </div>
+                                              <div class="flex gap-6 font-test text-base items-center">
+                                                <div class="text-base font-test text-lg pl-1 pr-3 border-r border-gray-300 ">
+                                                  맡은 직군
+                                                </div>
+                                                <input
+                                                  class="font-ltest text-gray-600 w-1/2 focus:outline-0"
+                                                  placeholder={item.job}
+                                                  onChange={(e) => {
+                                                    onUpdatePrjJobInput(
+                                                      e.currentTarget.value,
+                                                      item.job,
+                                                      e
                                                     );
-                                                    fileReader.onload =
-                                                      function (evt) {
-                                                        /* file을 꺼내서 State로 지정 */
-                                                        // setPrjImg(
-                                                        //   evt.target.result
-                                                        // );
-                                                        onUpdatePrjImgInput(
-                                                          evt.target.result,
-                                                          item.imageBytes,
-                                                          item.imageType
-                                                        );
-                                                      };
-                                                  }
+                                                  }}
+                                                />
+                                              </div>
+                                              <div class="mr-3 font-test text-base">
+                                                <div class="text-base border-b border-gray-400 w-full px-1 pb-2">
+                                                  사용 기술
+                                                </div>
+                                                <div class="grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
+                                                  {selectedTagList.map(
+                                                    (item) => {
+                                                      return (
+                                                        <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
+                                                          {item.name}
+                                                        </div>
+                                                      );
+                                                    }
+                                                  )}
+                                                  <button
+                                                    class="w-full rounded-lg border border-dashed border-gray-300 p-1"
+                                                    onClick={() => {
+                                                      setShowTagModal(true);
+                                                    }}
+                                                  >
+                                                    +
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        ) : (
+                                          <div class="flex justify-center gap-5 mt-5">
+                                            <div class="flex flex-col items-center">
+                                              <img
+                                                class="w-40rem h-50rem border border-gray-300"
+                                                src={
+                                                  "data:image/" +
+                                                  item.imageType +
+                                                  ";base64," +
+                                                  item.imageBytes
+                                                }
+                                                style={{
+                                                  minHeight: "12rem",
+                                                  minWidth: "16rem",
+                                                  maxHeight: "12rem",
+                                                  maxWidth: "16rem",
                                                 }}
                                               />
                                             </div>
-                                          )}
+                                            <div class="text-gray-500 w-full flex flex-col gap-4 px-3 justify-center">
+                                              <div class="text-base mr-3 font-test text-xl px-1">
+                                                개발 날짜
+                                                <div class="font-ltest text-gray-500 mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
+                                                  <input
+                                                    class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                                                    placeholder={item.startTerm}
+                                                    disabled
+                                                  />
+                                                  <div>~</div>
+                                                  <input
+                                                    class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                                                    placeholder={item.endTerm}
+                                                    disabled
+                                                  />
+                                                </div>
+                                              </div>
+                                              <div class="text-gray-500 flex gap-6 font-test text-base items-center">
+                                                <div class="font-test text-base pl-1 pr-3 border-r border-gray-300 ">
+                                                  맡은 직군
+                                                </div>
+                                                <input
+                                                  class="bg-gray-100 font-ltest text-gray-600 w-1/2 focus:outline-0"
+                                                  placeholder={item.job}
+                                                />
+                                              </div>
 
-                                          <div class="w-full flex flex-col gap-4 px-3 justify-center">
-                                            <div class="mr-3 font-test text-base px-1">
-                                              개발 날짜
-                                              <div class="font-ltest mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
-                                                <input
-                                                  class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                  placeholder={item.startTerm}
-                                                  onChange={(e) =>
-                                                    onUpdatePrjStartInput(
-                                                      e.currentTarget.value,
-                                                      item.startTerm,
-                                                      e
-                                                    )
-                                                  }
-                                                />
-                                                <div>~</div>
-                                                <input
-                                                  class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                  onChange={(e) =>
-                                                    onUpdatePrjEndInput(
-                                                      e.currentTarget.value,
-                                                      item.endTerm,
-                                                      e
-                                                    )
-                                                  }
-                                                  placeholder={item.endTerm}
-                                                />
+                                              <div class="mr-3 font-test text-base">
+                                                <div class="border-b border-gray-400 w-full px-1 pb-2">
+                                                  사용 기술
+                                                </div>
+                                                <div class="text-gray-500 grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
+                                                  {item.tagId &&
+                                                    item.tagId.map((tag) => {
+                                                      return (
+                                                        <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
+                                                          {tag.name}
+                                                        </div>
+                                                      );
+                                                    })}
+                                                </div>
                                               </div>
                                             </div>
-                                            <div class="flex gap-6 font-test text-base items-center">
-                                              <div class="text-base font-test text-lg pl-1 pr-3 border-r border-gray-300 ">
-                                                맡은 직군
+                                          </div>
+                                        )}
+                                        {item.update ? (
+                                          <>
+                                            <div class="text-gray-500 mt-5 font-test text-base break-all border-b border-gray-300">
+                                              <div class="border-b border-gray-300 w-full pb-2 mb-2 ">
+                                                프로젝트 설명
                                               </div>
-                                              <input
-                                                class="font-ltest text-gray-600 w-1/2 focus:outline-0"
-                                                placeholder={item.job}
+                                              <textarea
+                                                class="text-base w-full focus:outline-0 resize-none bg-inherit min-h-[10rem] "
+                                                placeholder={item.content}
                                                 onChange={(e) => {
-                                                  onUpdatePrjJobInput(
+                                                  onUpdatePrjContentInput(
                                                     e.currentTarget.value,
-                                                    item.job,
+                                                    item.content,
                                                     e
                                                   );
                                                 }}
                                               />
                                             </div>
-                                            <div class="mr-3 font-test text-base">
-                                              <div class="text-base border-b border-gray-400 w-full px-1 pb-2">
-                                                사용 기술
-                                              </div>
-                                              <div class="grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                                                {prjSkillsList.map((item) => {
-                                                  return (
-                                                    <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
-                                                      {item.name}
-                                                    </div>
+                                            <div class="w-full flex justify-end">
+                                              <button
+                                                class="w-[15%] mt-2 ml-full py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                                onClick={(e) => {
+                                                  onUpdateProjectHandler(
+                                                    item.id,
+                                                    item.title,
+                                                    item.content,
+                                                    item.startTerm,
+                                                    item.endTerm,
+                                                    item.job,
+                                                    prjImg,
+                                                    // item.projectSkills,
+                                                    e
                                                   );
-                                                })}
-                                                {prjSkillsAdd ? (
-                                                  <input
-                                                    class="w-full rounded-lg border border-gray-300 px-2 text-center py-1 focus:outline-0"
-                                                    placeholder="입력"
-                                                    onKeyPress={(e) => {
-                                                      if (e.key === "Enter") {
-                                                        onPrjSkillInputHandler(
-                                                          e
-                                                        );
-                                                      }
-                                                    }}
-                                                    onChange={(e) => {
-                                                      setPrjSkillInput(
-                                                        e.currentTarget.value
-                                                      );
-                                                    }}
-                                                  />
-                                                ) : (
-                                                  <button
-                                                    class="w-full rounded-lg border border-dashed border-gray-300 p-1"
-                                                    onClick={() => {
-                                                      setPrjSkillsAdd(true);
-                                                    }}
-                                                  >
-                                                    +
-                                                  </button>
-                                                )}
-                                              </div>
+                                                }}
+                                              >
+                                                수정완료
+                                              </button>
                                             </div>
-                                          </div>
-                                        </div>
-                                      ) : (
-                                        <div class="flex justify-center gap-5 mt-5">
-                                          <div class="flex flex-col items-center">
-                                            <img
-                                              class="w-40rem h-50rem border border-gray-300"
-                                              src={
-                                                "data:image/" +
-                                                item.imageType +
-                                                ";base64," +
-                                                item.imageBytes
-                                              }
-                                              style={{
-                                                minHeight: "12rem",
-                                                minWidth: "16rem",
-                                                maxHeight: "12rem",
-                                                maxWidth: "16rem",
-                                              }}
-                                            />
-                                          </div>
-                                          <div class="text-gray-500 w-full flex flex-col gap-4 px-3 justify-center">
-                                            <div class="text-base mr-3 font-test text-xl px-1">
-                                              개발 날짜
-                                              <div class="font-ltest text-gray-500 mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
-                                                <input
-                                                  class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                  placeholder={item.startTerm}
-                                                  disabled
-                                                />
-                                                <div>~</div>
-                                                <input
-                                                  class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                  placeholder={item.endTerm}
-                                                  disabled
-                                                />
-                                              </div>
-                                            </div>
-                                            <div class="text-gray-500 flex gap-6 font-test text-base items-center">
-                                              <div class="font-test text-base pl-1 pr-3 border-r border-gray-300 ">
-                                                맡은 직군
-                                              </div>
-                                              <input
-                                                class="bg-gray-100 font-ltest text-gray-600 w-1/2 focus:outline-0"
-                                                placeholder={item.job}
-                                              />
-                                            </div>
-
-                                            <div class="mr-3 font-test text-base">
-                                              <div class="border-b border-gray-400 w-full px-1 pb-2">
-                                                사용 기술
-                                              </div>
-                                              <div class="text-gray-500 grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                                                {/* {item.projectSkills.map(
-                                                  (skill) => {
-                                                    return (
-                                                      <div class="font-ltest w-full rounded-lg bg-gray-100 border border-gray-300 px-2 text-center py-1 ">
-                                                        {skill.name}
-                                                      </div>
-                                                    );
-                                                  }
-                                                )} */}
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-                                      )}
-                                      {item.update ? (
-                                        <>
+                                          </>
+                                        ) : (
                                           <div class="text-gray-500 mt-5 font-test text-base break-all border-b border-gray-300">
                                             <div class="border-b border-gray-300 w-full pb-2 mb-2 ">
                                               프로젝트 설명
                                             </div>
                                             <textarea
-                                              class="text-base w-full focus:outline-0 resize-none bg-inherit min-h-[10rem] "
+                                              class="font-ltest w-full bg-inherit min-h-[10rem]"
                                               placeholder={item.content}
-                                              onChange={(e) => {
-                                                onUpdatePrjContentInput(
-                                                  e.currentTarget.value,
-                                                  item.content,
-                                                  e
-                                                );
-                                              }}
+                                              disabled
                                             />
-                                          </div>
-                                          <div class="w-full flex justify-end">
-                                            <button
-                                              class="w-[15%] mt-2 ml-full py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={(e) => {
-                                                onUpdateProjectHandler(
-                                                  item.id,
-                                                  item.title,
-                                                  item.content,
-                                                  item.startTerm,
-                                                  item.endTerm,
-                                                  item.job,
-                                                  prjImg,
-                                                  // item.projectSkills,
-                                                  e
-                                                );
-                                              }}
-                                            >
-                                              수정완료
-                                            </button>
-                                          </div>
-                                        </>
-                                      ) : (
-                                        <div class="text-gray-500 mt-5 font-test text-base break-all border-b border-gray-300">
-                                          <div class="border-b border-gray-300 w-full pb-2 mb-2 ">
-                                            프로젝트 설명
-                                          </div>
-                                          <textarea
-                                            class="font-ltest w-full bg-inherit min-h-[10rem]"
-                                            placeholder={item.content}
-                                            disabled
-                                          />
-                                          <div class="flex justify-end gap-2">
-                                            {/* <button
+                                            <div class="flex justify-end gap-2">
+                                              {/* <button
                                               class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
                                               onClick={() => {
                                                 const findIndex =
@@ -2629,38 +2905,38 @@ function PortfolioMain() {
                                             >
                                               수정하기
                                             </button> */}
-                                            <button
-                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={(e) => {
-                                                onProjectDeleteHandler(
-                                                  item.id,
-                                                  e
-                                                );
-                                                const findIndex =
-                                                  projectInfo.findIndex(
-                                                    (element) =>
-                                                      element.id == item.id
+                                              <button
+                                                class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                                onClick={(e) => {
+                                                  onProjectDeleteHandler(
+                                                    item.id,
+                                                    e
                                                   );
-                                                let copyProject = [
-                                                  ...projectInfo,
-                                                ];
-                                                copyProject[findIndex] = {
-                                                  ...copyProject[findIndex],
-                                                  delete: true,
-                                                };
-                                                setProjectInfo(copyProject);
-                                              }}
-                                            >
-                                              삭제하기
-                                            </button>
+                                                  const findIndex =
+                                                    projectInfo.findIndex(
+                                                      (element) =>
+                                                        element.id == item.id
+                                                    );
+                                                  let copyProject = [
+                                                    ...projectInfo,
+                                                  ];
+                                                  copyProject[findIndex] = {
+                                                    ...copyProject[findIndex],
+                                                    delete: true,
+                                                  };
+                                                  setProjectInfo(copyProject);
+                                                }}
+                                              >
+                                                삭제하기
+                                              </button>
+                                            </div>
                                           </div>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                </>
-                              );
-                            })}
+                                        )}
+                                      </div>
+                                    )}
+                                  </>
+                                );
+                              })}
                           </>
                         ) : (
                           <>
@@ -2757,12 +3033,31 @@ function PortfolioMain() {
                                                       imgTarget
                                                     );
 
-                                                    tmpPrjImgList.push(
-                                                      imgTarget
+                                                    if (
+                                                      tmpPrjImgList.includes(
+                                                        imgTarget
+                                                      )
+                                                    ) {
+                                                      tmpPrjImgList[
+                                                        tmpPrjImgList.indexOf(
+                                                          imgTarget
+                                                        )
+                                                      ] = imgTarget;
+                                                    } else {
+                                                      tmpPrjImgList.push(
+                                                        imgTarget
+                                                      );
+                                                    }
+
+                                                    console.log(
+                                                      "이미지 리스트 보여주세여"
                                                     );
+                                                    console.log(tmpPrjImgList);
+
                                                     setPrjImageList(
                                                       tmpPrjImgList
                                                     );
+
                                                     fileReader.onload =
                                                       function (evt) {
                                                         /* file을 꺼내서 State로 지정 */
@@ -2827,40 +3122,23 @@ function PortfolioMain() {
                                                 사용 기술
                                               </div>
                                               <div class="grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                                                {prjSkillsList.map((item) => {
-                                                  return (
-                                                    <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
-                                                      {item.name}
-                                                    </div>
-                                                  );
-                                                })}
-                                                {prjSkillsAdd ? (
-                                                  <input
-                                                    class="w-full rounded-lg border border-gray-300 px-2 text-center py-1 focus:outline-0"
-                                                    placeholder="입력"
-                                                    onKeyPress={(e) => {
-                                                      if (e.key === "Enter") {
-                                                        onPrjSkillInputHandler(
-                                                          e
-                                                        );
-                                                      }
-                                                    }}
-                                                    onChange={(e) => {
-                                                      setPrjSkillInput(
-                                                        e.currentTarget.value
-                                                      );
-                                                    }}
-                                                  />
-                                                ) : (
-                                                  <button
-                                                    class="w-full rounded-lg border border-dashed border-gray-300 p-1"
-                                                    onClick={() => {
-                                                      setPrjSkillsAdd(true);
-                                                    }}
-                                                  >
-                                                    +
-                                                  </button>
+                                                {selectedTagList.map(
+                                                  (skill) => {
+                                                    return (
+                                                      <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
+                                                        {skill.name}
+                                                      </div>
+                                                    );
+                                                  }
                                                 )}
+                                                <button
+                                                  class="w-full rounded-lg border border-dashed border-gray-300 p-1"
+                                                  onClick={() => {
+                                                    setShowTagModal(true);
+                                                  }}
+                                                >
+                                                  +
+                                                </button>
                                               </div>
                                             </div>
                                           </div>
@@ -2910,16 +3188,17 @@ function PortfolioMain() {
                                               <div class="border-b border-gray-400 w-full px-1 pb-2">
                                                 사용 기술
                                               </div>
-                                              <div class="text-gray-500 grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                                                {item.projectSkills.map(
-                                                  (skill) => {
-                                                    return (
-                                                      <div class="font-ltest w-full rounded-lg bg-gray-100 border border-gray-300 px-2 text-center py-1 ">
-                                                        {skill.name}
-                                                      </div>
-                                                    );
-                                                  }
-                                                )}
+                                              <div class="text-gray-500 grid grid-cols-3 text-base mt-3 gap-3">
+                                                {item.projectSkills &&
+                                                  item.projectSkills.map(
+                                                    (skill) => {
+                                                      return (
+                                                        <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
+                                                          {skill.name}
+                                                        </div>
+                                                      );
+                                                    }
+                                                  )}
                                               </div>
                                             </div>
                                           </div>
@@ -3020,9 +3299,9 @@ function PortfolioMain() {
                                                   ...copyProject[findIndex],
                                                   delete: true,
                                                 };
-                                                setFirstProjectInfo(
-                                                  copyProject
-                                                );
+                                                // setFirstProjectInfo(
+                                                //   copyProject
+                                                // );
                                               }}
                                             >
                                               삭제하기
@@ -3098,7 +3377,9 @@ function PortfolioMain() {
                                   if (e.target.value.length > 0) {
                                     let imgTarget = e.target.files[0];
 
-                                    tmpPrjImgList.push(imgTarget);
+                                    // tmpPrjImgList.push(imgTarget);
+                                    // setPrjImageList(tmpPrjImgList);
+
                                     setPrjImageList(tmpPrjImgList);
 
                                     let fileReader = new FileReader();
@@ -3148,36 +3429,21 @@ function PortfolioMain() {
                                     사용 기술
                                   </div>
                                   <div class="font-ltest grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                                    {prjSkillsList.map((item) => {
+                                    {selectedTagList.map((item) => {
                                       return (
-                                        <div class="text-base w-full rounded-lg bg-gray-50 border border-gray-300 px-2 text-center py-1 ">
+                                        <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
                                           {item.name}
                                         </div>
                                       );
                                     })}
-                                    {prjSkillsAdd ? (
-                                      <input
-                                        class="font-ltest w-full rounded-lg border border-gray-300 px-2 text-center py-1 focus:outline-0"
-                                        placeholder="입력"
-                                        onKeyPress={(e) => {
-                                          if (e.key === "Enter") {
-                                            onPrjSkillInputHandler(e);
-                                          }
-                                        }}
-                                        onChange={(e) => {
-                                          setPrjSkillInput(e.target.value);
-                                        }}
-                                      />
-                                    ) : (
-                                      <button
-                                        class="w-full rounded-lg border border-dashed border-gray-300 p-1"
-                                        onClick={() => {
-                                          setPrjSkillsAdd(true);
-                                        }}
-                                      >
-                                        +
-                                      </button>
-                                    )}
+                                    <button
+                                      class="w-full rounded-lg border border-dashed border-gray-300 p-1"
+                                      onClick={() => {
+                                        setShowTagModal(true);
+                                      }}
+                                    >
+                                      +
+                                    </button>
                                   </div>
                                 </div>
                               </div>
@@ -3199,8 +3465,15 @@ function PortfolioMain() {
                                 class="w-[15%] mt-2 ml-full py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
                                 onClick={() => {
                                   onProjectInputHandler();
+                                  setSelectedTagList([]);
                                   setPrjSkillsList([]);
                                   tmpPrjSkillsList = [];
+
+                                  if (!checkCreate) {
+                                    tmpPrjImgList.push(prjImg);
+                                    setPrjImageList(tmpPrjImgList);
+                                  }
+
                                   setPrjImg(null);
                                 }}
                               >
@@ -3226,23 +3499,96 @@ function PortfolioMain() {
                 </table>
                 <div class="mt-5 border-b pb-10 border-gray-300"></div>
                 <section class="mt-10">
-                  <div class="text-xl font-bold">블로그 정보</div>
-                  <div class="w-full mt-4 pt-3 pb-6 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]">
-                    <div class="w-full border-b border-gray-300 pb-1 text-gray-500">
-                      블로그 주소.com
-                    </div>
-                    <div>
-                      <div class="w-full border-b border-gray-300 pb-1 mb-3 mt-8 text-gray-500">
-                        추천수 상위글
+                  {topRecommendPost ? (
+                    <>
+                      <div class="text-xl font-bold">
+                        블로그 정보{" "}
+                        <a class="text-base text-gray-500">
+                          (실제로 등록된 글이 삭제되지는 않습니다.)
+                        </a>
                       </div>
-                      <div class="w-full flex px-5 items-center gap-5 text-gray-500 text-md">
-                        <div class="w-3 h-3 rounded-full bg-gray-500"></div>
-                        <div class="grow">글 제목</div>
-                        <div>추천수 : 123</div>
-                        <div>2022.05.10</div>
+                      <div class="flex justify-end">
+                        <button
+                          class=" text-base text-gray-500"
+                          onClick={() => updateTopPost()}
+                        >
+                          🔄추천수 상위글 갱신하기
+                        </button>
                       </div>
+                      {checkCreate ? (
+                        <>
+                          {topRecommendPost &&
+                            topRecommendPost.map((item, index) => {
+                              return (
+                                <div class="w-full mt-4 pt-3 pb-6 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]">
+                                  <div>
+                                    <div class="text-gray-500 flex w-full border-b border-gray-300 pb-1 mb-3 mt-2 ">
+                                      <div class="">추천수 상위글</div>
+                                      <button
+                                        class="ml-auto pr-2"
+                                        onClick={(e) =>
+                                          onTopPostDeleteHandler(index, e)
+                                        }
+                                      >
+                                        ✂ 삭제하기
+                                      </button>
+                                    </div>
+                                    <div class="w-full flex px-5 items-center gap-5 text-gray-500 text-md">
+                                      <div class="w-3 h-3 rounded-full bg-gray-500"></div>
+                                      <div class="grow">{item.title}</div>
+                                      <div>추천수 : {item.recommend}</div>
+                                      <div>{dateAfter[index]}</div>
+                                    </div>
+
+                                    <div
+                                      class="px-5 flex justify-center items-center mt-3 gap-6"
+                                      style={{
+                                        maxHeight: "10rem",
+                                        minWidth: "48rem",
+                                      }}
+                                    >
+                                      <div class="bg-white rounded-lg border border-gray-300 py-4 grow">
+                                        <div class="relative py-2 px-2 break-all text-gray-500">
+                                          {contentAfter[index]}{" "}
+                                          {
+                                            <button
+                                              class=" text-gray-600"
+                                              onClick={() =>
+                                                navigate(
+                                                  "/blog/detail/" + item.boardId
+                                                )
+                                              }
+                                            >
+                                              {"("}🔗더보기 {")"}
+                                            </button>
+                                          }
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          <div class="flex justify-end mt-5">
+                            <button
+                              class="rounded-lg py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                              onClick={(e) => onUpdateBlogHandler()}
+                            >
+                              등록하기
+                            </button>
+                          </div>
+                        </>
+                      ) : (
+                        <div class="mt-1">
+                          블로그 글은 포트폴리오 생성 후에 확인할 수 있어요!
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <div class="font-test">
+                      블로그에 등록된 글이 존재하지 않습니다.😅
                     </div>
-                  </div>
+                  )}
                 </section>
               </div>
             </section>

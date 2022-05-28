@@ -21,8 +21,12 @@ import T1 from "./page/Portfolio/Template/T1";
 import T2 from "./page/Portfolio/Template/T2";
 import T3 from "./page/Portfolio/Template/T3";
 import T4 from "./page/Portfolio/Template/T4";
-import T5 from "./page/Portfolio/Template/T5";
+import SampleT1 from "./page/Portfolio/sample/sampleT1";
+import SampleT2 from "./page/Portfolio/sample/sampleT2";
+import SampleT3 from "./page/Portfolio/sample/sampleT3";
+import SampleT4 from "./page/Portfolio/sample/sampleT4";
 import Header from "./particals/Header";
+
 import { SERVER_URL } from "./utils/SRC";
 import { createRoot } from "react-dom/client";
 import "tailwindcss/tailwind.css";
@@ -211,7 +215,10 @@ function App() {
           <Route path="/portfolio/template/t2" element={<T2 />} />
           <Route path="/portfolio/template/t3" element={<T3 />} />
           <Route path="/portfolio/template/t4" element={<T4 />} />
-          <Route path="/portfolio/template/t5" element={<T5 />} />
+          <Route path="/portfolio/template/samplet1" element={<SampleT1 />} />
+          <Route path="/portfolio/template/samplet2" element={<SampleT2 />} />
+          <Route path="/portfolio/template/samplet3" element={<SampleT3 />} />
+          <Route path="/portfolio/template/samplet4" element={<SampleT4 />} />
         </Routes>
       </BrowserRouter>
     </>
