@@ -67,7 +67,7 @@ function T3() {
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.data.profileType);
-            setProfileImg(res.data.data.profileBytes);
+            setProfileImg(res.data.data.profileString);
             console.log(profileType);
             console.log(profileType);
             setCheckProfile(true);
@@ -139,7 +139,7 @@ function T3() {
                 <div class="text-left font-sbtest text-black text-4xl ">
                   <a class="text-indigo-300">●</a> 개발자{" "}
                   {portfolioInfo.username}{" "}
-                  {portfolioInfo.job ? (
+                  {portfolioInfo.job.length != 0 ? (
                     <a class="text-2xl">
                       {" "}
                       {"("} {portfolioInfo.job} {")"}{" "}
@@ -147,7 +147,7 @@ function T3() {
                   ) : null}
                 </div>
               </div>
-              {portfolioInfo.content ? (
+              {portfolioInfo.content != 0 ? (
                 <div class="w-1/2 font-test text-lg">
                   {portfolioInfo.content}
                 </div>
@@ -179,7 +179,7 @@ function T3() {
                       <a class="mr-3 font-sbtest">이메일</a>{" "}
                       {portfolioInfo.email}
                     </div>
-                    {portfolioInfo.github ? (
+                    {portfolioInfo.github.length != 0 ? (
                       <div>
                         <a class="mr-3 font-sbtest">Github</a>{" "}
                         {portfolioInfo.github}
@@ -189,7 +189,8 @@ function T3() {
                 </div>
               </div>
             </div>
-            {portfolioInfo.skills && portfolioInfo.awards ? (
+            {portfolioInfo.skills.length != 0 &&
+            portfolioInfo.awards.length != 0 ? (
               <section class="relative">
                 <div class="w-1/2 mt-10 mx-auto flex justify-center border-b border-gray-400 pb-12">
                   <div class="w-[50%]">
@@ -240,7 +241,7 @@ function T3() {
               </section>
             ) : null}
 
-            {portfolioInfo.projects ? (
+            {portfolioInfo.projects.length != 0 ? (
               <section class="relative" id="project">
                 <div class="w-1/2 mx-auto px-4 z-30 pt-16 border-b border-gray-400 pb-28">
                   <div class="flex justify-center">
@@ -323,7 +324,7 @@ function T3() {
               </section>
             ) : null}
 
-            {portfolioInfo.careers ? (
+            {portfolioInfo.careers.length != 0 ? (
               <section class="relative" id="workExperience">
                 <div class="w-1/2 mx-auto z-30 py-12 border-b border-gray-400 ">
                   <div class="w-full flex justify-center">
@@ -359,7 +360,7 @@ function T3() {
               </section>
             ) : null}
 
-            {portfolioInfo.boards ? (
+            {portfolioInfo.boards.length != 0 ? (
               <section class="relative" id="blog">
                 <div class="w-1/2 mx-auto px-4 z-30 py-24">
                   <div class="w-full flex justify-center font-test">

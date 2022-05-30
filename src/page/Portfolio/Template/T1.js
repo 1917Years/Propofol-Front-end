@@ -13,7 +13,7 @@ export function T1() {
   let tempTopPost = [];
 
   const navigate = useNavigate();
-  const image = require("../../../assets/img/sky.jpg");
+  const image = require("../../../assets/img/skt.png");
   const style = {
     backgroundImage: `url(${image})`,
   };
@@ -69,9 +69,7 @@ export function T1() {
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.data.profileType);
-            setProfileImg(res.data.data.profileBytes);
-            console.log(profileType);
-            console.log(profileType);
+            setProfileImg(res.data.data.profileString);
             setCheckProfile(true);
             //setLoadingComplete(true);
           }
@@ -161,7 +159,7 @@ export function T1() {
                 </div>
               </div>
               <div>
-                {portfolioInfo.job ? (
+                {portfolioInfo.job.length != 0 ? (
                   <div class="mt-20 text-2xl text-white font-iroBatang">
                     {portfolioInfo.job}
                   </div>
@@ -170,7 +168,7 @@ export function T1() {
                 <div class="text-5xl text-white z-20 font-iroBatang text-shadow-white mb-4">
                   개발자 {portfolioInfo.username}
                 </div>
-                {portfolioInfo.content ? (
+                {portfolioInfo.content.length != 0 ? (
                   <div
                     className="인사말"
                     class="text-2xl font-iroBatang text-white z-20 opacity-[70%] mb-2"
@@ -204,7 +202,7 @@ export function T1() {
                       {portfolioInfo.email}
                     </div>
                   </div>
-                  {portfolioInfo.github ? (
+                  {portfolioInfo.github.length != 0 ? (
                     <div class="flex items-center">
                       <div class="p-1 mr-3 font-timeless opacity-[90%] ">
                         Github
@@ -217,7 +215,7 @@ export function T1() {
                 </div>
               </div>
               <div class="px-16">
-                {portfolioInfo.skills ? (
+                {portfolioInfo.skills.length != 0 ? (
                   <>
                     <div class="w-full flex items-center gap-5">
                       <div class="text-white text-4xl opacity-[90%] font-timeless text-center text-shadow-sm border-b border-white/50">
@@ -228,7 +226,7 @@ export function T1() {
                       <div class="grid grid-cols-3">
                         {portfolioInfo.skills.map((skill) => {
                           return (
-                            <a class="mx-2 my-2 border border-white/70 rounded-lg px-2 py-1 text-center">
+                            <a class="mx-2 my-2 border border-white/70 rounded-lg px-2 py-1 text-center align-top">
                               {skill.name}
                             </a>
                           );
@@ -240,7 +238,7 @@ export function T1() {
               </div>
             </div>
           </div>
-          {portfolioInfo.projects ? (
+          {portfolioInfo.projects.length != 0 ? (
             <section class="relative bg-gray-600" id="project">
               <div class="w-[63%] mx-auto px-4 z-30 pt-16 pb-32">
                 <div class="flex justify-center">
@@ -321,7 +319,7 @@ export function T1() {
             </section>
           ) : null}
 
-          {portfolioInfo.awards ? (
+          {portfolioInfo.awards.length != 0 ? (
             <section class="relative bg-gray-800" id="award">
               <div class="w-[60%] mx-auto px-4 z-30 py-24">
                 <div class="flex justify-center">
@@ -355,7 +353,7 @@ export function T1() {
             </section>
           ) : null}
 
-          {portfolioInfo.careers ? (
+          {portfolioInfo.careers.length != 0 ? (
             <section class="relative bg-gray-500" id="workExperience">
               <div class="w-[60%] mx-auto px-4 z-30 pt-24 pb-32">
                 <div class="w-full flex justify-center">
@@ -386,7 +384,7 @@ export function T1() {
             </section>
           ) : null}
 
-          {portfolioInfo.boards ? (
+          {portfolioInfo.boards.length != 0 ? (
             <section class="relative bg-gray-200" id="blog">
               <div class="w-[60%] mx-auto px-4 z-30 py-24">
                 <div class="w-full flex justify-center font-test">

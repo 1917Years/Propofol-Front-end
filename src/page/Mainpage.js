@@ -30,7 +30,6 @@ function Mainpage(props) {
         console.log(res);
 
         if (res.data.data != "no") {
-          console.log("실행이 도이ㅓㅆ나요....?");
           setCookie("portfolioId", res.data.data);
         }
       })
