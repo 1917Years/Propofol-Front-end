@@ -9,6 +9,7 @@ import 'react-quill/dist/quill.bubble.css';
 
 function BlogDetail() {
     let tmpWrInfo;
+    const languageList = ["C", "JAVA", "Python"];
     const navigate = useNavigate();
     const id = useParams().id;
     const [compileResultList, setCompileResultList] = useState([]);
@@ -37,13 +38,18 @@ function BlogDetail() {
     const [commentList, setCommentList] = useState([]);
     const [checkFollowing, setCheckFollowing] = useState(false);
     const [checkProfile, setCheckProfile] = useState(false);
+    const [checkCompile, setCheckCompile] = useState(false);
+    const [selectedLanList, setSelectedLanList] = useState([]);
+    const [codeInputList, setCodeInputList] = useState([]);
+
 
     function postCode(index) {
         console.log("버튼이 눌렸다!");
         console.log(index);
         console.log(codeList[index]);
+        console.log(selectedLanList[index]);
         axios.post(SERVER_URL + "/til-service/api/v1/boards/code/" + id, {
-            type: codeLanguageList[index],
+            type: selectedLanList[index],
             code: codeList[index]
         })
             .then((res) => {
@@ -68,11 +74,13 @@ function BlogDetail() {
 
     function loadCode() {
         let tmpcodelist = [];
+        let tmpinputlist = [];
         let start = 0;
         let startend = 0;
         let end = 0;
         let k = 0;
         let tmpdetaillist = [];
+        let tmplanlist = [];
         let division = 0;
         let prev_end = 0;
         let d = 0;
@@ -107,17 +115,34 @@ function BlogDetail() {
             console.log(tmpWrInfo.detail);
             prev_end = end + 6;
             tmplist.push({ mes: "", err: false });
+            tmplanlist.push("");
+            tmpinputlist.push("");
             k++;
         }
         console.log("지금부터 tmpdetaillist를 출력하겠습니다~~~~~~~~!");
         tmpdetaillist.map((item) => {
             console.log(item);
         })
+        setCodeInputList([...tmpinputlist]);
+        setSelectedLanList([...tmplanlist]);
         setCompileResultList([...tmplist]);
         setCodeList([...tmpcodelist]);
         setDetailList([...tmpdetaillist]);
         setDetailAfter(tmpWrInfo.detail);
     }
+
+    function onLanguageButtonHandler(language, index) {
+        let tmplanlist = selectedLanList;
+        tmplanlist[index] = language;
+        setSelectedLanList([...tmplanlist]);
+    }
+
+    function onCodeInputHandler(input, index) {
+        let tmpinputlist = codeInputList;
+        tmpinputlist[index] = input;
+        setSelectedLanList([...tmpinputlist]);
+    }
+
 
     async function loadImage() {
         let tmpimgsrc = [];
@@ -187,7 +212,7 @@ function BlogDetail() {
                     commentCount: writing.commentCount,
                     profileBytes: writing.profileBytes,
                     profileType: writing.profileType,
-                    tag: writing.tags,
+                    tag: writing.tagInfos,
                 }
                 tmpWrInfo.date = tmpWrInfo.date.substring(0, 10) + "   " + tmpWrInfo.date.substring(11, 16);
                 //주소로 axios 후 변환
@@ -235,7 +260,7 @@ function BlogDetail() {
                         imgBytes: item.profileBytes,
                         imgType: item.profileType
                     }
-
+                    tmpCm.date = tmpCm.date.substring(0, 10) + "   " + tmpCm.date.substring(11, 16);
                     if (tmpCm.imgType == null) {
                         console.log("프로필 이미지 x");
                         setCheckProfile(false);
@@ -246,7 +271,7 @@ function BlogDetail() {
                     }
                     tmpCmList.push(tmpCm);
                 })
-                tmpCm.date = tmpCm.date.substring(0, 10) + "   " + tmpCm.date.substring(11, 16);
+
                 setCommentList([...tmpCmList]);
                 console.log(commentList);
                 console.log("댓글임");
@@ -358,14 +383,17 @@ function BlogDetail() {
         syntax: {
             value: (text) => hljs.highlightAuto(text).language,
             highlight: (text) => {
-                let tmpLang = codeLanguageList;
-                tmpLang.push(hljs.highlightAuto.language);
-                setCodeLanguageList([...tmpLang]);
+                //let tmpLang = codeLanguageList;
+                //tmpLang.push(hljs.highlightAuto.language);
+                //setCodeLanguageList([...tmpLang]);
                 return (hljs.highlightAuto(text).value);
             }
         },
     };
 
+    useEffect(() => {
+        console.log(codeLanguageList);
+    }, [codeLanguageList]);
 
     useEffect(() => {
         loadWritings();
@@ -405,38 +433,85 @@ function BlogDetail() {
                 </div>
 
                 <div class="focus:outline-0 mt-3 rounded-sm w-full py-3 px-5 border-b border-gray-300 mb-5 h-fit">
-                    {detailList.slice(0, detailList.length - 1).map((item) => {
+                    {detailList.slice(0, detailList.length - 1).map((item, index) => {
                         return (
                             <div class="w-[54rem]">
+
                                 <ReactQuill
                                     value={item.detail}
                                     readOnly={true}
                                     modules={modules}
                                     theme={"bubble"}
                                 />
-                                <button
-                                    class="ml-2"
-                                    value={item.index}
-                                    onClick={(e) => { postCode(e.target.value) }}
-                                >
-                                    컴파일하기
-                                </button>
-                                <div>
-                                    <div>컴파일 결과</div>
-                                    {compileResultList[item.index].err ?
-                                        (
-                                            <div class="ml-2 bg-gray-50 text-red-500">
-                                                <div>컴파일 에러!</div>
-                                                {compileResultList[item.index].mes}
-                                            </div>
-                                        ) :
-                                        (
-                                            <div class="ml-2 bg-gray-50 text-green-500">
-                                                {compileResultList[item.index].mes}
-                                            </div>
-                                        )}
-
+                                <div class="px-5 flex items-center justify-between">
+                                    <div class="flex items-center gap-1">
+                                        <div class="text-gray-600 border-r border-gray-400 mr-2 pr-3">
+                                            언어 선택
+                                        </div>
+                                        {
+                                            languageList.map((item) => {
+                                                if (item == selectedLanList[index]) {
+                                                    return (
+                                                        <button
+                                                            class="bg-indigo-100 rounded-lg py-1 px-2 border border-indigo-300 text-indigo-500"
+                                                            value={item}
+                                                        >
+                                                            {item}
+                                                        </button>
+                                                    )
+                                                }
+                                                return (
+                                                    <button
+                                                        class="bg-white rounded-lg py-1 px-2 border border-gray-300"
+                                                        onClick={(e) => { onLanguageButtonHandler(e.target.value, index) }}
+                                                        value={item}
+                                                    >
+                                                        {item}
+                                                    </button>
+                                                )
+                                            })
+                                        }
+                                    </div>
+                                    <div class="flex justify-end">
+                                        <button
+                                            class="border border-gray-400 text-gray-500 rounded-lg px-3 py-1"
+                                            value={item.index}
+                                            onClick={(e) => {
+                                                postCode(e.target.value)
+                                                setCheckCompile(true)
+                                            }}
+                                        >
+                                            컴파일 {">"}
+                                        </button>
+                                    </div>
                                 </div>
+                                <div class="mt-2 px-4">
+                                    <div class="border-gray-300 border-t border-l border-r px-3 py-1 text-gray-500 bg-gray-50">입력</div>
+                                    <textarea
+                                        class="w-full border border-gray-300  resize-none py-3 px-3 focus:outline-0 text-gray-700 font-ltest"
+                                    />
+                                </div>
+                                {checkCompile ?
+                                    <div class="mt-2 px-4">
+                                        <div class="border border-gray-300 text-gray-500 bg-white">
+                                            <div class="border-b border-gray-300 px-3 py-1 bg-gray-50">컴파일 결과</div>
+                                            {compileResultList[item.index].err ?
+                                                (
+                                                    <div class="mx-3 my-3 bg-white text-red-500 font-ltest">
+                                                        <div>컴파일 에러!</div>
+                                                        {compileResultList[item.index].mes}
+                                                    </div>
+                                                ) :
+                                                (
+                                                    <div class="mx-3 my-3 bg-white text-green-500 font-ltest">
+                                                        {compileResultList[item.index].mes}
+                                                    </div>
+                                                )}
+
+                                        </div>
+                                    </div>
+                                    : null}
+
                             </div>
                         );
                     })

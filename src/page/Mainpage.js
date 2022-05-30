@@ -18,7 +18,7 @@ function Mainpage(props) {
 
   const style = {
     backgroundImage:
-      "url(https://cdn.discordapp.com/attachments/766266146520563785/967860864743002112/cherrydeck-rMILC1PIwM0-unsplash.jpg)",
+      "url(https://cdn.discordapp.com/attachments/766266146520563785/980038822052102184/whiteboard_-_1658_Original.mp4)",
   };
 
   useEffect(() => {
@@ -42,16 +42,25 @@ function Mainpage(props) {
   return (
     <div class="text-gray-800 antialiased z-1">
       <main>
-        <div class="absolute w-[75%] h-full left-[12.5%] xl:border-l xl:border-r border-white opacity-50 z-10"></div>
-        <div class="pt-20 bg-black" style={{ minHeight: "54rem" }}>
+        <div class="pt-20 bg-black w-[100%] h-[100vh]" style={{ minHeight: "54rem" }}>
           <div
-            class="bg-cover bg-center absolute top-0 w-full h-[58rem] bg-bg6 bg-blend-multiply blur-[5px] brightness-[.80] grayscale-[10%]  "
+            class=""
             style={style}
           ></div>
-          <div class="relative mx-auto flex flex-col">
-            <div class="z-20 animate__animated animate__fadeIn absolute flex lg:gap-[145%] md:gap-[130%] gap-[15px] 3xl:left-1/4 2xl:left-[20%] xl:left-[17%] md:left-[10%] left-[5%]">
+          <video
+            autoPlay
+            muted
+            loop
+            width="120%"
+            playsInline
+            class="bg-cover bg-center absolute top-0 bg-bg6 xl:bg-cover bg-blend-multiply min-h-[66.5rem] min-w-[110rem] blur-[5px] brightness-[.75] grayscale-[10%]"
+            src="https://cdn.discordapp.com/attachments/766266146520563785/980038822052102184/whiteboard_-_1658_Original.mp4"
+            type="video/mp4"
+          ></video>
+          <div class="flex items-center h-full relative mx-auto ">
+            <div class="self-start z-20 animate__animated animate__fadeIn absolute flex lg:gap-[145%] md:gap-[130%] gap-[15px] 3xl:left-1/4 2xl:left-[20%] xl:left-[17%] md:left-[10%] left-[5%]">
               <div>
-                <div class=" text-white font-ttest flex md:flex-col flex-row ">
+                <div class="text-white font-ttest flex md:flex-col flex-row">
                   <Link to="TIL" spy={true} smooth={true}>
                     <button class="hover:animate-pulse p-3 w-12 h-12 md:pt-4 lg:w-20 lg:h-20 shadow-lg rounded-full bg-none border border-white text-center align-middle lg:pt-4 lg:text-3xl md:w-16 md:h-16 md:text-2xl">
                       1
@@ -88,9 +97,9 @@ function Mainpage(props) {
                 </div>
               </div>
             </div>
-            <div class="w-full mt-20 pt-20 ml-auto mr-auto text-center border-white">
-              <div class="mb-10">
-                <h1 class="mt-10 text-white font-rumpi text-6xl text-shadow">
+            <div class="mt-20 flex flex-col items-start w-[50%] w-full ml-auto mr-auto text-center border-white">
+              <div class="mb-10 flex flex-col gap-2">
+                <h1 class="text-white font-rumpi text-8xl text-shadow">
                   Propofol
                 </h1>
                 <p class="animate__animated animate__fadeIn text-2xl text-white opacity-90 font-ltest">
@@ -99,7 +108,7 @@ function Mainpage(props) {
                   io )
                 </p>
               </div>
-              <p class="animate__animated animate__fadeIn pt-10 font-ltest text-lg text-gray-300">
+              <p class="text-left animate__animated animate__fadeIn pt-5 font-ltest text-xl flex flex-col gap-2 text-gray-300">
                 <p>
                   힘든 일일 학습, 지겨운 포트폴리오 작성, 번거로운 프로젝트
                   매칭.
@@ -108,101 +117,69 @@ function Mainpage(props) {
                 <p>프로포폴과 함께라면, 편하게 해결할 수 있어요.</p>
               </p>
             </div>
-            <div class="self-center relative transform text-2xl font-test text-white z-40 mt-12 animate__animated animate__backInUp ">
-              <button
-                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-100/10 hover:text-white mt-12 drop-shadow-lg"
-                onClick={() => {
-                  navigate("/login");
-                }}
-              >
-                로그인
-              </button>
-              <div class="font-ltest text-lg text-center my-2">or</div>
-              <button
-                class="z-40 w-44 border border-white px-10 py-3 rounded-xl bg-none hover:bg-gray-100/10 hover:text-white drop-shadow-lg"
-                onClick={() => {
-                  navigate("/register");
-                }}
-              >
-                회원가입
-              </button>
-              <button
-                class="bg-white z-40 text-black font-test"
-                onClick={() => {
-                  axios
-                    .get(SERVER_URL + "/user-service/api/v1/members")
-                    .then((res) => {
-                      console.log(res);
-                    })
-                    .catch((err) => {
-                      if (err.response) {
-                        console.log(err.response);
-                        console.log(getAccessToken());
-                        console.log(getRefreshToken());
-                        /*
-                                                console.log(err.response.data.data);
-                                                if (err.response.data.data == "Please RefreshToken.") {
-                                                  refreshJWT();
-                                                }
-                        */
-                      }
-                    });
-                }}
-              >
-                버튼11111
-              </button>
-            </div>
+            <button
+              class="bg-white w-12 z-40 text-black font-test"
+              onClick={() => {
+                axios
+                  .get(SERVER_URL + "/user-service/api/v1/members")
+                  .then((res) => {
+                    console.log(res);
+                  })
+                  .catch((err) => {
+                    if (err.response) {
+                      console.log(err.response);
+                      console.log(getAccessToken());
+                      console.log(getRefreshToken());
+                    }
+                  });
+              }}
+            >
+              버튼11111
+            </button>
           </div>
         </div>
 
         <section class="relative bg-white" id="TIL">
-          <div class="absolute w-[75%] h-full left-[12.5%] xl:border-l xl:border-r border-gray-300 z-40"></div>
-          <div class="container mx-auto px-4 z-30 py-32 ">
-            <div class="flex flex-wrap items-center">
-              <div class="w-full md:w-1/4 px-4 mr-auto ml-auto">
-                <div class="text-gray-600 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-gray-300"></div>
-
-                <h3 class="z-40 font-test text-3xl mb-2 font-semibold leading-normal">
-                  TIL 블로그
-                </h3>
-                <p class="font-test text-lg font-light leading-relaxed mt-4 mb-4 text-gray-700">
-                  솰랴솰랴
-                </p>
-                <p class="font-test text-lg font-light leading-relaxed mt-0 mb-8 text-gray-700">
-                  솰랴솰랴
-                </p>
-              </div>
-              <div class="w-full md:w-4/12 px-4 mr-auto ml-auto">
-                <div class="relative flex flex-col min-w-0 break-words bg-gray-300 w-full mb-6 shadow-lg rounded-lg bg-bg3">
+          <div class="container mx-auto h-[100vh] flex items-center px-4 z-30 py-32 ">
+            <div class="flex justify-evenly items-center w-full">
+              <div class="w-full md:w-[30%] px-4">
+                <div class="">
                   <img
                     alt="..."
-                    src="https://media.discordapp.net/attachments/874660081160044625/889471029276213268/work-731198_960_720.png"
-                    class="w-full align-middle rounded-t-lg"
+                    src="https://cdn.discordapp.com/attachments/766266146520563785/980066390369267712/windows-v94mlgvsza4-unsplash.jpg"
+                    class="w-[90%] min-w-0 h-[90%] align-middle rounded-lg shadow-xl drop-shadow-xl transition ease-in-out delay-150 hover:-translate-y-1 hover:scale-110  duration-150"
                   />
-                  <blockquote class="relative p-8 mb-4">
-                    <svg
-                      preserveAspectRatio="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 583 95"
-                      class="absolute left-0 w-full block"
-                      style={{ height: "95px", top: "-94px" }}
-                    >
-                      <polygon
-                        points="-30,95 583,95 583,65"
-                        class="text-bg3 fill-current"
-                      ></polygon>
-                    </svg>
-                    <h4 class="font-test text-xl font-bold text-white">
-                      이번 프로젝트 어떡하지...🤯
-                    </h4>
-                    <p class="text-md font-ltest font-light mt-2 text-white">
-                      막막했던 팀프로젝트, 이제는 Gitime와 함께하세요. <br></br>
-                      사장님께는 사랑받는 사원으로, 교수님께는 칭찬받는
-                      학생으로! <br></br>
-                      더욱 편리하게 프로젝트를 관리할 수 있어요.
-                    </p>
-                  </blockquote>
                 </div>
+              </div>
+              <div class="w-full flex flex-col items-start w-full md:w-[30%] px-4">
+                <h3 class="z-40 font-test text-6xl mb-2 font-semibold leading-normal">
+                  TIL 블로그
+                </h3>
+                <p class="font-test text-xl font-light leading-relaxed mt-4 text-gray-700">
+                  오늘의 공부, 프로포폴이 책임질게요!
+
+                </p>
+                <p class="font-test text-xl font-light leading-relaxed mt-1 text-gray-700">
+                  개발자를 위한 일일학습 특화 블로그 TIL은
+                </p>
+                <p class="font-test text-xl font-light leading-relaxed mt-1 mb-4 text-gray-700">
+                  여러 기능들로 일일학습을 더 쉽게 만들어줄 거에요.
+                </p>
+
+                <div class="flex flex-col gap-2 font-ltest text-gray-500 text-lg">
+                  <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-gray-600"></div>
+                    본인의 학습 기록을 점검할 수 있는 스트릭 기능 제공</div>
+                  <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-gray-600"></div>
+                    바로 결과를 확인할 수 있는 코드 컴파일 기능 제공</div>
+                  <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-gray-600"></div>
+                    원하는 분야만 찾아보고 분류할 수 있는 태그 기능 제공</div>
+                </div>
+                <button
+                  class="font-sbtest w-1/2 mt-10 text-xl bg-indigo-100 rounded-lg px-4 py-4"
+
+                >
+                  학습하러 가기
+                </button>
               </div>
             </div>
           </div>
@@ -213,88 +190,44 @@ function Mainpage(props) {
             class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
             style={{ height: "80px", transform: "translateZ(0px)" }}
           >
-            <svg
-              class="absolute bottom-0 overflow-hidden"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              version="1.1"
-              viewBox="0 0 2560 100"
-              x="0"
-              y="0"
-            >
-              <polygon
-                class="text-bg4 fill-current"
-                points="2560 0 2560 100 0 100"
-              ></polygon>
-            </svg>
           </div>
           <div class="container mx-auto px-4">
             <div class="items-center flex flex-wrap">
-              <div class="w-full md:w-4/12 ml-auto mr-auto px-4">
-                <img
-                  alt="..."
-                  class="max-w-full rounded-lg shadow-lg"
-                  src="https://media.discordapp.net/attachments/874660081160044625/897738904692740166/teamwork-3213924_960_720.png"
-                />
-              </div>
-              <div class="w-full md:w-5/12 ml-auto mr-auto px-4">
-                <div class="md:pr-12">
-                  <div class="bg-bg1 p-3 text-center inline-flex items-center justify-center w-16 h-16 mb-6 shadow-lg rounded-full bg-pink-300">
-                    <i class="fas fa-rocket text-xl"></i>
-                  </div>
-                  <h3 class="font-test text-3xl font-semibold">
-                    한 눈에 볼 수 있는 우리 팀의 진행 상황.
+              <div class="mx-auto w-full md:w-full px-4">
+                <div class="">
+                  <h3 class="font-test text-6xl font-semibold">
+                    포트폴리오
                   </h3>
-                  <p class="font-test mt-4 text-lg leading-relaxed text-gray-600">
-                    "이 팀원 지금 뭐 하고 있는 거지..." <br></br>
-                    "우리 팀 지금 해야 되는 일이 뭐야?" <br></br>더 이상의
-                    방황은 그만! 프로젝트별로 일정을 한 눈에 관리할 수 있어요.
+                  <p class="font-ltest mt-2 text-xl leading-relaxed text-gray-600">
+                    "아이스크림 같지?"
                   </p>
-                  <ul class="list-none mt-6">
-                    <li class="py-2">
-                      <div class="flex items-center">
-                        <div>
-                          <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-bg1 mr-3">
-                            <i class="fas fa-fingerprint"></i>
-                          </span>
-                        </div>
-                        <div>
-                          <h4 class="font-ltest text-gray-600">
-                            To-Do List와 연동된 세션별 진행률 제공
-                          </h4>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="py-2">
-                      <div class="flex items-center">
-                        <div>
-                          <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-bg1 mr-3">
-                            <i class="fab fa-html5"></i>
-                          </span>
-                        </div>
-                        <div>
-                          <h4 class="font-ltest text-gray-600">
-                            팀장, 팀원 공동으로 쓸 수 있는 게시판 제공
-                          </h4>
-                        </div>
-                      </div>
-                    </li>
-                    <li class="py-2">
-                      <div class="flex items-center">
-                        <div>
-                          <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full text-pink-600 bg-bg1 mr-3">
-                            <i class="far fa-paper-plane"></i>
-                          </span>
-                        </div>
-                        <div>
-                          <h4 class="font-ltest text-gray-600">
-                            실시간으로 소통할 수 있는 실시간 채팅, 화상 회의
-                            제공
-                          </h4>
-                        </div>
-                      </div>
-                    </li>
-                  </ul>
+
+                </div>
+              </div>
+              <div class="relative min-h-[40rem] w-full">
+                <div class="absolute right-[0rem] z-[30]  md:w-1/2">
+                  <img
+                    class="rounded-lg shadow-lg w-fit"
+                    src="https://media.discordapp.net/attachments/973534197849415713/980084940517539850/1.png?width=294&height=668"
+                  />
+                </div>
+                <div class="absolute left-[60rem] top-[10rem] z-[40] md:w-1/3 ">
+                  <img
+                    class="max-w-full rounded-lg shadow-lg"
+                    src="https://media.discordapp.net/attachments/973534197849415713/980084939598995456/2.png?width=252&height=669"
+                  />
+                </div>
+                <div class="absolute left-[70rem] top-[5rem] md:w-1/2">
+                  <img
+                    class="max-w-full rounded-lg shadow-lg"
+                    src="https://media.discordapp.net/attachments/973534197849415713/980084939892617237/3.png?width=301&height=670"
+                  />
+                </div>
+                <div class="absolute left-[60.5rem] bottom-[8rem] md:w-1/3">
+                  <img
+                    class="max-w-full rounded-lg shadow-lg"
+                    src="https://media.discordapp.net/attachments/973534197849415713/980084940161028206/4.png?width=554&height=669"
+                  />
                 </div>
               </div>
             </div>
@@ -308,20 +241,7 @@ function Mainpage(props) {
             class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
             style={{ height: "80px", transform: "translateZ(0px)" }}
           >
-            <svg
-              class="absolute bottom-0 overflow-hidden"
-              xmlns="http://www.w3.org/2000/svg"
-              preserveAspectRatio="none"
-              version="1.1"
-              viewBox="0 0 2560 100"
-              x="0"
-              y="0"
-            >
-              <polygon
-                class="text-gray-900 fill-current"
-                points="2560 0 2560 100 0 100"
-              ></polygon>
-            </svg>
+
           </div>
           <div class="container mx-auto px-4 lg:pt-24 lg:pb-64">
             <div class="flex flex-wrap text-center justify-center">

@@ -64,10 +64,14 @@ function BlogSearch(props) {
 
   async function loadSearchResult(page) {
     //
+    console.log(tag);
+    console.log(searchParams.getAll('tag'));
     let taglist = tag.split(" ").slice(1);
     let tmptaglist = [];
     let tagIdlist = [];
     taglist.map((item) => {
+      console.log(item);
+      console.log(item.split("_"));
       tmptaglist.push({ name: item.split("_")[1], id: item.split("_")[0] });
       tagIdlist.push(item.split("_")[0]);
     })
@@ -78,9 +82,13 @@ function BlogSearch(props) {
     tagIdlist.map((item) => {
       params.append('tagId', item);
     });
+    console.log(tmptaglist);
+    console.log(params.get('keyword'));
+    console.log(params.get('page'));
+    console.log(params.getAll('tagId'));
     //
     if (option == '제목') {
-      await axios.get(SERVER_URL + "/til-service/api/v1/boards/search/title/" + keyword + "?page=1")
+      await axios.get(SERVER_URL + "/til-service/api/v1/boards/search", { params: params })
         .then((res) => {
           console.log(res);
           let pageCount = res.data.data.pageCount;
@@ -104,7 +112,7 @@ function BlogSearch(props) {
               imgtype: tmpImgType,
               like: board.recommend,
               comment: board.commentCount,
-              tag: board.tags,
+              tag: board.tagInfos,
             }
             tempSR.date = tempSR.date.substring(0, 10) + "   " + tempSR.date.substring(11, 16);
 
@@ -114,7 +122,7 @@ function BlogSearch(props) {
           });
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.response);
         })
     }
   }
@@ -235,11 +243,11 @@ function BlogSearch(props) {
                       {item.title}
                     </button>
                     <div class="font-ltest">{item.detail.slice(0, 300)}</div>
-                    <div class="flex">
+                    <div class="flex gap-2">
                       {item.tag.map((item) => {
                         return (
-                          <div class="bg-indigo-50 border border-indigo-300 text-indigo-300 rounded-lg p-2">
-                            {item.tagName}
+                          <div class="bg-indigo-50 border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
+                            {item.name}
                           </div>
                         )
                       })}

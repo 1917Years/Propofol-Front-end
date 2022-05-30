@@ -24,6 +24,9 @@ const postRegister = async ({ data }) => {
 */
 function Register() {
   const navigate = useNavigate();
+
+  const [certi, setCerti] = useState("");
+
   const [data, setData] = useState({});
   const [emailInput, setEmailInput] = useState("");
   const [nameInput, setNameInput] = useState("");
@@ -31,12 +34,14 @@ function Register() {
   const [pwdInput, setPwdInput] = useState("");
   const [pwdCheckInput, setPwdCheckInput] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
-  const [phoneCheckInput, setPhoneCheckInput] = useState("");
-  const [phoneCheckValid, setPhoneCheckValid] = useState(false); // 나중에 백이랑 통신 후 추가
+  const [emailCheckInput_left, setEmailCheckInput_left] = useState("");
+  const [emailCheckInput_right, setEmailCheckInput_right] = useState("");
+  const [emailCheckValid, setEmailCheckValid] = useState(false); // 나중에 백이랑 통신 후 추가
   const [registerData, setRegisterData] = useState(null);
   /*메시지*/
   const [nickNameMsg, setNickNameMsg] = useState("");
   const [emailMsg, setEmailMsg] = useState("");
+  const [emailCheckMsg, setEmailCheckMsg] = useState("");
   const [pwdMsg, setPwdMsg] = useState("");
   const [pwdCheckMsg, setPwdCheckMsg] = useState("");
   const [phoneMsg, setPhoneMsg] = useState("");
@@ -50,6 +55,7 @@ function Register() {
   const [pwdCheckVaild, setPwdCheckVaild] = useState(false);
   const [phoneVaild, setPhoneVaild] = useState(false);
 
+  let certificationNumber = "";
 
   function postRegister(data) {
     console.log("확인");
@@ -80,7 +86,17 @@ function Register() {
       .then((res) => {
         console.log(res.data.result);
         setEmailVaild(true);
-        setEmailMsg("사용 가능한 이메일입니다.");
+        axios.post(SERVER_URL + "/user-service/auth/mailCheck", data)
+          .then((res) => {
+            console.log(res);
+            certificationNumber = res.data.data;
+            setCerti(res.data.data);
+            setEmailMsg("사용 가능한 이메일입니다.");
+          })
+          .catch((err) => {
+            console.log(err.response);
+            setEmailMsg("인증 번호를 가져오는 과정에서 에러가 발생했습니다. 다시 시도해주세요.");
+          })
       })
       .catch((err) => {
         console.log(err.request);
@@ -140,14 +156,32 @@ function Register() {
     setNickNameInput(e.target.value);
   };
 
-  const onEmailCheckHandler = (e) => {
+  const onEmailCheckHandler = async (e) => {
     if (emailInput == "") {
       setEmailMsg("올바르지 않은 이메일 형식입니다. 다시 입력해주세요.");
       setEmailVaild(false);
     } else {
-      postEmail({ email: emailInput });
+      await postEmail({ email: emailInput });
     }
   };
+
+  const onEmailNumberCheckHandler = (e) => {
+    console.log(certi);
+    if (certi == "") {
+      setEmailCheckValid(false);
+      setEmailCheckMsg("아직 인증 번호를 받지 않았습니다.");
+      return;
+    }
+    if (certi == emailCheckInput_left + "-" + emailCheckInput_right) {
+      setEmailCheckValid(true);
+      setEmailCheckMsg("올바른 인증번호입니다.");
+    }
+    else {
+      setEmailCheckValid(false);
+      setEmailCheckMsg("올바르지 않은 인증번호입니다.");
+    }
+  }
+
   const onNickNameCheckHandler = (e) => {
     if (nickNameInput == "") {
       setNickNameMsg("닉네임을 입력해주세요.");
@@ -198,18 +232,27 @@ function Register() {
     } else {
     }
   };
-  const onPhoneCheckInputHandler = (e) => {
+  const onEmailCheckInputHandler_left = (e) => {
     const regex = /^[0-9\b -]{0,4}$/;
     if (regex.test(e.target.value)) {
-      setPhoneCheckInput(e.target.value);
+      setEmailCheckInput_left(e.target.value);
       //console.log("인증번호 : " + phoneCheckInput);
       /* 일단 임시로 true로 해놓음. 나중에 백이랑 통신 후 인증 성공 시에만 true로 바꾸고, 실패시엔 false로 바꾸기 */
-      setPhoneVaild(true);
+      // setPhoneVaild(true);
+    }
+  };
+  const onEmailCheckInputHandler_right = (e) => {
+    const regex = /^[0-9\b -]{0,4}$/;
+    if (regex.test(e.target.value)) {
+      setEmailCheckInput_right(e.target.value);
+      //console.log("인증번호 : " + phoneCheckInput);
+      /* 일단 임시로 true로 해놓음. 나중에 백이랑 통신 후 인증 성공 시에만 true로 바꾸고, 실패시엔 false로 바꾸기 */
+      // setPhoneVaild(true);
     }
   };
   const onRegisterButtonHandler = (t) => {
     let valid = false;
-    valid = emailVaild && nickNameVaild && pwdVaild && pwdCheckVaild && phoneVaild;
+    valid = emailVaild && emailCheckValid && nickNameVaild && pwdVaild && pwdCheckVaild;
     if (valid == true) {
       alert("우왕굿");
       console.log(t);
@@ -218,6 +261,7 @@ function Register() {
       alert("안돼임마");
     }
   };
+
   useEffect(() => {
     // 폰넘버에 하이폰 자동으로 넣어주는 코드
     if (phoneInput.length === 10) {
@@ -268,7 +312,7 @@ function Register() {
               class="rounded-lg bg-gray-500 text-white flex-grow"
               onClick={onEmailCheckHandler}
             >
-              중복 확인
+              인증하기
             </button>
           </div>
           {
@@ -277,6 +321,39 @@ function Register() {
                 {emailMsg}
               </div>) : (<div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
                 {emailMsg}
+              </div>)
+          }
+        </div>
+        <div>
+          <div class="flex items-center gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
+            <input
+              class=" py-2 px-3 border rounded-lg bg-gray-50 w-[32.5%] focus:outline-0 text-lg font-ltest"
+              placeholder="인증번호"
+              type="text"
+              onChange={onEmailCheckInputHandler_left}
+              value={emailCheckInput_left}
+            />
+            -
+            <input
+              class=" py-2 px-3 border rounded-lg bg-gray-50 w-[32.5%] focus:outline-0 text-lg font-ltest"
+              placeholder="인증번호"
+              type="text"
+              onChange={onEmailCheckInputHandler_right}
+              value={emailCheckInput_right}
+            />
+            <button
+              class="h-full py-[10px] rounded-lg bg-gray-500 text-white flex-grow"
+              onClick={onEmailNumberCheckHandler}
+            >
+              확인
+            </button>
+          </div>
+          {
+            emailCheckMsg == "올바른 인증번호입니다." ?
+              (<div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-green-600 font-ltest mt-1 min-w-[20rem]">
+                {emailCheckMsg}
+              </div>) : (<div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 text-red-500 font-ltest mt-1 min-w-[20rem]">
+                {emailCheckMsg}
               </div>)
           }
         </div>
@@ -330,31 +407,6 @@ function Register() {
           />
           <div class="text-red-500 font-ltest mt-1">{pwdCheckMsg}</div>
         </div>
-        <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
-          <input
-            class="py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
-            placeholder="핸드폰 번호"
-            type="text"
-            onChange={onPhoneInputHandler}
-            value={phoneInput}
-          />
-          <button class="rounded-lg bg-gray-500 text-white flex-grow">
-            인증
-          </button>
-        </div>
-        <div class="flex gap-2 relative inset-x-1/2 transform -translate-x-1/2 w-1/5 min-w-[20rem]">
-          <input
-            class=" py-2 px-3 border rounded-lg bg-gray-50 w-7/10 focus:outline-0 text-lg font-ltest"
-            placeholder="인증번호"
-            type="text"
-            onChange={onPhoneCheckInputHandler}
-            value={phoneCheckInput}
-          />
-          <button class="rounded-lg bg-gray-500 text-white flex-grow">
-            확인
-          </button>
-        </div>
-
         <div class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 flex items-center justify-center gap-3 mt-2">
           <input
             type="checkbox"
@@ -374,7 +426,6 @@ function Register() {
               password: pwdInput,
               username: nameInput,
               nickname: nickNameInput,
-              phoneNumber: phoneInput,
             };
             onRegisterButtonHandler(t);
             //onLoginButtonHandler();
