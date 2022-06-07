@@ -59,6 +59,7 @@ export function refreshJWT(originalRequest) { //백으로부터 갱신요청 받
 export function removeJWT() { // 갱신 실패 or 로그아웃 시 호출
     axios.defaults.headers.common['Authorization'] = null;
     cookies.remove('refresh_token');
+    cookies.remove('access_token');
 }
 
 export function auth() {

@@ -6,6 +6,7 @@ import { SERVER_URL } from "../../utils/SRC";
 import { TeamScheduleModal } from "../../Component/Modal"
 import ProjectSearchBar from "../../Component/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
+import { getUserDataToken } from "../../utils/user";
 
 function ProjectMyDetail() {
     const navigate = useNavigate();
@@ -22,6 +23,8 @@ function ProjectMyDetail() {
     //
     const [isLoadingCompleted, setIsLoadingCompleted] = useState(false);
     //
+    const [userNickname, setUserNickname] = useState(null);
+
     function Page(props) { // props --> startPage, totalPage, load__함수, setSelected, selected
         let endPage = (props.startPage + 9 > props.totalPage ? props.totalPage : props.startPage + 9);
         const result = [];
@@ -108,44 +111,52 @@ function ProjectMyDetail() {
         }
         useEffect(() => {
             loadRecommendedDev(1);
+            if (getUserDataToken()) {
+                console.log(getUserDataToken());
+                setUserNickname(getUserDataToken().nickname);
+            }
         }, [])
         return (
             <>
-                <div class="text-xl font-btest mb-4 mt-5">😊 지원님, 이런 인재들은 어떠신가요?</div>
-                {recommended.map((item) => {
-                    return (
-                        <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
-                            <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                <img
-                                    src={profileImage}
-                                    class="w-28 h-28 rounded-full drop-shadow-lg"
-                                    alt="profile"
-                                />
-                            </div>
-                            <div class="ml-4 my-auto flex flex-col items-start">
-                                <div class="text-2xl font-btest">{item.nickname}</div>
-                                <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
-                                <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-
-                            </div>
-                            <div class="ml-auto text-right text-sm self-center">
-                                <div class="">
-                                    <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
-                                    <div class="text-black grid grid-cols-3 gap-2">
-                                        {item.tagData.map((tag) => {
-                                            return (
-                                                <div class="bg-indigo-100 text-center p-1">
-                                                    {tag.name}
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
+                <div class="text-xl font-btest mb-4 mt-5">😊 {userNickname}님, 이런 인재들은 어떠신가요?</div>
+                {recommended != null ?
+                    recommended.map((item) => {
+                        return (
+                            <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
+                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
+                                    <img
+                                        src={profileImage}
+                                        class="w-28 h-28 rounded-full drop-shadow-lg"
+                                        alt="profile"
+                                    />
                                 </div>
+                                <div class="ml-4 my-auto flex flex-col items-start">
+                                    <div class="text-2xl font-btest">{item.nickName}</div>
+                                    <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
+                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
 
+                                </div>
+                                <div class="ml-auto text-right text-sm self-center">
+                                    <div class="">
+                                        <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
+                                        <div class="text-black grid grid-cols-3 gap-2">
+                                            {item.tagData.map((tag) => {
+                                                return (
+                                                    <div class="bg-indigo-100 text-center p-1">
+                                                        {tag.name}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })
+                    :
+                    <div>로딩중.</div>
+                }
                 <div class="flex gap-2 justify-center w-full px-2">
                     <Page
                         startPage={startPage}
@@ -154,53 +165,6 @@ function ProjectMyDetail() {
                         setSelected={setSelected}
                         load={loadRecommendedDev}
                     />
-                </div>
-                <div class="px-4 py-4 flex mt-2 border rounded-lg">
-                    <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                        <img
-                            src={profileImage}
-                            class="w-28 h-28 rounded-full drop-shadow-lg"
-                            alt="profile"
-                        />
-                    </div>
-                    <div class="ml-4 my-auto ">
-                        <div class="text-2xl font-btest">신유진</div>
-                        <div class="tont-ltest pt-1 text-sm">UI/UX Designer</div>
-                        <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, 프론트 디자이너입니다. </div>
-                        <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                    </div>
-                    <div class="ml-auto text-right text-sm">
-                        <div class="text-bluepurple text-base">기술</div>
-                        <div class=" ml-3 text-black">React, Javascript</div>
-                        <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                        <div>월요일 화요일 15:00~16:30</div>
-                        <div>수요일 목요일 16:00~18:30</div>
-                        <div>금요일 토요일 일요일 18:00~16:30</div>
-                    </div>
-                </div>
-                <div class="px-4 py-4 flex mt-2 mb-4 border rounded-lg">
-                    <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                        <img
-                            src={profileImage}
-                            class="w-28 h-28 rounded-full drop-shadow-lg"
-                            alt="profile"
-                        />
-                    </div>
-                    <div class="ml-4 my-auto ">
-                        <div class="text-2xl font-btest">최영찬</div>
-                        <div class="tont-ltest pt-1 text-sm">Backend Developer</div>
-                        <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, 백엔드 디자이너입니다.</div>
-                        <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                    </div>
-                    <div class="ml-auto text-right text-sm">
-                        <div class="text-bluepurple text-base">기술</div>
-                        <div class="ml-3 text-black">Spring, Java</div>
-
-                        <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                        <div>월요일 화요일 12:00~16:30</div>
-                        <div>목요일 13:00~18:30</div>
-                        <div>일요일 19:00~16:30</div>
-                    </div>
                 </div>
             </>
         )
@@ -233,40 +197,45 @@ function ProjectMyDetail() {
         return (
             <>
                 <div class="text-xl font-btest mb-4 mt-5">🙆‍♀️ 현재 참여 중인 팀원들이에요.</div>
-                {participants.map((item) => {
-                    return (
-                        <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
-                            <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                <img
-                                    src={profileImage}
-                                    class="w-28 h-28 rounded-full drop-shadow-lg"
-                                    alt="profile"
-                                />
-                            </div>
-                            <div class="ml-4 my-auto flex flex-col items-start">
-                                <div class="text-2xl font-btest">{item.nickname}</div>
-                                <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
-                                <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-
-                            </div>
-                            <div class="ml-auto text-right text-sm self-center">
-                                <div class="">
-                                    <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
-                                    <div class="text-black grid grid-cols-3 gap-2">
-                                        {item.tagInfos.map((tag) => {
-                                            return (
-                                                <div class="bg-indigo-100 text-center p-1">
-                                                    {tag.name}
-                                                </div>
-                                            )
-                                        })}
-                                    </div>
+                {participants != null ?
+                    participants.map((item) => {
+                        return (
+                            <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
+                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
+                                    <img
+                                        src={profileImage}
+                                        class="w-28 h-28 rounded-full drop-shadow-lg"
+                                        alt="profile"
+                                    />
                                 </div>
+                                <div class="ml-4 my-auto flex flex-col items-start">
+                                    <div class="text-2xl font-btest">{item.nickName}</div>
+                                    <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
+                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
 
+                                </div>
+                                <div class="ml-auto text-right text-sm self-center">
+                                    <div class="">
+                                        <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
+                                        <div class="text-black grid grid-cols-3 gap-2">
+                                            {item.tagInfos.map((tag) => {
+                                                return (
+                                                    <div class="bg-indigo-100 text-center p-1">
+                                                        {tag.name}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+
+                                </div>
                             </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })
+                    :
+                    <div>로딩중...</div>
+                }
+
                 <div class="flex gap-2 justify-center w-full px-2">
                     <Page
                         startPage={startPage}
@@ -306,63 +275,71 @@ function ProjectMyDetail() {
         return (
             <>
                 <div class="text-xl font-btest mt-5 mb-4">📢 본 프로젝트에 지원한 팀원들이에요. 어서 확인해보세요! </div>
-                {apply.map((item) => {
-                    return (
-                        <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
-                            <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                <img
-                                    src={profileImage}
-                                    class="w-28 h-28 rounded-full drop-shadow-lg"
-                                    alt="profile"
-                                />
-                            </div>
-                            <div class="ml-4 my-auto flex flex-col items-start">
-                                <div class="text-2xl font-btest">{item.nickname}</div>
-                                <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
-                                <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                            </div>
-                            <div class="ml-auto text-right text-sm self-center">
-                                <div class="">
-                                    <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
-                                    <div class="text-black grid grid-cols-3 gap-2">
-                                        {item.tagInfos.map((tag) => {
-                                            return (
-                                                <div class="bg-indigo-100 text-center p-1">
-                                                    {tag.name}
-                                                </div>
-                                            )
-                                        })}
+                {apply != null ?
+                    apply.map((item) => {
+                        return (
+                            <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
+                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
+                                    <img
+                                        src={profileImage}
+                                        class="w-28 h-28 rounded-full drop-shadow-lg"
+                                        alt="profile"
+                                    />
+                                </div>
+                                <div class="ml-4 my-auto flex flex-col items-start">
+                                    <div class="text-2xl font-btest">{item.nickName}</div>
+                                    <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
+                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
+                                </div>
+                                <div class="w-[15%] ml-auto text-right text-sm self-center">
+                                    <div class="">
+                                        <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
+                                        <div class="text-black grid grid-cols-3 gap-2">
+                                            {item.tagInfos.map((tag) => {
+                                                return (
+                                                    <div class="bg-indigo-100 text-center p-1">
+                                                        {tag.name}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <button
+                                            class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white"
+                                            onClick={() => {
+                                                axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/approve")
+                                                    .then((res) => {
+                                                        console.log(res);
+                                                    })
+                                                    .catch((err) => {
+                                                        console.log(err.response);
+                                                    })
+                                            }}
+                                        >수락</button>
+                                        <button
+                                            class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white"
+                                            onClick={() => {
+                                                axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/reject")
+                                                    .then((res) => {
+                                                        console.log(res);
+                                                    })
+                                                    .catch((err) => {
+                                                        console.log(err.response);
+                                                    })
+                                            }}
+                                        >거절
+                                        </button>
                                     </div>
                                 </div>
-                                <button
-                                    class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white"
-                                    onClick={() => {
-                                        axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/approve")
-                                            .then((res) => {
-                                                console.log(res);
-                                            })
-                                            .catch((err) => {
-                                                console.log(err.response);
-                                            })
-                                    }}
-                                >수락</button>
-                                <button
-                                    class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white"
-                                    onClick={() => {
-                                        axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/reject")
-                                            .then((res) => {
-                                                console.log(res);
-                                            })
-                                            .catch((err) => {
-                                                console.log(err.response);
-                                            })
-                                    }}
-                                >거절
-                                </button>
                             </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })
+                    :
+                    <div>로딩중.....</div>
+                }
+
+
                 <div class="flex gap-2 justify-center w-full px-2">
                     <Page
                         startPage={startPage}
@@ -371,65 +348,6 @@ function ProjectMyDetail() {
                         setSelected={setSelected}
                         load={loadApplyDev}
                     />
-                </div>
-                <div class="flex gap-3">
-                    <div class="px-4 py-4 flex mt-2 border rounded-lg w-5/6">
-                        <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                            <img
-                                src={profileImage}
-                                class="w-28 h-28 rounded-full drop-shadow-lg"
-                                alt="profile"
-                            />
-                        </div>
-                        <div class="ml-4 my-auto ">
-                            <div class="text-2xl font-btest">신유진</div>
-                            <div class="tont-ltest pt-1 text-sm">UI/UX Designer</div>
-                            <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, 저를 뽑아주세요. 잠수는 절대 안 탑니다. </div>
-                            <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                        </div>
-                        <div class="ml-auto text-right text-sm">
-                            <div class="text-bluepurple text-base">기술</div>
-                            <div class=" ml-3 text-black">React, Javascript</div>
-                            <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                            <div>월요일 화요일 15:00~16:30</div>
-                            <div>수요일 목요일 16:00~18:30</div>
-                            <div>금요일 토요일 일요일 18:00~16:30</div>
-                        </div>
-                    </div>
-                    <div class="grow flex flex-col gap-4 mt-2 justify-center mb-4">
-                        <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">수락</button>
-                        <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">거절</button>
-                    </div>
-                </div>
-                <div class="flex gap-3">
-                    <div class="px-4 py-4 flex mt-2 mb-4 border rounded-lg w-5/6">
-                        <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                            <img
-                                src={profileImage}
-                                class="w-28 h-28 rounded-full drop-shadow-lg"
-                                alt="profile"
-                            />
-                        </div>
-                        <div class="ml-4 my-auto ">
-                            <div class="text-2xl font-btest">최영찬</div>
-                            <div class="tont-ltest pt-1 text-sm">Backend Developer</div>
-                            <div class="mt-2 text-sm font-test text-black">💬 안녕하세요, "혁준"하지 않겠습니다. </div>
-                            <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                        </div>
-                        <div class="ml-auto text-right text-sm">
-                            <div class="text-bluepurple text-base">기술</div>
-                            <div class="ml-3 text-black">Spring, Java</div>
-
-                            <div class="text-bluepurple text-base mt-1">가능 시간</div>
-                            <div>월요일 화요일 12:00~16:30</div>
-                            <div>목요일 13:00~18:30</div>
-                            <div>일요일 19:00~16:30</div>
-                        </div>
-                    </div>
-                    <div class="grow flex flex-col gap-4 mt-2 justify-center mb-4">
-                        <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">수락</button>
-                        <button class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white">거절</button>
-                    </div>
                 </div>
             </>
         )

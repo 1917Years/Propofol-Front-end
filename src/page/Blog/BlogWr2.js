@@ -84,7 +84,7 @@ function BlogWr2(props) {
                     imgtype: typeList,
                     like: writing.recommend,
                     commentCount: writing.commentCount,
-                    tag: writing.tags,
+                    tag: writing.tagInfos,
                 }
                 //wrInfo = tmpInfo;
 

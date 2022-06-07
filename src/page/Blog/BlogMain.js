@@ -7,6 +7,7 @@ import { htmlDetailToText } from "../../utils/html";
 import { TagModal } from "../../Component/Modal";
 import BlogSearchBar from "../../Component/BlogSearchBar";
 import { Page } from "../../utils/page";
+import { BlogWritingList } from "../../Component/BlogWritingList";
 
 let tmpSt = [];
 
@@ -97,7 +98,7 @@ function BlogMain() {
     console.log(page);
     loadWritings(page);
 
-    axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + currentPage)
+    axios.get(SERVER_URL + "/til-service/api/v1/members/myBoards?page=" + currentPage)
       .then((res) => {
         let tmpPageCount = res.data.data.totalPageCount;
         setMaxPageCount(tmpPageCount);
@@ -317,16 +318,16 @@ function BlogMain() {
           selectedTagList={selectedTagList}
         />
       </div>
-      <div class="relative h-full flex w-[80rem] gap-5 inset-x-1/2 transform -translate-x-1/2 ">
-        <div class="flex flex-col items-center w-[20rem]">
+      <div class="relative h-full flex w-[82rem] gap-5 inset-x-1/2 transform -translate-x-1/2 ">
+        <div class="flex flex-col items-center w-[22rem]">
           <div class="relative pt-10 flex items-start h-full border-r border-gray-200 pr-5 flex-col gap-5 pb-6">
-            <div class="text-[2.5rem] font-btest text-center text-bluepurple ">
-              <a class="text-black">T</a>oday <a class="text-black">I</a>{" "}
-              <a class="text-black">L</a>earned
+            <div class="text-[2.5rem] font-btest text-center text-gray-400 font-test">
+              <a class="text-indigo-400 text-[2.75rem]">T</a>oday <a class="text-indigo-400 text-[2.75rem]">I</a>{" "}
+              <a class="text-indigo-400 text-[2.75rem]">L</a>earned
             </div>
             <div class="w-full flex flex-col items-center gap-2 text-gray-600 border-b border-gray-200 pb-5">
               <button
-                class="text-gray-600 rounded-lg border border-slate-300 w-full h-full py-2 "
+                class="text-gray-500 font-sbtest rounded-lg border border-gray-300 w-full h-full py-2 "
                 onClick={() => {
                   navigate('/blog/writing');
                 }}
@@ -350,7 +351,7 @@ function BlogMain() {
             </div>
           </div>
         </div>
-        <div class="grow pt-5">
+        <div class="w-[60rem] pt-5">
 
           <div class="flex flex-col gap-10 pt-6">
             <section className="Streak grow">
@@ -510,94 +511,11 @@ function BlogMain() {
                   : "hidden"}>{checkNoPost == true ? "아직 아무 글도 작성하지 않았어요 😥" : ""}</div>
               </div>
             }
-            {writingList.map((item, index) => {
-              if (item.img != null) {
-                return (
-                  <button
-                    className="Writing"
-                    class="flex border bg-white h-48 px-10 py-5 gap-5 text-left"
-                    value={item.id}
-                    onClick={(e) => {
-                      navigate('/blog/detail/' + e.currentTarget.value);
-                    }}
-                  >
-                    <div class="w-[45.5rem] h-36 flex flex-col justify-between">
-                      <div class="">
-                        <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                          <h>나</h>
-                          <h>{item.date}</h>
-                        </div>
-                        <button class="py-1 text-blue-400 text-lg">
-                          {item.title}
-                        </button>
-                        <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
-                      </div>
-                      <div class="flex gap-2">
-                        {item.tag.map((item) => {
-                          return (
-                            <div class="bg-indigo-50 text-sm border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
-                              {item.name}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                    <div class="w-grow">
-                      <div class=" w-32 h-32 mb-2">
-                        <img
-                          src={"data:image/" + item.imgtype + ";base64," + item.img}
-                          class="w-full z-full z-40 min-h-[8rem] max-h-[8rem]"
-                        />
-                      </div>
-                      <div class="w-32 grid grid-cols-2 text-sm ">
-                        <div>🧡 {item.like}</div>
-                        <div>💬 {item.comment}</div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              } else {
-                return (
-                  <button
-                    className="Writing"
-                    class="border bg-white h-48 px-10 py-5 gap-5 text-left"
-                    value={item.id}
-                    onClick={(e) => {
-                      navigate('/blog/detail/' + e.currentTarget.value);
-                    }}
-                  >
-                    <div class="w-[45.5rem] h-36 flex flex-col justify-between">
-                      <div class="">
-                        <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                          <h>나</h>
-                          <h>{item.date}</h>
-                        </div>
-                        <button class="py-1 text-blue-400 text-lg">
-                          {item.title}
-                        </button>
-                        <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
-                      </div>
-                      <div class="flex gap-2">
-                        {item.tag.map((item) => {
-                          return (
-                            <div class="bg-indigo-50 text-sm border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
-                              {item.name}
-                            </div>
-                          )
-                        })}
-                      </div>
-                    </div>
-                    <div class="flex">
-                      <div class="w-[47rem]"></div>
-                      <div class="w-32 grid grid-cols-2 text-sm">
-                        <div>🧡 {item.like}</div>
-                        <div>💬 {item.comment}</div>
-                      </div>
-                    </div>
-                  </button>
-                );
-              }
-            })}
+            <BlogWritingList
+              writingList={writingList}
+              onWritingClickHandler={(e) => { navigate('/blog/detail/' + e.currentTarget.value) }}
+              writingTextList={writingTextList}
+            />
           </div>
           <div class="flex justify-center">
             <nav class="my-6">

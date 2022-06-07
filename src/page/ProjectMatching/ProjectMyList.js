@@ -5,6 +5,7 @@ import { SERVER_URL } from "../../utils/SRC";
 import ProjectSearchBar from "../../Component/ProjectSearchBar";
 import { TagModal, ApplyingModal } from "../../Component/Modal";
 import { htmlDetailToText } from "../../utils/html";
+import { getUserDataToken } from "../../utils/user";
 
 function ProjectMyList() {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ function ProjectMyList() {
     const [showRecruiting, setShowRecruiting] = useState(true);
     const [showJoining, setShowJoining] = useState(false);
     //
+    const [userNickname, setUserNickname] = useState(null);
     function Project(props) { //projectList, projectTextList
         return (
             <div>
@@ -88,10 +90,6 @@ function ProjectMyList() {
                                         {item.status == "ACTIVE" ? (
                                             <>
                                                 <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                                                <button
-                                                    class="ml-auto"
-                                                    onClick={() => { navigate("/pm/writing?No=" + item.id) }}
-                                                >{">"} 수정하기</button>
                                             </>
                                         )
                                             :
@@ -99,7 +97,9 @@ function ProjectMyList() {
                                         }
                                     </div>
                                     <button
-                                        onClick={() => navigate("/pm/myproject/" + item.id)}
+                                        onClick={
+                                            props.isRecruiting ? () => navigate("/pm/detail/" + item.id) : () => navigate("/pm/myproject/" + item.id)
+                                        }
                                         class="mt-1 py-1 text-black text-xl">
                                         {item.title}
                                     </button>
@@ -115,7 +115,7 @@ function ProjectMyList() {
                                     </div>
                                     <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
                                 </div>
-                                <div class="w-grow">
+                                <div class="w-grow flex flex-col items-start justify-end">
                                     {props.isRecruiting ? (
                                         <button
                                             class="border p-1"
@@ -209,7 +209,7 @@ function ProjectMyList() {
         return (
             <>
                 <div class="mt-10 text-2xl font-btest">
-                    유진님이 모집 중인 프로젝트예요.
+                    {userNickname}님이 모집 중인 프로젝트예요.
                 </div>
                 <div class="mt-4 border rounded-lg">
                     <Project
@@ -324,7 +324,7 @@ function ProjectMyList() {
             <>
                 <div class="flex mt-10 ">
                     <div class="text-2xl font-btest">
-                        유진님이 참여 중인 프로젝트예요.
+                        {userNickname}님이 참여 중인 프로젝트예요.
                     </div>
                     <button
                         class="ml-auto text-lg mr-2"
@@ -371,7 +371,10 @@ function ProjectMyList() {
     //
 
     useEffect(() => {
-
+        if (getUserDataToken()) {
+            console.log(getUserDataToken());
+            setUserNickname(getUserDataToken().nickname);
+        }
     }, []);
 
     return (

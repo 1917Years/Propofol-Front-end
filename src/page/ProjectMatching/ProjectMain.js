@@ -7,6 +7,7 @@ import { SERVER_URL } from "../../utils/SRC";
 import { fillScheduleStyleList, TimeList } from "../../Component/Schedule";
 import ProjectSearchBar from "../../Component/ProjectSearchBar";
 import { htmlDetailToText } from "../../utils/html";
+import { getUserDataToken } from "../../utils/user";
 
 function ProjectMain() {
   const navigate = useNavigate();
@@ -22,6 +23,7 @@ function ProjectMain() {
   const [startPage, setStartPage] = useState(1);
   const [selected, setSelected] = useState(1);
   //
+  const [userNickname, setUserNickname] = useState(null);
   function Page() {
     let endPage = (startPage + 9 > totalPage ? totalPage : startPage + 9);
     const result = [];
@@ -60,6 +62,10 @@ function ProjectMain() {
   //
   useEffect(() => {
     loadProject(1);
+    if (getUserDataToken()) {
+      console.log(getUserDataToken());
+      setUserNickname(getUserDataToken().nickname);
+    }
   }, []);
 
   function loadProject(page) {
@@ -122,7 +128,7 @@ function ProjectMain() {
             </button>
           </div>
           <div class="mt-4 text-2xl font-btest">
-            유진님, 이런 프로젝트는 어떠신가요?
+            {userNickname}님, 이런 프로젝트는 어떠신가요?
           </div>
 
           <div class="mt-4 border rounded-lg">
@@ -131,7 +137,7 @@ function ProjectMain() {
                 return (
                   <div
                     className="Writing"
-                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem] pb-3"
                   >
                     <div class="w-[47rem]">
                       <div class="text-sm text-gray-400 flex items-center font-ltest">
@@ -161,7 +167,7 @@ function ProjectMain() {
                       </div>
                       <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
                     </div>
-                    <div class="w-grow">
+                    <div class="w-grow self-end">
                       <div class="w-32 h-32 mb-2">
                         <img
                           src={"data:image/" + item.imgType + ";base64," + item.image}
@@ -179,7 +185,7 @@ function ProjectMain() {
                 return (
                   <div
                     className="Writing"
-                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
+                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem] pb-3"
                   >
                     <div class="w-[47rem]">
                       <div class="text-sm text-gray-400 flex items-center font-ltest">
@@ -201,7 +207,7 @@ function ProjectMain() {
                       <div class="flex gap-2">
                         {item.tagInfos.map((tags) => {
                           return (
-                            <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                            <div class="px-1 font-ltest text-sm w-fit mt-2 bg-gray-200 rounded-none border">
                               {tags.name}
                             </div>
                           )
@@ -209,7 +215,7 @@ function ProjectMain() {
                       </div>
                       <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
                     </div>
-                    <div class="w-grow">
+                    <div class="w-grow self-end">
                       <div class="w-32 grid grid-rows-2 text-sm ">
                         <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
                       </div>

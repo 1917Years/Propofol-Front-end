@@ -46,6 +46,7 @@ function See() {
                         console.log("result", event.data);
                         setData(old => [...old, result]);
                         setValue(result);
+                        loadNotice(1);
                     };
                     eventSource.onerror = event => {
                         console.log(event.target.readyState);
@@ -54,7 +55,6 @@ function See() {
                         }
                         eventSource.close();
                     };
-                    loadNotice(1);
                     setListening(true);
                 }
                 return () => {
@@ -269,197 +269,6 @@ function See() {
                                             X
                                         </button>
                                     </div>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "APPLY") { //누가 플젝에 신청함
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                        onClick={() => { navigate('/pm/myproject/' + JSON.parse(mes).boardId); }}
-                                    >
-                                        <div class=" text-xs">
-                                            📣
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "OUT") { //회원이 탈퇴함
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                        onClick={() => { navigate('/pm/myproject/' + JSON.parse(mes).boardId); }}
-                                    >
-                                        <div class=" text-xs">
-                                            😥
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "APPROVE") { //신청 승인됨
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                        onClick={() => { navigate('/pm/detail/' + JSON.parse(mes).boardId); }}
-                                    >
-                                        <div class=" text-xs">
-                                            😊
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "REJECT") { //신청 거절당함
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                        onClick={() => { navigate('/pm/detail/' + JSON.parse(mes).boardId); }}
-                                    >
-                                        <div class=" text-xs">
-                                            😅
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "COMMENT") { //댓글 달림
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                        onClick={() => { navigate('/blog/detail/' + JSON.parse(mes).boardId); }}
-                                    >
-                                        <div class=" text-xs">
-                                            💬
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "COMMENTSUBSCRIBER_BOARD") { //구독중인 사람이 글 씀
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                        onClick={() => { navigate('/blog/detail/' + JSON.parse(mes).boardId); }}
-                                    >
-                                        <div class=" text-xs">
-                                            📣
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "LIKE") { //좋아요
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                        onClick={() => { navigate('/blog/detail/' + JSON.parse(mes).boardId); }}
-                                    >
-                                        <div class=" text-xs">
-                                            💗
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
-                                </div>
-                            )
-                        }
-                        if (JSON.parse(mes).type == "SUBSCRIBE") { //구독
-                            return (
-                                <div class="flex items-center justify-between border-b border-gray-300 py-1 px-2 gap-2">
-                                    <button
-                                        class="flex gap-2 items-center"
-                                    >
-                                        <div class=" text-xs">
-                                            👍
-                                        </div>
-                                        <div> {JSON.parse(mes).message}</div>
-                                    </button>
-                                    <div class="text-gray-400">{JSON.parse(mes).createdDate.split("T")[0]}</div>
-                                    <button
-                                        class="text-black"
-                                        onClick={() => {
-                                            deleteNotice(JSON.parse(mes).id);
-                                        }}
-                                    >
-                                        X
-                                    </button>
                                 </div>
                             )
                         }

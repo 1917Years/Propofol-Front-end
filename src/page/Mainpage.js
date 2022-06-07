@@ -23,19 +23,21 @@ function Mainpage(props) {
 
   useEffect(() => {
     console.log("이친구 왜 실행이 안될까...........?");
-    axios
-      .get(SERVER_URL + "/ptf-service/api/v1/portfolio/checkPortfolio")
-      .then((res) => {
-        console.log("기존에 포폴 있는지 조회하기");
-        console.log(res);
+    if (getAccessToken != "no access_token") {
+      axios
+        .get(SERVER_URL + "/ptf-service/api/v1/portfolio/checkPortfolio")
+        .then((res) => {
+          console.log("기존에 포폴 있는지 조회하기");
+          console.log(res);
 
-        if (res.data.data != "no") {
-          setCookie("portfolioId", res.data.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+          if (res.data.data != "no") {
+            setCookie("portfolioId", res.data.data);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
   }, [userMove]);
 
   return (

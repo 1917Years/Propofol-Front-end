@@ -4,6 +4,7 @@ import { SERVER_URL } from "../utils/SRC";
 import { useNavigate, Navigate } from "react-router-dom";
 import Cookies from 'universal-cookie';
 import { setRefreshTokenToCookie, setAccessTokenToCookie, getRefreshToken, getAccessToken } from "../utils/auth.js"
+import { setUserDataCookie } from "../utils/user";
 
 const cookies = new Cookies();
 
@@ -54,6 +55,7 @@ function Login(props) {
       .get(SERVER_URL + "/user-service/api/v1/members", at)
       .then((res) => {
         console.log(res);
+        setUserDataCookie(res.data.data);
         navigate('/');
       })
       .catch((err) => {

@@ -14,6 +14,11 @@
 }
 
 @font-face {
+  font-family: "good_brush";
+  src: url("./font/Good\ Brush.ttf");
+}
+
+@font-face {
   font-family: "pretend-medium";
   src: url("./font/Pretendard-Medium.ttf");
 }
@@ -121,6 +126,11 @@
 @font-face {
   font-family: "timelessB";
   src: url("./font/Timeless-Bold.ttf");
+}
+
+@font-face {
+  font-family: "Bodo_Amat";
+  src: url("./font/Bodo\ Amat.ttf");
 }
 
 .App-header {

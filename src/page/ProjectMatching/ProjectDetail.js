@@ -21,6 +21,29 @@ function ProjectDetail() {
   const [showScheduleViewModal, setShowScheduleViewModal] = useState(false);
 
   //
+
+  function cancleApply() {
+    axios.delete(SERVER_URL + "/matching-service/api/v1/members/" + id + "/cancel")
+      .then((res) => {
+        console.log(res);
+        loadProjectDetail();
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
+
+  function secedeProject() {
+    axios.delete(SERVER_URL + "/matching-service/api/v1/members/" + id + "/secession")
+      .then((res) => {
+        console.log(res);
+        loadProjectDetail(1);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
+
   async function loadImage(content_before) {
     let tmpimgsrc = [];
     let tmpimgsrctype = [];
@@ -79,6 +102,7 @@ function ProjectDetail() {
     axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/apply")
       .then((res) => {
         console.log(res);
+        loadProjectDetail();
       })
       .catch((err) => {
         console.log(err.response);
@@ -148,7 +172,7 @@ function ProjectDetail() {
                 >
                   <div class="w-[47rem]">
                     <div class="flex">
-                      {project.imageTypes == 0 ? (null)
+                      {project.imageType == null ? (null)
                         :
                         (<div>
                           <img
@@ -216,31 +240,44 @@ function ProjectDetail() {
                 <div class="bg-gray-100 py-4 px-4 rounded-lg">
                   <div class="flex mt-2">
                     <div className="ProfileImage" class=" w-14 h-14 rounded-full">
-                      <img
-                        src={project.profileString}
-                        class="w-14 h-14 rounded-full drop-shadow-lg"
-                        alt="profile"
-                      />
+                      {project.profileString == null ? null :
+                        <img
+                          src={project.profileString}
+                          class="w-14 h-14 rounded-full drop-shadow-lg"
+                          alt="profile"
+                        />}
                     </div>
                     <div class="ml-4 my-auto text-2xl font-btest">{project.nickName}</div>
                   </div>
                 </div>
                 <button class="ml-6 mt-4 font-ltest text-sm"> 팀장의 포트폴리오 확인하기 {">"}</button>
                 <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
-                {project.apply ?
-                  (<button
-                    class="mt-4 border text-md rounded-lg w-full py-2"
-                    onClick={() => { }}
-                  >
-                    신청 취소하기
-                  </button>)
+                {project.master ?
+                  null
                   :
-                  (<button
-                    class="mt-4 border text-md rounded-lg w-full py-2"
-                    onClick={postApply}
-                  >
-                    지원하기
-                  </button>)}
+                  project.join ?
+                    <button
+                      class="mt-4 border text-md rounded-lg w-full py-2"
+                      onClick={() => { secedeProject() }}
+                    >
+                      탈퇴하기
+                    </button>
+                    :
+                    project.apply ?
+                      (<button
+                        class="mt-4 border text-md rounded-lg w-full py-2"
+                        onClick={() => { cancleApply() }}
+                      >
+                        신청 취소하기
+                      </button>)
+                      :
+                      (<button
+                        class="mt-4 border text-md rounded-lg w-full py-2"
+                        onClick={() => { postApply() }}
+                      >
+                        지원하기
+                      </button>)
+                }
                 <div class="mt-6 text-lg font-btest">현재 참여 중인 팀원</div>
                 <div class="mt-3 text-gray-600">
                   {project.recruited + "명이 참여하고 있어요!"}

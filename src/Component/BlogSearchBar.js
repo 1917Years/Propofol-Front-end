@@ -28,7 +28,7 @@ function BlogSearchBar(props) { // setShowTagModal, selectedTagList(props) / key
         <div class="mb-3">
             <div class="flex ">
                 <div class="h-12 grow">
-                    <div class="flex gap-2 content-center bg-gray-50 rounded-lg border border-slate-300 px-2 py-2 ">
+                    <div class="flex gap-2 content-center rounded-xl border border-gray-200 px-2 py-[9px] shadow-[0_3px_6px_0px_rgba(0,0,0,0.075)]">
                         <div class="self-center ml-2">🔍</div>
                         <select
                             class="text-gray-400 text-lg appearance-none focus:outline-none bg-transparent"
@@ -77,7 +77,7 @@ function BlogSearchBar(props) { // setShowTagModal, selectedTagList(props) / key
                             (null)
                         }
                         <input
-                            class="bg-gray-50 grow focus:outline-0 text-gray-500 ml-2"
+                            class="bg-inherit grow focus:outline-0 text-gray-500 ml-2"
                             type="text"
                             value={keyword}
                             onChange={(e) => { setKeyword(e.target.value) }}
@@ -88,7 +88,7 @@ function BlogSearchBar(props) { // setShowTagModal, selectedTagList(props) / key
                 </div>
                 <div class="flex content-center gap-4 text-lg font-ltest mt-1 h-10 ml-3">
                     <button
-                        class="self-center rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-500 py-2 px-2"
+                        class="self-center rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-500 py-[9px] px-3 shadow-[0_3px_6px_0px_rgba(0,0,0,0.075)]"
                         onClick={() => { props.setShowTagModal(true) }}
                     >태그 추가 +
                     </button>

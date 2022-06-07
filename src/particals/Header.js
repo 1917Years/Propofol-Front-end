@@ -4,12 +4,14 @@ import logo from "../assets/img/logo_tmp.png";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { getCookie } from "../utils/cookie";
+import { getAccessToken, getRefreshToken, removeJWT } from "../utils/auth";
 import See from "../utils/sse";
 
 function Header({ }) {
   const navigate = useNavigate();
   const [portfolioId, setPortfolioId] = useState(null);
   const [userMove, setUserMove] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
 
   useEffect(() => {
     console.log("쿠키 나와");
@@ -23,6 +25,15 @@ function Header({ }) {
     if (portfolioId != null) navigate("/portfolio/main/" + portfolioId);
     else navigate("/portfolio/main");
   };
+
+  useEffect(() => {
+    if (getAccessToken() != "no access_token") {
+      setIsLogin(true);
+    }
+    else {
+      setIsLogin(false);
+    }
+  }, []);
 
   return (
     <div>
@@ -57,35 +68,50 @@ function Header({ }) {
             프로젝트
           </button>
         </div>
-        <div class="flex w-[25%] justify-between">
-          <button
-            class="relative font-ltest"
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            로그인
-          </button>
-          <button
-            class="relative font-ltest"
-            onClick={() => {
-              navigate("/register");
-            }}
-          >
-            회원가입
-          </button>
-          <button
-            class="relative font-ltest"
-            onClick={() => {
-              navigate("/mypage");
-            }}
-          >
-            MYPAGE
-          </button>
-          <div class="">
-            <See />
+        {getAccessToken() != "no access_token" ?
+          <div class="flex w-[17%] justify-between">
+            <button
+              class="relative font-ltest"
+              onClick={() => {
+                removeJWT();
+                setIsLogin(false);
+              }}
+            >
+              LOGOUT
+            </button>
+            <button
+              class="relative font-ltest"
+              onClick={() => {
+                navigate("/mypage");
+              }}
+            >
+              MYPAGE
+            </button>
+            <div class="">
+              <See />
+            </div>
           </div>
-        </div>
+          :
+          <div class="flex w-[12%] justify-between">
+            <button
+              class="relative font-ltest"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              로그인
+            </button>
+            <button
+              class="relative font-ltest"
+              onClick={() => {
+                navigate("/register");
+              }}
+            >
+              회원가입
+            </button>
+
+          </div>
+        }
       </div>
       <div class="h-16"></div>
     </div>

@@ -330,6 +330,8 @@ function ProjectWriting() {
       formData_Save.append("endTime", item.endTime);
       formData_Save.append("week", item.week);
     });
+    console.log("태그~~");
+    console.log(formData_Save.get("tagId"));
     console.log(formData_Save.getAll("startTime"));
     console.log(formData_Save.getAll("endTime"));
     console.log(formData_Save.getAll("week"));

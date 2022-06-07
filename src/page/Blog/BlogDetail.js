@@ -7,6 +7,16 @@ import { SERVER_URL } from "../../utils/SRC";
 import profileImage from "../../assets/img/profile.jpg";
 import 'react-quill/dist/quill.bubble.css';
 
+
+const modules = {
+    toolbar: {
+        container: []
+    },
+    syntax: {
+        highlight: (text) => hljs.highlightAuto(text).value,
+    },
+};
+
 function BlogDetail() {
     let tmpWrInfo;
     const languageList = ["C", "JAVA", "Python"];
@@ -92,16 +102,22 @@ function BlogDetail() {
             startend = tmpWrInfo.detail.indexOf(">", start);
             end = tmpWrInfo.detail.indexOf("</pre>", startend);
             tmpcode = tmpWrInfo.detail.slice(startend + 1, end);
-            tmpcode_after = tmpcode.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, s => {
+            tmpcode = tmpcode.replace(/(<([^>]+)>)/ig, "");
+            tmpcode_after = tmpcode.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;|&nbsp;)/g, s => {
                 const entityMap = {
                     '&amp;': '&',
                     '&lt;': '<',
                     '&gt;': '>',
                     '&quot;': '"',
                     '&#39;': "'",
+                    '&nbsp;': " ",
                 };
                 return entityMap[s];
             });
+            //
+            console.log("코드 전처리 이후는");
+            console.log(tmpcode_after);
+            //
             tmpdetail_before = tmpdetaillist.pop().detail; // 잘라 줄 친구
             let tmpd_left = tmpdetail_before.slice(0, end + 6 - prev_end);
             let tmpd_right = tmpdetail_before.slice(end + 6 - prev_end);
@@ -283,16 +299,15 @@ function BlogDetail() {
     }
 
     function loadFollowing(nickname) {
-
         const t = {
             followingNickname: nickname
         };
-
         console.log("왜이래/??");
         console.log(JSON.stringify(t));
+        console.log(nickname);
 
-        axios.post(SERVER_URL + "/user-service/api/v1/members/checkFollowing", JSON.stringify(t), {
-            headers: { "Content-Type": "application/json" },
+        axios.get(SERVER_URL + "/user-service/api/v1/subscribe/following", {
+            params: { "nickname": nickname },
         })
             .then((res) => {
                 if (res.data.data == true) {
@@ -303,7 +318,7 @@ function BlogDetail() {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                console.log(err.response);
             })
     }
 
@@ -348,7 +363,7 @@ function BlogDetail() {
     };
 
     function onFollowingHandler(data) {
-        axios.post(SERVER_URL + "/user-service/api/v1/members/following", data)
+        axios.post(SERVER_URL + "/user-service/api/v1/subscribe/following", data)
             .then((res) => {
                 console.log("팔로우할랭");
                 if (res.data.data == "ok") {
@@ -372,24 +387,9 @@ function BlogDetail() {
                 console.log(res);
             })
             .catch((err) => {
-                console.log(err);
+                console.log(err.response);
             })
     }
-
-    const modules = {
-        toolbar: {
-            container: []
-        },
-        syntax: {
-            value: (text) => hljs.highlightAuto(text).language,
-            highlight: (text) => {
-                //let tmpLang = codeLanguageList;
-                //tmpLang.push(hljs.highlightAuto.language);
-                //setCodeLanguageList([...tmpLang]);
-                return (hljs.highlightAuto(text).value);
-            }
-        },
-    };
 
     useEffect(() => {
         console.log(codeLanguageList);
@@ -438,7 +438,7 @@ function BlogDetail() {
                             <div class="w-[54rem]">
 
                                 <ReactQuill
-                                    value={item.detail}
+                                    defaultValue={item.detail}
                                     readOnly={true}
                                     modules={modules}
                                     theme={"bubble"}
@@ -485,12 +485,6 @@ function BlogDetail() {
                                         </button>
                                     </div>
                                 </div>
-                                <div class="mt-2 px-4">
-                                    <div class="border-gray-300 border-t border-l border-r px-3 py-1 text-gray-500 bg-gray-50">입력</div>
-                                    <textarea
-                                        class="w-full border border-gray-300  resize-none py-3 px-3 focus:outline-0 text-gray-700 font-ltest"
-                                    />
-                                </div>
                                 {checkCompile ?
                                     <div class="mt-2 px-4">
                                         <div class="border border-gray-300 text-gray-500 bg-white">
@@ -516,19 +510,20 @@ function BlogDetail() {
                         );
                     })
                     }
-                    {detailList.slice(detailList.length - 1).map((item) => {
-                        return (
-                            <>
-                                <ReactQuill
-                                    value={item.detail}
-                                    readOnly={true}
-                                    modules={modules}
-                                    theme={"bubble"}
-                                />
-                            </>
-                        );
-                    })
-                    }
+                    <div class="w-[54rem]">
+                        {detailList.slice(detailList.length - 1).map((item) => {
+                            return (
+                                <>
+                                    <ReactQuill
+                                        defaultValue={item.detail}
+                                        readOnly={true}
+                                        theme={"bubble"}
+                                    />
+                                </>
+                            );
+                        })
+                        }
+                    </div>
                     <div class="mt-10 flex gap-2 items-center">
                         <div>
                             #
