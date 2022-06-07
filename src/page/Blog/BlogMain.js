@@ -8,6 +8,7 @@ import { TagModal } from "../../Component/Modal";
 import BlogSearchBar from "../../Component/Blog/BlogSearchBar";
 import { Page } from "../../utils/page";
 import { BlogWritingList } from "../../Component/Blog/BlogWritingList";
+import { Streak } from "../../Component/Blog/Streak";
 
 let tmpSt = [];
 
@@ -208,36 +209,6 @@ function BlogMain() {
 
   }
 
-  const onTagButtonClickHandler = (e) => {
-    if (e.target.value == "-1") return;
-    if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
-      setIsTagFull(true);
-      return;
-    }
-    let t = isTagChecked;
-    e.target.checked = true;
-    t[e.target.value] = !t[e.target.value];
-    setIsTagChecked(t);
-    let t_c = checkedTagList;
-    if (isTagChecked[e.target.value] == true) {
-      t_c.push(e.target.name);
-      setCheckedTagList(t_c);
-    }
-    else if (isTagChecked[e.target.value] == false) {
-      setCheckedTagList(t_c.filter((tagname) => tagname !== e.target.name));
-      setIsTagFull(false);
-    }
-    console.log(checkedTagList);
-    setTmp(!tmp);
-  };
-  const keyPressHandler = (e) => {
-    let keyword = e.currentTarget.value;
-    // console.log(searchOption);
-    // console.log(keyword);
-    if (e.key === 'Enter') {
-      navigate("/blog/search?keyword=" + keyword + "&option=" + searchOption);
-    }
-  };
   useEffect(() => {
     // axios
     //   .get(SERVER_URL + "/user-service/api/v1/members/follower")
@@ -347,6 +318,10 @@ function BlogMain() {
 
           <div class="flex flex-col gap-10 pt-6">
             <section className="Streak grow">
+              <Streak
+                workingSum={workingSum}
+                streak={streak}
+              />
               <div class="w-full h-full border rounded-md pb-6 pt-3">
                 <div class="px-8 pb-3 text-base font-ltest text-gray-500">This year, I learned {workingSum} times</div>
                 {(streak != []) ?
