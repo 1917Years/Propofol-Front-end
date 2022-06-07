@@ -1,10 +1,11 @@
-import axios from "axios";
-import ReactQuill, { Quill } from "react-quill";
-import hljs from "highlight.js";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
+import axios from "axios";
+
 import profileImage from "../../assets/img/profile.jpg";
+import ReactQuill, { Quill } from "react-quill";
+import hljs from "highlight.js";
 import 'react-quill/dist/quill.bubble.css';
 
 
@@ -27,7 +28,6 @@ function BlogDetail() {
     const [codeLanguageList, setCodeLanguageList] = useState([]);
     const [detailList, setDetailList] = useState([]);
     const [detailAfter, setDetailAfter] = useState("");
-    const [tmp, setTmp] = useState(false);
     const [writingInfo, setWritingInfo] = useState({
         title: "",
         detail: "",

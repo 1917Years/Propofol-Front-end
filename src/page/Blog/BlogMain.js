@@ -1,14 +1,16 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
+
 import { SERVER_URL } from "../../utils/SRC";
 import { leafYear, dateToNumber, numberToDate } from "../../utils/date";
 import { htmlDetailToText } from "../../utils/html";
-import { TagModal } from "../../Component/Modal";
-import BlogSearchBar from "../../Component/Blog/BlogSearchBar";
 import { Page } from "../../utils/page";
+
 import { BlogWritingList } from "../../Component/Blog/BlogWritingList";
 import { Streak } from "../../Component/Blog/Streak";
+import { TagModal } from "../../Component/Modal";
+import BlogSearchBar from "../../Component/Blog/BlogSearchBar";
 
 let tmpSt = [];
 
@@ -16,10 +18,6 @@ function BlogMain() {
   const navigate = useNavigate();
   const page = useParams().page;
 
-  const tagList = ["JAVA", "Spring", "C++", "JavaScript", "C#", "C", "Python", "냠냠", "ㅁㄴㅇ", "울랄라", "언어1", "언어2"];
-  const [isTagChecked, setIsTagChecked] = useState([]);
-  const [isTagFull, setIsTagFull] = useState(false);
-  const [checkedTagList, setCheckedTagList] = useState([]);
   const [tmp, setTmp] = useState(false);
   const [writingList, setWritingList] = useState([]);
   const [searchOption, setSearchOption] = useState("");
@@ -226,29 +224,6 @@ function BlogMain() {
     // setCurrentPage(page);
     // loadWritings(currentPage);
     loadStreak();
-    //
-    let temp = [];
-    let tmpsum = 0;
-    let day = ["Mon", "Tue", "Wed", "T", "F", "S", "Su"];
-    for (let i = 0; i < 365; i++) {
-      temp.push({ date: i, day: day[i % 7], working: Math.floor(Math.random() * 6) });
-      tmpsum = tmpsum + temp[i].working;
-    }
-    tmpSt = temp;
-    setTmpStreak([...temp, tmpStreak]);
-    setTmpWorkingSum(tmpsum);
-    setStreakUpdated(true);
-    setTmp(!tmp);
-    loadFollowers(1);
-    //
-    let t = [];
-    for (let i = 0; i < tagList.length; i++) {
-      t.push(false);
-    }
-    console.log(t);
-    setIsTagChecked(t);
-    console.log(isTagChecked);
-    //
   }, []);
 
   function loadFollowers(page) {

@@ -8,11 +8,7 @@ import { Page } from "../../utils/page";
 import { BlogWritingList } from "../../Component/Blog/BlogWritingList"
 import { htmlDetailToText } from "../../utils/html";
 
-function BlogSearch(props) {
-  //const keyword = useParams().keyword;
-  //const option = useParams().option;
-  // const keyword = useLocation();
-  // const option = useLocation();
+function BlogSearch() {
   const navigate = useNavigate();
   const tagList = ["JAVA", "Spring", "C++", "JavaScript", "C#", "C", "Python", "냠냠", "ㅁㄴㅇ", "울랄라", "언어1", "언어2"];
   const [isTagChecked, setIsTagChecked] = useState([]);
