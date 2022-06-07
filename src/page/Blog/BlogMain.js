@@ -5,9 +5,9 @@ import { SERVER_URL } from "../../utils/SRC";
 import { leafYear, dateToNumber, numberToDate } from "../../utils/date";
 import { htmlDetailToText } from "../../utils/html";
 import { TagModal } from "../../Component/Modal";
-import BlogSearchBar from "../../Component/BlogSearchBar";
+import BlogSearchBar from "../../Component/Blog/BlogSearchBar";
 import { Page } from "../../utils/page";
-import { BlogWritingList } from "../../Component/BlogWritingList";
+import { BlogWritingList } from "../../Component/Blog/BlogWritingList";
 
 let tmpSt = [];
 
@@ -67,26 +67,18 @@ function BlogMain() {
   }
 
   function loadStreak() {
-    console.log("스트릭~~");
     axios.get(SERVER_URL + "/user-service/api/v1/members/streak")
       .then((res) => {
         let temp, tmpsum = 0;
-        console.log("년도는");
-        console.log(res.data.data.year);
         isLeafYear = leafYear(res.data.data.year);
-        console.log(isLeafYear);
         temp = putNumberToStreak(res.data.data.year, isLeafYear);
         res.data.data.streaks.map((item) => {
           let tmpnum = dateToNumber(isLeafYear, item.date);
-          console.log("날짜(number)는 " + tmpnum);
           temp[tmpnum - 1].working = item.working;
           tmpsum = tmpsum + item.working * 1;
         });
-        console.log(temp);
         setStreak(temp);
         setWorkingSum(tmpsum * 1);
-        console.log("씨발");
-
       })
       .catch((err) => {
         console.log(err);

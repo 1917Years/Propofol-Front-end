@@ -2,7 +2,7 @@ import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
-import ProjectSearchBar from "../../Component/ProjectSearchBar";
+import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal, ApplyingModal } from "../../Component/Modal";
 import { htmlDetailToText } from "../../utils/html";
 import { getUserDataToken } from "../../utils/user";

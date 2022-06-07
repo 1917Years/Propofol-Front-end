@@ -5,7 +5,7 @@ import profileImage from "../../assets/img/profile.jpg";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
 import 'react-quill/dist/quill.bubble.css';
-import ProjectSearchBar from "../../Component/ProjectSearchBar";
+import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal, ScheduleViewModal } from "../../Component/Modal";
 
 function ProjectDetail() {

@@ -4,7 +4,7 @@ import { useNavigate, Navigate, useParams, useSearchParams } from "react-router-
 import profileImage from "../../assets/img/profile.jpg";
 import { SERVER_URL } from "../../utils/SRC";
 import { TeamScheduleModal } from "../../Component/Modal"
-import ProjectSearchBar from "../../Component/ProjectSearchBar";
+import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
 import { getUserDataToken } from "../../utils/user";
 

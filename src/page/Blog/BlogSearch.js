@@ -2,10 +2,10 @@ import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams, useLocation, useSearchParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
-import BlogSearchBar from "../../Component/BlogSearchBar";
+import BlogSearchBar from "../../Component/Blog/BlogSearchBar";
 import { TagModal } from "../../Component/Modal";
 import { Page } from "../../utils/page";
-import { BlogWritingList } from "../../Component/BlogWritingList"
+import { BlogWritingList } from "../../Component/Blog/BlogWritingList"
 import { htmlDetailToText } from "../../utils/html";
 
 function BlogSearch(props) {

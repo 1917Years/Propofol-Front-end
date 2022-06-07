@@ -4,7 +4,7 @@ import DatePicker from "react-datepicker";
 import { SERVER_URL } from "../../utils/SRC";
 import { TagModal, TeamScheduleModal } from "../../Component/Modal";
 import "react-datepicker/dist/react-datepicker.css";
-import ProjectEditor from "../../Component/ProjectEditor";
+import ProjectEditor from "../../Component/Project/ProjectEditor";
 import axios from "axios";
 
 function ProjectWriting() {

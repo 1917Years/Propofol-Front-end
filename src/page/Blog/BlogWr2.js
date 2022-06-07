@@ -3,7 +3,7 @@ import { useParams, useSearchParams, useLocation } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
 import axios from "axios";
 import 'react-quill/dist/quill.snow.css';
-import BlogEditor from "../../Component/BlogEditor";
+import BlogEditor from "../../Component/Blog/BlogEditor";
 
 function BlogWr2(props) {
     //const [isModify, setIsModify] = useState(false);

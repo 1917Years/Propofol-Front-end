@@ -40,7 +40,7 @@ function Header({ }) {
       <div class="w-full px-32 min-w-[80rem] bg-opacity-100 h-16 fixed flex justify-between border-b border-gray-300 shadow-md bg-white text-black z-50 font-test text-lg py-4 px-6">
         <div class="flex items-center w-1/3 justify-between">
           <button
-            class="relative font-rumpi text-2xl font-semibold"
+            class="relative font-rumpi text-[1.625rem] font-semibold"
             onClick={() => {
               navigate("/");
               setUserMove(!userMove);

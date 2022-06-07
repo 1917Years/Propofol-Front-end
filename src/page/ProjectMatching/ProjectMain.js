@@ -5,7 +5,7 @@ import { useNavigate, Navigate } from "react-router-dom";
 import { TagModal } from "../../Component/Modal";
 import { SERVER_URL } from "../../utils/SRC";
 import { fillScheduleStyleList, TimeList } from "../../Component/Schedule";
-import ProjectSearchBar from "../../Component/ProjectSearchBar";
+import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { htmlDetailToText } from "../../utils/html";
 import { getUserDataToken } from "../../utils/user";
 

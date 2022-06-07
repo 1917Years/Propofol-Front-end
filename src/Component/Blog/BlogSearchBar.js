@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
-import { SERVER_URL } from "../utils/SRC";
+import { SERVER_URL } from "../../utils/SRC";
 
 function BlogSearchBar(props) { // setShowTagModal, selectedTagList(props) / keyword(props) <- 검색창에서만 보내주면 됨.
     const navigate = useNavigate();
@@ -88,9 +88,9 @@ function BlogSearchBar(props) { // setShowTagModal, selectedTagList(props) / key
                 </div>
                 <div class="flex content-center gap-4 text-lg font-ltest mt-1 h-10 ml-3">
                     <button
-                        class="self-center rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-500 py-[9px] px-3 shadow-[0_3px_6px_0px_rgba(0,0,0,0.075)]"
+                        class="self-center rounded-xl bg-indigo-400/80 text-white py-[9px] px-7 shadow-[0_3px_6px_0px_rgba(117,117,215,0.35)]"
                         onClick={() => { props.setShowTagModal(true) }}
-                    >태그 추가 +
+                    >태그 +
                     </button>
                 </div>
                 {isTagFull ? (
