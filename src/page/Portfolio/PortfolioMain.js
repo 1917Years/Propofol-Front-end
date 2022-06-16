@@ -915,6 +915,7 @@ function PortfolioMain() {
           console.log("뭐야 ㅅㅄㅄ");
         });
 
+      console.log("dwfe" + tmpCm.id);
       await axios
         .get(SERVER_URL + "/user-service/api/v1/members/info/" + tmpCm.id)
         .then((res) => {

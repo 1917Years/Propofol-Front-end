@@ -6,6 +6,7 @@ import { TagModal, TeamScheduleModal } from "../../Component/Modal";
 import "react-datepicker/dist/react-datepicker.css";
 import ProjectEditor from "../../Component/Project/ProjectEditor";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 function ProjectWriting() {
   const [isModify, setIsModify] = useState(false);
@@ -26,6 +27,10 @@ function ProjectWriting() {
   const [project, setProject] = useState({});
   const [showTeamScheduleModal, setShowTeamScheduleModal] = useState(false);
   const [teamScheduleList, setTeamScheduleList] = useState([]);
+
+  const [errmsg, setErrmsg] = useState("");
+
+  const Swal = require("sweetalert2");
 
   function dateToString(prevdate) {
     let year, month, date;
@@ -267,10 +272,40 @@ function ProjectWriting() {
     const formData_Save = new FormData();
     const formData_Image = new FormData();
     console.log(content);
+    let err = -1;
     let tmpTagIdList = [];
     selectedTagList.map((item) => {
       tmpTagIdList.push(item.id);
     });
+
+    if (title == "") { setErrmsg("제목을 입력해주세요."); }
+    else if (content == "") { setErrmsg("내용을 입력해주세요."); }
+    else if (startDate == null) { setErrmsg("시작 날짜를 선택해주세요."); }
+    else if (endDate == null) { setErrmsg("종료 날짜를 선택해주세요."); }
+    else if (recruit == "") {
+      setErrmsg("모집 인원을 입력해주세요.");
+    }
+    else if (selectedTagList.length == 0) {
+      setErrmsg("태그를 선택해주세요.");
+    }
+    else if (teamScheduleList.length == 0) {
+      setErrmsg("팀 시간표를 생성해주세요.");
+    }
+    else {
+      err = 0;
+    }
+    if (err == -1) {
+      Swal.fire({
+        text: errmsg,
+        confirmButtonText: "",
+        confirmButtonColor: "#171717",
+        timer: 650,
+        icon: 'error',
+        showConfirmButton: false,
+        timerProgressBar: false,
+      });
+      return;
+    }
     //
     let imgByteList = [];
     let imgByteTypeList = [];
@@ -425,8 +460,8 @@ function ProjectWriting() {
               }}
             />
           </div>
-          <div class="flex items-center gap-5 mt-4">
-            <div class="text-lg text-gray-600 font-ltest">#태그</div>
+          <div class="flex flex-wrap items-center gap-5 mt-4">
+            <div class="text-lg text-gray-600 font-ltest w-fit">#태그</div>
             {selectedTagList.map((item) => {
               return (
                 <div class="w-1/6 py-2 px-3 border border-indigo-300 text-indigo-400 text-center bg-indigo-50 text-md font-test min-w-[6rem]">

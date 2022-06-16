@@ -180,7 +180,7 @@ function See() {
             </button>
             {showNotice ?
                 (<div
-                    class="border shadow-lg absolute text-sm flex flex-col w-fit min-w-[24rem] min-h-[6rem] justify-center h-fit px-4 py-2 bg-white text-black rounded-lg transform -translate-x-[90%]"
+                    class="border shadow-lg absolute text-sm flex flex-col w-fit min-w-[24rem] min-h-[6rem] justify-center h-fit px-4 py-2 bg-white text-black rounded-lg transform -translate-x-[95%]"
                     onMouseEnter={() => {
                         console.log("ㅎㅇ");
                     }}

@@ -231,6 +231,7 @@ function App() {
           <Route path="/portfolio/template/samplet2" element={<SampleT2 />} />
           <Route path="/portfolio/template/samplet3" element={<SampleT3 />} />
           <Route path="/portfolio/template/samplet4" element={<SampleT4 />} />
+          <Route path="/gitime/dashboard" element={<SampleT4 />} />
         </Routes>
       </BrowserRouter>
     </>

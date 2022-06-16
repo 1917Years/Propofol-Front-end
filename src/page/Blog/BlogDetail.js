@@ -406,7 +406,7 @@ function BlogDetail() {
                     {writingInfo.title}
                     <div class="flex mb-4 mt-8 gap-4">
                         <img
-                            src={checkProfile == false ? profileImage : "data:image/" + writingInfo.profileType + ";base64," + writingInfo.profileBytes}
+                            src={writingInfo.profileType == null ? profileImage : "data:image/" + writingInfo.profileType + ";base64," + writingInfo.profileBytes}
                             class="w-24 h-14 rounded-full drop-shadow-md"
                         />
 
@@ -593,7 +593,7 @@ function BlogDetail() {
                                     <>
                                         <div class="flex items-center gap-4 mt-5">
                                             <img
-                                                src={checkProfile == false ? profileImage : "data:image/" + item.imgType + ";base64," + item.imgBytes}
+                                                src={item.imgType == null ? profileImage : "data:image/" + item.imgType + ";base64," + item.imgBytes}
                                                 class="w-12 h-12 rounded-full drop-shadow-md"
                                                 alt="profile"
                                             />
@@ -640,13 +640,17 @@ function BlogDetail() {
                                     <>
                                         <div class="flex flex-col items-center bg-gray-50 border-b border-gray-300 pb-10">
                                             <div class="flex w-4/5 items-center gap-4 mt-5">
-                                                <div class="w-10 h-10 bg-black rounded-full"></div>
+                                                <img
+                                                    src={item.imgType == null ? profileImage : "data:image/" + item.imgType + ";base64," + item.imgBytes}
+                                                    class="w-12 h-12 rounded-full drop-shadow-md"
+                                                    alt="profile"
+                                                />
                                                 <div class="flex flex-col justify-between">
                                                     <div class="text-xl text-gray-600">{item.nickname}</div>
                                                     <div class="text-md text-gray-400 font-ltest">{item.date}</div>
                                                 </div>
                                             </div>
-                                            <div class="w-4/5 text-gray-600 text-base font-ltest ml-28">
+                                            <div class="w-4/5 text-gray-600 text-base font-ltest ml-32">
                                                 {item.content}
                                             </div>
                                         </div>

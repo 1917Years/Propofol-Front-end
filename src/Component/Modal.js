@@ -104,7 +104,7 @@ export function ApplyingModal(props) { // props-> setShowApplyingModal, applying
                                             <div class="bg-gray-100 font-ltest text-gray-700 text-sm">참여 인원 : {item.recruited}/{item.recruit}</div>
                                             <div class="bg-gray-100 font-ltest text-gray-700 text-sm">{item.startDate} ~{item.endDate}</div>
                                         </div>
-                                        <div class="flex mt-1">
+                                        <div class="flex mt-1 gap-1">
                                             {item.tagInfos.map((tag) => {
                                                 return (
                                                     <div class="bg-gray-100 font-ltest text-gray-700 text-sm">
@@ -177,13 +177,28 @@ export function ScheduleViewModal(props) {// props -> setShowScheduleViewModal
             tmpScheduleList.push(item);
         })
         scheduleList = tmpScheduleList;
-        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, scheduleList);
+        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, props.timeTables);
     }
+    useEffect(() => {
+        console.log(props.timeTables);
+        loadPropsSchedule();
+    }, [])
     return (
         <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
             <div class="bg-white w-[38%] min-w-[46rem] min-h-[49rem] h-[60%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
                 <div class="flex justify-between border-b border-gray-300 pb-3">
-                    <div class="ml-2 text-3xl font-sbtest">
+                    <div class="ml-2 text-3xl font-sbtest flex">
+                        {props.isPerson ?
+                            <>
+                                <div class="text-indigo-500"> {props.name} </div>
+                                {"님의 "}
+                            </>
+                            :
+                            <>
+                                <div class="text-indigo-500"> {props.name} </div>
+                                {"의 "}
+                            </>
+                        }
                         시간표
                     </div>
                     <button class="text-2xl"
@@ -914,7 +929,7 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
                 <div class="relative px-2 mt-5 grow">
                     {loadingComplete ? (
                         <div class="flex flex-col justify-between h-full">
-                            <div class="flex flex-col justify-around grow mb-10">
+                            <div class="flex flex-col justify-start gap-[1px] grow mb-10">
                                 {tagList.tag.map((item) => {
                                     let tmpSelctedTagList = props.selectedTagList;
                                     if (checkTagList(item.id, tmpSelctedTagList)) {

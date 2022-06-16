@@ -30,10 +30,11 @@ function ProjectMyList() {
                                 class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
                             >
                                 <div class="w-[47rem]">
-                                    <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                    <div class="text-sm text-gray-400 flex gap-2 items-center font-ltest">
                                         {item.status == "ACTIVE" ? (
                                             <>
                                                 <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                                                <div class="text-sm font-ltest text-gray-400">{item.startDate + " ~ " + item.endDate}</div>
                                                 <button
                                                     class="ml-auto"
                                                     onClick={async () => {
@@ -45,7 +46,12 @@ function ProjectMyList() {
                                             </>
                                         )
                                             :
-                                            (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+
+                                            (<>
+                                                <div class="px-2 bg-red-300 text-black">모집완료</div>
+                                                <div class="text-sm font-ltest text-gray-400">{item.startDate + " ~ " + item.endDate}</div>
+                                            </>
+                                            )
                                         }
                                     </div>
                                     <button
@@ -57,13 +63,12 @@ function ProjectMyList() {
                                     <div class="flex gap-2">
                                         {item.tagInfos.map((tags) => {
                                             return (
-                                                <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                <div class="px-1 font-ltest text-sm w-fit mt-4 rounded-lg border">
                                                     {tags.name}
                                                 </div>
                                             )
                                         })}
                                     </div>
-                                    <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
                                 </div>
                                 <div class="w-grow">
                                     <div class="w-32 h-32 mb-2">
@@ -85,8 +90,8 @@ function ProjectMyList() {
                                 className="Writing"
                                 class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
                             >
-                                <div class="w-[47rem]">
-                                    <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                <div class="w-[47rem] py-2">
+                                    <div class="text-sm text-gray-400 flex gap-2 items-center font-ltest">
                                         {item.status == "ACTIVE" ? (
                                             <>
                                                 <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
@@ -95,6 +100,7 @@ function ProjectMyList() {
                                             :
                                             (<div class="px-2 bg-red-300 text-black">모집완료</div>)
                                         }
+                                        <div class="text-sm font-ltest text-gray-400 mt-1">{item.startDate + " ~ " + item.endDate}</div>
                                     </div>
                                     <button
                                         onClick={
@@ -107,13 +113,12 @@ function ProjectMyList() {
                                     <div class="flex gap-2">
                                         {item.tagInfos.map((tags) => {
                                             return (
-                                                <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                <div class="px-1 font-ltest text-sm w-fit mt-2 rounded-lg border">
                                                     {tags.name}
                                                 </div>
                                             )
                                         })}
                                     </div>
-                                    <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
                                 </div>
                                 <div class="w-grow flex flex-col items-start justify-end">
                                     {props.isRecruiting ? (

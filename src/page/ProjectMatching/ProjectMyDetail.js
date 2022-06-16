@@ -3,7 +3,7 @@ import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams, useSearchParams } from "react-router-dom";
 import profileImage from "../../assets/img/profile.jpg";
 import { SERVER_URL } from "../../utils/SRC";
-import { TeamScheduleModal } from "../../Component/Modal"
+import { TeamScheduleModal, ScheduleViewModal } from "../../Component/Modal"
 import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
 import { getUserDataToken } from "../../utils/user";
@@ -11,7 +11,8 @@ import { getUserDataToken } from "../../utils/user";
 function ProjectMyDetail() {
     const navigate = useNavigate();
     const [projectDetail, setProjectDetail] = useState({ id: 0, timeTables: [] });
-    let tagList = [];
+    //let tagList = [];
+    const [tagList, setTagList] = useState([]);
     const id = useParams().id;
     //
     const [selectedTagList, setSelectedTagList] = useState([]);
@@ -24,6 +25,11 @@ function ProjectMyDetail() {
     const [isLoadingCompleted, setIsLoadingCompleted] = useState(false);
     //
     const [userNickname, setUserNickname] = useState(null);
+    //
+    const [showScheduleViewModal, setShowScheduleViewModal] = useState(false);
+    const [timeTable, setTimeTable] = useState([]);
+    const [name, setName] = useState("");
+    //let timeTable;
 
     function Page(props) { // props --> startPage, totalPage, load__함수, setSelected, selected
         let endPage = (props.startPage + 9 > props.totalPage ? props.totalPage : props.startPage + 9);
@@ -94,9 +100,12 @@ function ProjectMyDetail() {
         async function loadRecommendedDev(page) {
             const params = new URLSearchParams();
             params.append('page', page);
+            //console.log(tagList);
             tagList.map((item) => {
                 params.append('tagId', item.id);
             })
+            params.append('boardId', id);
+            console.log(params.get('boardId'));
             console.log(params.getAll('tagId'));
             await axios.get(SERVER_URL + "/user-service/api/v1/members/matchings",
                 { params: params }
@@ -104,6 +113,7 @@ function ProjectMyDetail() {
                 .then((res) => {
                     console.log(res);
                     setRecommended(res.data.data.data);
+                    setTotalPage(res.data.data.totalPageCount);
                 })
                 .catch((err) => {
                     console.log(err.response);
@@ -120,52 +130,48 @@ function ProjectMyDetail() {
             <>
                 <div class="text-xl font-btest mb-4 mt-5">😊 {userNickname}님, 이런 인재들은 어떠신가요?</div>
                 {recommended != null ?
-                    recommended.map((item) => {
-                        return (
-                            <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
-                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                    <img
-                                        src={profileImage}
-                                        class="w-28 h-28 rounded-full drop-shadow-lg"
-                                        alt="profile"
-                                    />
-                                </div>
-                                <div class="ml-4 my-auto flex flex-col items-start">
-                                    <div class="text-2xl font-btest">{item.nickName}</div>
-                                    <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
-                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
+                    totalPage == 0 ? <div class="text-lg pb-5">프로젝트에 적합한 팀원이 없어요😥</div> :
+                        <>{
+                            recommended.map((item) => {
+                                return (
+                                    <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
+                                        <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
+                                            <img
+                                                src={item.profileType == null ? profileImage : "data:image/" + item.profileType + ";base64," + item.profileString}
+                                                class="w-28 h-28 rounded-full drop-shadow-lg"
+                                            />
+                                        </div>
+                                        <div class="ml-4 my-auto flex flex-col items-start">
+                                            <div class="text-2xl font-btest">{item.nickname}</div>
+                                            <button
+                                                class="mt-1 font-test text-sm"
+                                                id={item.id}
+                                                value={item.nickName}
+                                                onClick={(e) => {
+                                                    loadPersonSchedule(e.currentTarget.value);
+                                                }}
+                                            >⏱ 시간표 확인하기 {">"}</button>
+                                            <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
 
-                                </div>
-                                <div class="ml-auto text-right text-sm self-center">
-                                    <div class="">
-                                        <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
-                                        <div class="text-black grid grid-cols-3 gap-2">
-                                            {item.tagData.map((tag) => {
-                                                return (
-                                                    <div class="bg-indigo-100 text-center p-1">
-                                                        {tag.name}
-                                                    </div>
-                                                )
-                                            })}
                                         </div>
                                     </div>
-
-                                </div>
+                                )
+                            })
+                        }
+                            <div class="flex gap-2 justify-center w-full px-2">
+                                <Page
+                                    startPage={startPage}
+                                    totalPage={totalPage}
+                                    selected={selected}
+                                    setSelected={setSelected}
+                                    load={loadRecommendedDev}
+                                />
                             </div>
-                        )
-                    })
+                        </>
                     :
                     <div>로딩중.</div>
                 }
-                <div class="flex gap-2 justify-center w-full px-2">
-                    <Page
-                        startPage={startPage}
-                        totalPage={totalPage}
-                        selected={selected}
-                        setSelected={setSelected}
-                        load={loadRecommendedDev}
-                    />
-                </div>
+
             </>
         )
 
@@ -186,6 +192,7 @@ function ProjectMyDetail() {
                 .then((res) => {
                     console.log(res.data.data.data);
                     setParticipants(res.data.data.data);
+                    setTotalPage(res.data.data.totalPageCount);
                 })
                 .catch((err) => {
                     console.log(err.response);
@@ -198,53 +205,46 @@ function ProjectMyDetail() {
             <>
                 <div class="text-xl font-btest mb-4 mt-5">🙆‍♀️ 현재 참여 중인 팀원들이에요.</div>
                 {participants != null ?
-                    participants.map((item) => {
-                        return (
-                            <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
-                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                    <img
-                                        src={profileImage}
-                                        class="w-28 h-28 rounded-full drop-shadow-lg"
-                                        alt="profile"
-                                    />
-                                </div>
-                                <div class="ml-4 my-auto flex flex-col items-start">
-                                    <div class="text-2xl font-btest">{item.nickName}</div>
-                                    <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
-                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-
-                                </div>
-                                <div class="ml-auto text-right text-sm self-center">
-                                    <div class="">
-                                        <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
-                                        <div class="text-black grid grid-cols-3 gap-2">
-                                            {item.tagInfos.map((tag) => {
-                                                return (
-                                                    <div class="bg-indigo-100 text-center p-1">
-                                                        {tag.name}
-                                                    </div>
-                                                )
-                                            })}
+                    totalPage == 0 ? <div class="text-lg pb-5">프로젝트에 참여 중인 팀원이 없어요😥</div> :
+                        <>
+                            {participants.map((item) => {
+                                return (
+                                    <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
+                                        <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
+                                            <img
+                                                src={item.profileType == null ? profileImage : "data:image/" + item.profileType + ";base64," + item.profileString}
+                                                class="w-28 h-28 rounded-full drop-shadow-lg"
+                                            />
                                         </div>
-                                    </div>
+                                        <div class="ml-4 my-auto flex flex-col items-start">
+                                            <div class="text-2xl font-btest">{item.nickName}</div>
+                                            <button class="mt-1 font-test text-sm"
+                                                id={item.id}
+                                                value={item.nickName}
+                                                onClick={(e) => loadPersonSchedule(e.currentTarget)}
+                                            >⏱ 시간표 확인하기 {">"}</button>
+                                            <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
 
-                                </div>
+                                        </div>
+
+                                    </div>
+                                )
+                            })}
+                            <div class="flex gap-2 justify-center w-full px-2">
+                                <Page
+                                    startPage={startPage}
+                                    totalPage={totalPage}
+                                    selected={selected}
+                                    setSelected={setSelected}
+                                    load={loadParticipants}
+                                />
                             </div>
-                        )
-                    })
+                        </>
                     :
                     <div>로딩중...</div>
                 }
 
-                <div class="flex gap-2 justify-center w-full px-2">
-                    <Page
-                        startPage={startPage}
-                        totalPage={totalPage}
-                        selected={selected}
-                        setSelected={setSelected}
-                        load={loadParticipants}
-                    />
-                </div>
+
             </>
         )
     }
@@ -264,6 +264,7 @@ function ProjectMyDetail() {
                 .then((res) => {
                     console.log(res);
                     setApply(res.data.data.data);
+                    setTotalPage(res.data.data.totalPageCount);
                 })
                 .catch((err) => {
                     console.log(err.response);
@@ -276,81 +277,99 @@ function ProjectMyDetail() {
             <>
                 <div class="text-xl font-btest mt-5 mb-4">📢 본 프로젝트에 지원한 팀원들이에요. 어서 확인해보세요! </div>
                 {apply != null ?
-                    apply.map((item) => {
-                        return (
-                            <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
-                                <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
-                                    <img
-                                        src={profileImage}
-                                        class="w-28 h-28 rounded-full drop-shadow-lg"
-                                        alt="profile"
-                                    />
-                                </div>
-                                <div class="ml-4 my-auto flex flex-col items-start">
-                                    <div class="text-2xl font-btest">{item.nickName}</div>
-                                    <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
-                                    <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
-                                </div>
-                                <div class="w-[15%] ml-auto text-right text-sm self-center">
-                                    <div class="">
-                                        <div class="text-gray-500 text-lg text-left border-b mb-2">기술</div>
-                                        <div class="text-black grid grid-cols-3 gap-2">
-                                            {item.tagInfos.map((tag) => {
-                                                return (
-                                                    <div class="bg-indigo-100 text-center p-1">
-                                                        {tag.name}
-                                                    </div>
-                                                )
-                                            })}
+                    totalPage == 0 ? <div class="text-lg pb-5">프로젝트에 지원한 팀원이 없어요😥</div> :
+                        <>{
+                            apply.map((item) => {
+                                return (
+                                    <div class="px-4 py-4 flex mt-2 border rounded-lg h-40">
+                                        <div className="ProfileImage" class="my-auto mx-4 w-28 h-28 rounded-full">
+                                            <img
+                                                src={item.profileType == null ? profileImage : "data:image/" + item.profileType + ";base64," + item.profileString}
+                                                class="w-28 h-28 rounded-full drop-shadow-lg"
+                                            />
+                                        </div>
+                                        <div class="ml-4 my-auto flex flex-col items-start">
+                                            <div class="text-2xl font-btest">{item.nickName}</div>
+                                            <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
+                                            <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
+                                        </div>
+                                        <div class="w-[30%] ml-auto text-right text-sm self-center">
+
+                                            <div class="flex gap-1">
+                                                <button
+                                                    class="basis-1/2 px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-300"
+                                                    onClick={() => {
+                                                        axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/approve")
+                                                            .then((res) => {
+                                                                console.log(res);
+                                                            })
+                                                            .catch((err) => {
+                                                                console.log(err.response);
+                                                            })
+                                                    }}
+                                                >수락</button>
+                                                <button
+                                                    class="basis-1/2 px-4 py-2 rounded-lg bg-white text-gray-500 border border-gray-300"
+                                                    onClick={() => {
+                                                        axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/reject")
+                                                            .then((res) => {
+                                                                console.log(res);
+                                                            })
+                                                            .catch((err) => {
+                                                                console.log(err.response);
+                                                            })
+                                                    }}
+                                                >거절
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div class="flex flex-col gap-1">
-                                        <button
-                                            class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white"
-                                            onClick={() => {
-                                                axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/approve")
-                                                    .then((res) => {
-                                                        console.log(res);
-                                                    })
-                                                    .catch((err) => {
-                                                        console.log(err.response);
-                                                    })
-                                            }}
-                                        >수락</button>
-                                        <button
-                                            class="basis-1/2 px-4 py-2 rounded-lg bg-gray-500 text-white"
-                                            onClick={() => {
-                                                axios.post(SERVER_URL + "/matching-service/api/v1/members/" + id + "/" + item.id + "/reject")
-                                                    .then((res) => {
-                                                        console.log(res);
-                                                    })
-                                                    .catch((err) => {
-                                                        console.log(err.response);
-                                                    })
-                                            }}
-                                        >거절
-                                        </button>
-                                    </div>
-                                </div>
+                                )
+                            })}
+                            <div class="flex gap-2 justify-center w-full px-2">
+                                <Page
+                                    startPage={startPage}
+                                    totalPage={totalPage}
+                                    selected={selected}
+                                    setSelected={setSelected}
+                                    load={loadApplyDev}
+                                />
                             </div>
-                        )
-                    })
+                        </>
                     :
                     <div>로딩중.....</div>
                 }
-
-
-                <div class="flex gap-2 justify-center w-full px-2">
-                    <Page
-                        startPage={startPage}
-                        totalPage={totalPage}
-                        selected={selected}
-                        setSelected={setSelected}
-                        load={loadApplyDev}
-                    />
-                </div>
             </>
         )
+    }
+
+    async function loadPersonSchedule(ct) {
+        console.log(ct);
+        await axios.get(SERVER_URL + "/user-service/api/v1/members/timetables",
+            {
+                params: {
+                    memberId: ct.id
+                }
+            })
+            .then((res) => {
+                console.log(res);
+                let tmpPersonSch = [];
+                for (let i = 0; i < res.data.data.endTimes.length; i++) {
+                    tmpPersonSch.push({
+                        week: res.data.data.weeks[i],
+                        startTime: res.data.data.startTimes[i],
+                        endTime: res.data.data.endTimes[i],
+                    });
+                }
+                console.log(tmpPersonSch);
+                //timeTable = tmpPersonSch;
+                setName(ct.value);
+                setTimeTable([...tmpPersonSch]);
+                setShowScheduleViewModal(true);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            })
     }
 
     function deleteProject() {
@@ -364,13 +383,16 @@ function ProjectMyDetail() {
             })
     }
 
-    function loadProjectMyDetail() {
-        axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
+    async function loadProjectMyDetail() {
+        await axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
             .then((res) => {
                 console.log(res);
+                let tmpTagIdList = [];
                 res.data.data.tagInfos.map((item) => {
-                    tagList.push(item);
+                    tmpTagIdList.push(item);
                 })
+                console.log(tagList);
+                setTagList([...tmpTagIdList]);
                 setProjectDetail(res.data.data);
                 setIsLoadingCompleted(true);
                 //loadRecommendedDev(1);
@@ -392,6 +414,15 @@ function ProjectMyDetail() {
                     setShowTagModal={setShowTagModal}
                     selectedTagList={selectedTagList}
                     setSelectedTagList={setSelectedTagList}
+                />)
+                :
+                (null)}
+            {showScheduleViewModal ?
+                (<ScheduleViewModal
+                    setShowScheduleViewModal={setShowScheduleViewModal}
+                    timeTables={timeTable}
+                    isPerson={true}
+                    name={name}
                 />)
                 :
                 (null)}

@@ -8,6 +8,9 @@ import { fillScheduleStyleList, TimeList } from "../../Component/Schedule";
 import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { htmlDetailToText } from "../../utils/html";
 import { getUserDataToken } from "../../utils/user";
+import { ProjectWritingList } from "../../Component/Project/ProjectWritingList";
+
+let myTag = ["Spring", "JS", "Java", "Python", "C++", "Ruby", "Figma", "ReactJS"];
 
 function ProjectMain() {
   const navigate = useNavigate();
@@ -23,6 +26,8 @@ function ProjectMain() {
   const [startPage, setStartPage] = useState(1);
   const [selected, setSelected] = useState(1);
   //
+  const [userTag, setUserTag] = useState([]);
+
   const [userNickname, setUserNickname] = useState(null);
   function Page() {
     let endPage = (startPage + 9 > totalPage ? totalPage : startPage + 9);
@@ -78,6 +83,7 @@ function ProjectMain() {
       .then((res) => {
         let tmpProjectList = [], tmpTextList = [];
         console.log(res);
+        setUserTag([...res.data.data.userTags]);
         res.data.data.boards.map((item) => {
           tmpProjectList.push(item);
           tmpTextList.push(htmlDetailToText(item.content));
@@ -113,117 +119,42 @@ function ProjectMain() {
           <div class="flex gap-5">
             <button
               onClick={() => navigate("/pm/writing")}
-              class="text-gray-500 rounded-xl border border-slate-300 w-full my-4 py-3">
+              class="text-gray-500 rounded-xl border border-slate-300 w-full my-4 py-3 shadow-[0_3px_3px_0px_rgba(0,0,0,0.055)]">
               새 프로젝트 모집하기📄
             </button>
             <button
               onClick={() => navigate("/pm/mylist")}
-              class=" text-gray-500 rounded-xl border border-slate-300 w-full my-4 py-3">
+              class=" text-gray-500 rounded-xl border border-slate-300 w-full my-4 py-3 shadow-[0_3px_3px_0px_rgba(0,0,0,0.055)]">
               내 프로젝트 보기😊
             </button>
             <button
               onClick={() => navigate("/pm/myschedule")}
-              class="text-gray-500 rounded-xl border border-slate-300 w-full my-4 py-3">
+              class="text-gray-500 rounded-xl border border-slate-300 w-full my-4 py-3 shadow-[0_3px_3px_0px_rgba(0,0,0,0.055)]">
               나의 시간표⏰
             </button>
           </div>
-          <div class="mt-4 text-2xl font-btest">
-            {userNickname}님, 이런 프로젝트는 어떠신가요?
+          <div class="flex items-center gap-3">
+            <div class="mt-4 text-2xl font-btest">
+              {userNickname}님, 이런 프로젝트는 어떠신가요?
+            </div>
           </div>
-
-          <div class="mt-4 border rounded-lg">
-            {projectList.map((item, index) => {
-              if (item.image != null) {
+          <div class="flex items-center mt-4 gap-2">
+            <div class="w-full flex gap-3 mx">
+              {userTag.map((item) => {
                 return (
-                  <div
-                    className="Writing"
-                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem] pb-3"
-                  >
-                    <div class="w-[47rem]">
-                      <div class="text-sm text-gray-400 flex items-center font-ltest">
-                        {item.status == "ACTIVE" ? (
-                          <>
-                            <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                          </>
-                        )
-                          :
-                          (<div class="px-2 bg-red-300 text-black">모집완료</div>)
-                        }
-                      </div>
-                      <button
-                        onClick={() => navigate("/pm/detail/" + item.id)}
-                        class="mt-1 py-1 text-black text-xl">
-                        {item.title}
-                      </button>
-                      <div class="font-ltest min-h-[45px]">{projectTextList[index].slice(0, 128)}</div>
-                      <div class="flex gap-2">
-                        {item.tagInfos.map((tags) => {
-                          return (
-                            <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
-                              {tags.name}
-                            </div>
-                          )
-                        })}
-                      </div>
-                      <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
-                    </div>
-                    <div class="w-grow self-end">
-                      <div class="w-32 h-32 mb-2">
-                        <img
-                          src={"data:image/" + item.imgType + ";base64," + item.image}
-                          class="z-40 w-32 h-32"
-                        />
-                      </div>
-                      <div class="w-32 grid grid-rows-2 text-sm ">
-                        <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
-                      </div>
-                    </div>
+                  <div class="bg-gray-200 text-black px-3 py-1 rounded-xl text-sm font-ltest">
+                    {item}
                   </div>
                 )
-              }
-              else {
-                return (
-                  <div
-                    className="Writing"
-                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem] pb-3"
-                  >
-                    <div class="w-[47rem]">
-                      <div class="text-sm text-gray-400 flex items-center font-ltest">
-                        {item.status == "ACTIVE" ? (
-                          <>
-                            <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                          </>
-                        )
-                          :
-                          (<div class="px-2 bg-red-300 text-black">모집완료</div>)
-                        }
-                      </div>
-                      <button
-                        onClick={() => navigate("/pm/detail/" + item.id)}
-                        class="mt-1 py-1 text-black text-xl">
-                        {item.title}
-                      </button>
-                      <div class="font-ltest min-h-[45px]">{projectTextList[index].slice(0, 128)}</div>
-                      <div class="flex gap-2">
-                        {item.tagInfos.map((tags) => {
-                          return (
-                            <div class="px-1 font-ltest text-sm w-fit mt-2 bg-gray-200 rounded-none border">
-                              {tags.name}
-                            </div>
-                          )
-                        })}
-                      </div>
-                      <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
-                    </div>
-                    <div class="w-grow self-end">
-                      <div class="w-32 grid grid-rows-2 text-sm ">
-                        <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              }
-            })}
+              })}
+            </div>
+          </div>
+          {totalPage == 0 ? <div class="text-xl font-test">태그가 아직 없네요😅 활동을 통해 태그를 추가해 보세요!</div> : <div class="mt-4 border rounded-lg">
+            <ProjectWritingList
+              projectList={projectList}
+              projectTextList={projectTextList}
+              onWritingClickHandler={(e) => { navigate('/pm/detail/' + e.currentTarget.value) }}
+            />
             <div class="flex gap-2 justify-center w-full px-2">
               <button
                 class="text-gray-500"
@@ -249,7 +180,8 @@ function ProjectMain() {
               >{">"}
               </button>
             </div>
-          </div>
+          </div>}
+
         </div>
       </div>
     </div >
