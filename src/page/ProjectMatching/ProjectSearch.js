@@ -2,9 +2,10 @@ import axios from "axios";
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams, useSearchParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
-import ProjectSearchBar from "../../Component/ProjectSearchBar";
+import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
 import { htmlDetailToText } from "../../utils/html";
+import { ProjectWritingList } from "../../Component/Project/ProjectWritingList";
 
 function ProjectSearch() {
   const navigate = useNavigate();
@@ -128,129 +129,13 @@ function ProjectSearch() {
             selectedTagList={selectedTagList}
           />
           <div class="mt-4 border rounded-lg">
-            {projectList.map((item, index) => {
-              if (item.image != null) {
-                return (
-                  <div
-                    className="Writing"
-                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
-                  >
-                    <div class="w-[47rem]">
-                      <div class="text-sm text-gray-400 flex items-center font-ltest">
-                        {item.status == "ACTIVE" ? (
-                          <>
-                            <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                          </>
-                        )
-                          :
-                          (<div class="px-2 bg-red-300 text-black">모집완료</div>)
-                        }
-                      </div>
-                      <button
-                        onClick={() => navigate("/pm/detail/" + item.id)}
-                        class="mt-1 py-1 text-black text-xl">
-                        {item.title}
-                      </button>
-                      <div class="font-ltest min-h-[45px]">{projectTextList[index].slice(0, 128)}</div>
-                      <div class="flex gap-2">
-                        {item.tagInfos.map((tags) => {
-                          return (
-                            <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
-                              {tags.name}
-                            </div>
-                          )
-                        })}
-                      </div>
-                      <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
-                    </div>
-                    <div class="w-grow">
-                      <div class="w-32 h-32 mb-2">
-                        <img
-                          src={"data:image/" + item.imgType + ";base64," + item.image}
-                          class="z-40 w-32 h-32"
-                        />
-                      </div>
-                      <div class="w-32 grid grid-rows-2 text-sm ">
-                        <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              }
-              else {
-                return (
-                  <div
-                    className="Writing"
-                    class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
-                  >
-                    <div class="w-[47rem]">
-                      <div class="text-sm text-gray-400 flex items-center font-ltest">
-                        {item.status == "ACTIVE" ? (
-                          <>
-                            <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                          </>
-                        )
-                          :
-                          (<div class="px-2 bg-red-300 text-black">모집완료</div>)
-                        }
-                      </div>
-                      <button
-                        onClick={() => navigate("/pm/detail/" + item.id)}
-                        class="mt-1 py-1 text-black text-xl">
-                        {item.title}
-                      </button>
-                      <div class="font-ltest min-h-[45px]">{item.content}</div>
-                      <div class="flex gap-2">
-                        {item.tagInfos.map((tags) => {
-                          return (
-                            <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
-                              {tags.name}
-                            </div>
-                          )
-                        })}
-                      </div>
-                      <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
-                    </div>
-                    <div class="w-grow">
-                      <div class="w-32 grid grid-rows-2 text-sm ">
-                        <div>{"참여 인원: " + item.recruited + "/" + item.recruit}</div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              }
-            })}
-            <div
-              className="Writing"
-              class="flex border-b bg-white h-54 px-10 py-5 gap-5"
-            >
-              <div class="w-[47rem]">
-                <div class="text-sm flex gap-4 text-gray-400 font-ltest">
-                  <div class="px-2 bg-red-300 text-black">모집완료</div>
-                </div>
-                <button class="mt-1 py-1 text-black text-xl">
-                  개발자 도움 웹 서비스를 함께 만들어나갈 팀원을 구합니다.
-                </button>
-                <div class="font-ltest">{tmpDetail}</div>
-                <div class="flex gap-2">
-                  <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
-                    #Spring
-                  </div>
-                  <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
-                    #JavaScript
-                  </div>
-                </div>
-              </div>
-              <div class="w-grow">
-                <div class="bg-gray-300 w-32 h-28 mb-2">사진</div>
-                <div class="w-32 grid grid-rows-2 text-sm ">
-                  <div>마감 날짜: 5월 12일</div>
-                  <div>참여 인원: 2/4</div>
-                </div>
-              </div>
-            </div>
+            <ProjectWritingList
+              projectList={projectList}
+              projectTextList={projectTextList}
+              onWritingClickHandler={(e) => { navigate('/pm/detail/' + e.currentTarget.value) }}
+            />
           </div>
-          <div class="flex gap-2 justify-center w-full px-2">
+          <div class="mt-5 flex gap-2 justify-center w-full px-2">
             <button
               class="text-gray-500"
               onClick={() => {

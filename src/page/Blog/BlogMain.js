@@ -1,11 +1,16 @@
 import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate, useParams } from "react-router-dom";
 import axios from "axios";
+
 import { SERVER_URL } from "../../utils/SRC";
 import { leafYear, dateToNumber, numberToDate } from "../../utils/date";
 import { htmlDetailToText } from "../../utils/html";
+import { Page } from "../../utils/page";
+
+import { BlogWritingList } from "../../Component/Blog/BlogWritingList";
+import { Streak } from "../../Component/Blog/Streak";
 import { TagModal } from "../../Component/Modal";
-import BlogSearchBar from "../../Component/BlogSearchBar";
+import BlogSearchBar from "../../Component/Blog/BlogSearchBar";
 
 let tmpSt = [];
 
@@ -13,12 +18,6 @@ function BlogMain() {
   const navigate = useNavigate();
   const page = useParams().page;
 
-  const tagList = ["JAVA", "Spring", "C++", "JavaScript", "C#", "C", "Python", "냠냠", "ㅁㄴㅇ", "울랄라", "언어1", "언어2"];
-  const monthList = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-  const weekList = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  const [isTagChecked, setIsTagChecked] = useState([]);
-  const [isTagFull, setIsTagFull] = useState(false);
-  const [checkedTagList, setCheckedTagList] = useState([]);
   const [tmp, setTmp] = useState(false);
   const [writingList, setWritingList] = useState([]);
   const [searchOption, setSearchOption] = useState("");
@@ -27,6 +26,7 @@ function BlogMain() {
   const [streakUpdated, setStreakUpdated] = useState(false);
   const [tmpWorkingSUm, setTmpWorkingSum] = useState(0);
   const [workingSum, setWorkingSum] = useState(0);
+  const [follower, setFollower] = useState([]);
   const [followingCount, setFollowingCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [maxPageCount, setMaxPageCount] = useState(1);
@@ -66,26 +66,18 @@ function BlogMain() {
   }
 
   function loadStreak() {
-    console.log("스트릭~~");
     axios.get(SERVER_URL + "/user-service/api/v1/members/streak")
       .then((res) => {
         let temp, tmpsum = 0;
-        console.log("년도는");
-        console.log(res.data.data.year);
         isLeafYear = leafYear(res.data.data.year);
-        console.log(isLeafYear);
         temp = putNumberToStreak(res.data.data.year, isLeafYear);
         res.data.data.streaks.map((item) => {
           let tmpnum = dateToNumber(isLeafYear, item.date);
-          console.log("날짜(number)는 " + tmpnum);
           temp[tmpnum - 1].working = item.working;
           tmpsum = tmpsum + item.working * 1;
         });
-        console.log(temp);
         setStreak(temp);
         setWorkingSum(tmpsum * 1);
-        console.log("씨발");
-
       })
       .catch((err) => {
         console.log(err);
@@ -97,7 +89,7 @@ function BlogMain() {
     console.log(page);
     loadWritings(page);
 
-    axios.get(SERVER_URL + "/user-service/api/v1/members/myBoards?page=" + currentPage)
+    axios.get(SERVER_URL + "/til-service/api/v1/members/myBoards?page=" + currentPage)
       .then((res) => {
         let tmpPageCount = res.data.data.totalPageCount;
         setMaxPageCount(tmpPageCount);
@@ -143,15 +135,15 @@ function BlogMain() {
         console.log(tmpPageCount);
         //
 
-        // let tmpPgList = pageList;
-        // for (let i = 1; i <= tmpPageCount; i++) {
-        //   tmpPgList.push(i);
-        // }
-        // setPageList([...tmpPgList]);
-        // console.log("페이지 리스트를 보여주시겠어요?");
-        // console.log(pageList);
+        let tmpPgList = pageList;
+        for (let i = 1; i <= tmpPageCount; i++) {
+          tmpPgList.push(i);
+        }
+        setPageList([...tmpPgList]);
+        console.log("페이지 리스트를 보여주시겠어요?");
+        console.log(pageList);
 
-        //
+
         let tmpWrList = [], tmpTextList = [];
         res.data.data.boards.map((writing) => {
           let tmpimgtype = null;
@@ -215,79 +207,41 @@ function BlogMain() {
 
   }
 
-  const onTagButtonClickHandler = (e) => {
-    if (e.target.value == "-1") return;
-    if (checkedTagList.length >= 3 && isTagChecked[e.target.value] == false) {
-      setIsTagFull(true);
-      return;
-    }
-    let t = isTagChecked;
-    e.target.checked = true;
-    t[e.target.value] = !t[e.target.value];
-    setIsTagChecked(t);
-    let t_c = checkedTagList;
-    if (isTagChecked[e.target.value] == true) {
-      t_c.push(e.target.name);
-      setCheckedTagList(t_c);
-    }
-    else if (isTagChecked[e.target.value] == false) {
-      setCheckedTagList(t_c.filter((tagname) => tagname !== e.target.name));
-      setIsTagFull(false);
-    }
-    console.log(checkedTagList);
-    setTmp(!tmp);
-  };
-  const keyPressHandler = (e) => {
-    let keyword = e.currentTarget.value;
-    // console.log(searchOption);
-    // console.log(keyword);
-    if (e.key === 'Enter') {
-      navigate("/blog/search?keyword=" + keyword + "&option=" + searchOption);
-    }
-  };
   useEffect(() => {
-    axios
-      .get(SERVER_URL + "/user-service/api/v1/members/follower")
-      .then((res) => {
-        console.log("팔로워 조회");
-        console.log(res);
-        setFollowingCount(res.data.data);
-      })
-      .catch((err) => {
-        console.log(err);
-        console.log("뭐야 ㅅㅄㅄ");
-      });
+    // axios
+    //   .get(SERVER_URL + "/user-service/api/v1/members/follower")
+    //   .then((res) => {
+    //     console.log("팔로워 조회");
+    //     console.log(res);
+    //     setFollowingCount(res.data.data);
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     console.log("뭐야 ㅅㅄㅄ");
+    //   });
 
     setSearchOption("제목");
+    loadFollowers(1);
     // setCurrentPage(page);
     // loadWritings(currentPage);
     loadStreak();
-    //
-    let temp = [];
-    let tmpsum = 0;
-    let day = ["Mon", "Tue", "Wed", "T", "F", "S", "Su"];
-    for (let i = 0; i < 365; i++) {
-      temp.push({ date: i, day: day[i % 7], working: Math.floor(Math.random() * 6) });
-      tmpsum = tmpsum + temp[i].working;
-    }
-    tmpSt = temp;
-    setTmpStreak([...temp, tmpStreak]);
-    setTmpWorkingSum(tmpsum);
-    setStreakUpdated(true);
-    setTmp(!tmp);
-    //
-    let t = [];
-    for (let i = 0; i < tagList.length; i++) {
-      t.push(false);
-    }
-    console.log(t);
-    setIsTagChecked(t);
-    console.log(isTagChecked);
-    //
   }, []);
 
+  function loadFollowers(page) {
+    axios.get(SERVER_URL + "/user-service/api/v1/subscribe/followers",
+      { params: { page: page } })
+      .then((res) => {
+        console.log(res);
+        setFollower(res.data.data.data);
+        setFollowingCount(res.data.data.totalCount);
+      })
+      .catch((err) => {
+        console.log(err.response);
+      })
+  }
+
   return (
-    <div class="bg-white w-full h-screen font-test">
+    <div class="bg-white w-full h-screen font-test ">
       {showTagMoadl ?
         (<TagModal
           setShowTagModal={setShowTagModal}
@@ -297,75 +251,22 @@ function BlogMain() {
         :
         (null)
       }
-      <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2 ">
-        <div class="mt-10">
-          <BlogSearchBar
-            setShowTagModal={setShowTagModal}
-            selectedTagList={selectedTagList}
-          />
-        </div>
-        <div class="relative mt-10 border-b border-slate-300 pb-10">
-          <div class="h-12">
-            <div class="flex gap-2 content-center bg-gray-50 rounded-lg border border-slate-300 px-2 py-2 ">
-              <div class="self-center ml-2">🔍</div>
-              <select
-                class="text-gray-400 text-lg appearance-none focus:outline-none bg-transparent"
-                value={searchOption}
-                defaultValue="제목"
-                onChange={(e) => setSearchOption(e.target.value)}
-              >
-                <option value="제목"
-                  class="hover:bg-gray-100 dark:hover:bg-gray-600 text-center"
-                >
-                  제목
-                </option>
-                <option value="제목+내용" class="text-center">제목+내용</option>
-                <option value="작성자" class="text-center">작성자</option>
-              </select>
-              <div class="h-6 my-auto border-l border-gray-300 z-10"></div>
-              {selectedTagList.map((tag, index) => {
-                return (
-                  <div class="flex rounded-lg items-center font-ltest text-bluepurple text-sm bg-develbg px-2">
-                    <div>{tag}</div>
-                    <button
-                      class="ml-2"
-                      name={tag}
-                      value={index}
-                      onClick={onTagButtonClickHandler}
-                    >x</button>
-                  </div>
-                );
-              }
-              )}
-              <input
-                class="bg-gray-50 grow focus:outline-0 text-gray-500 ml-2"
-                type="text"
-                onKeyPress={keyPressHandler}
-              />
+      <div class="relative w-[80rem] inset-x-1/2 transform -translate-x-1/2 mt-10 border-b border-gray-200 pb-5">
+        <BlogSearchBar
+          setShowTagModal={setShowTagModal}
+          selectedTagList={selectedTagList}
+        />
+      </div>
+      <div class="relative h-full flex w-[82rem] gap-5 inset-x-1/2 transform -translate-x-1/2 ">
+        <div class="flex flex-col items-center w-[22rem]">
+          <div class="relative pt-10 flex items-start h-full border-r border-gray-200 pr-5 flex-col gap-5 pb-6">
+            <div class="text-[2.5rem] font-btest text-center text-gray-400 font-test">
+              <a class="text-indigo-400 text-[2.75rem]">T</a>oday <a class="text-indigo-400 text-[2.75rem]">I</a>{" "}
+              <a class="text-indigo-400 text-[2.75rem]">L</a>earned
             </div>
-          </div>
-          <div class="flex content-center gap-4 font-ltest mt-3 h-10 ml-3">
-            <div class="mr-1 self-center">#태그</div>
-            <button
-              class="border border-gray-300 bg-gray-50 rounded-lg w-fit min-w-[15%] px-2"
-              onClick={() => { setShowTagModal(true) }}
-            >
-              +
-            </button>
-          </div>
-          {isTagFull ? (<div class="absolute text-sm font-ltest ml-3 mt-2 text-bluepurple">태그는 최대 3개까지 선택할 수 있습니다.</div>) : null}
-        </div>
-
-        <div class="flex flex-col gap-10 pt-6">
-          <div class="flex gap-10 items-center pb-6">
-            <div class="grow text-5xl font-btest text-center text-bluepurple ">
-              <a class="text-black">T</a>oday <a class="text-black">I</a>{" "}
-              <a class="text-black">L</a>earned
-            </div>
-            <div class="w-1/2 flex flex-col items-center gap-2 text-gray-500">
-              <div class="">✨ {followingCount}명이 내 블로그를 구독하고 있어요!</div>
+            <div class="w-full flex flex-col items-center gap-2 text-gray-600 border-b border-gray-200 pb-5">
               <button
-                class="text-gray-600 rounded-lg border border-slate-300 w-full h-full py-2 "
+                class="text-gray-500 font-sbtest rounded-lg border border-gray-300 w-full h-full py-2 shadow-[0_3px_3px_0px_rgba(0,0,0,0.055)]"
                 onClick={() => {
                   navigate('/blog/writing');
                 }}
@@ -373,286 +274,80 @@ function BlogMain() {
                 오늘 학습한 내용 쓰러가기 📒
               </button>
             </div>
-          </div>
-          <section className="Streak grow">
-            <div class="w-full h-full border rounded-md pb-6 pt-3">
-              <div class="px-8 pb-3 text-base font-ltest text-gray-500">This year, I learned {workingSum} times</div>
-              {(streak != []) ?
-                (
-                  <div>
-                    <div class="flex px-8 gap-3 items-start">
-                      <div class="h-full grid grid-rows-7 grid-flow-col gap-[0px]">
-                        {streak.slice(0, 7).map((item) => {
-                          if (item.day == "Mon") {
-                            return (
-                              <div class="font-ltest text-gray-500 text-[11px] h-[11px] ">{item.day}</div>
-                            );
-                          }
-                          else if (item.day == "Wed") {
-                            return (
-                              <div class="font-ltest text-gray-500 text-[11px] h-[11px] ">{item.day}</div>
-                            );
-                          }
-                          else if (item.day == "Fri") {
-                            return (
-                              <div class="font-ltest text-gray-500 text-[11px] h-[11px] ">{item.day}</div>
-                            );
-                          }
-                          else if (item.day == "Sun") {
-                            return (
-                              <div class="font-ltest text-gray-500 text-[11px] h-[11px] ">{item.day}</div>
-                            );
-                          }
-                          else {
-                            return (
-                              <div class="font-ltest text-gray-500 text-[11px] h-[11px] ">{item.day}</div>
-                            );
-                          }
-                        })
-                        }
-                      </div>
-                      <div class="grow grid grid-rows-7 grid-flow-col gap-[0.1px]">
-                        {streak.map((item) => {
-                          if (item.working == 0) {
-                            return (
-                              <div class="">
-                                <div class="group bg-gray-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                  <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
-                                 before:translate-y-[22px] before:-translate-x-[0rem] after:border
-                                before:border-t-[12px] before:border-t-white
-                                before:border-r-[12px] before:border-r-transparent
-                                before:border-l-[0px] before:border-l-transparent
-                                before:border-b-[0px] before:border-b-transparent
-                                before:absolute before:z-20">
-                                    {item.date}일에, {item.working}번 공부를 했어요.
-                                  </div>
-                                </div>
-                              </div>
-                            )
-                          }
-                          else if (item.working == 1) {
-                            return (
-                              <div class="group bg-indigo-200 w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
-                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
-                                before:border-t-[12px] before:border-t-white
-                                before:border-r-[12px] before:border-r-transparent
-                                before:border-l-[0px] before:border-l-transparent
-                                before:border-b-[0px] before:border-b-transparent
-                                before:absolute before:z-20
-                                ">
-                                  {item.date}일에, {item.working}번 공부를 했어요.
-                                </div>
-                              </div>
-                            )
-                          }
-                          else if (item.working == 2) {
-                            return (
-                              <div class="group bg-indigo-300 w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
-                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
-                                before:border-t-[12px] before:border-t-white
-                                before:border-r-[12px] before:border-r-transparent
-                                before:border-l-[0px] before:border-l-transparent
-                                before:border-b-[0px] before:border-b-transparent
-                                before:absolute before:z-20
-                                ">
-                                  {item.date}일에, {item.working}번 공부를 했어요.
-                                </div>
-                              </div>
-                            )
-                          }
-                          else if (item.working == 3) {
-                            return (
-                              <div class="group bg-[#8289D9] w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-300 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
-                                3
-                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
-                                before:border-t-[12px] before:border-t-white
-                                before:border-r-[12px] before:border-r-transparent
-                                before:border-l-[0px] before:border-l-transparent
-                                before:border-b-[0px] before:border-b-transparent
-                                before:absolute before:z-20
-                                ">
-                                  {item.date}일에, {item.working}번 공부를 했어요.
-                                </div>
-                              </div>
-                            )
-                          }
-                          else if (item.working == 4) {
-                            return (
-                              <div class="group bg-[#6369A6] w-[12px] h-[12px] rounded-sm border border-gray-300">
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
-                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
-                                before:border-t-[12px] before:border-t-white
-                                before:border-r-[12px] before:border-r-transparent
-                                before:border-l-[0px] before:border-l-transparent
-                                before:border-b-[0px] before:border-b-transparent
-                                before:absolute before:z-20
-                                ">
-                                  {item.date}일에, {item.working}번 공부를 했어요.
-                                </div>
-                              </div>
-                            )
-                          }
-                          else if (item.working >= 5) {
-                            return (
-                              <div class={"group bg-[#54598C] w-[12px] h-[12px] rounded-sm border border-gray-300"}>
-                                <div class="group-hover:block absolute hidden rounded-xl p-1 w-fit bg-white text-gray-500 border border-gray-200 font-ltest text-sm -translate-y-10 -translate-x-1 z-40
-                                before:translate-y-[22px] before:-translate-x-[0rem] after:border
-                                before:border-t-[12px] before:border-t-white
-                                before:border-r-[12px] before:border-r-transparent
-                                before:border-l-[0px] before:border-l-transparent
-                                before:border-b-[0px] before:border-b-transparent
-                                before:absolute before:z-20
-                                ">
-                                  {item.date}일에, {item.working}번 공부를 했어요.
-                                </div>
-                              </div>
-                            )
-                          }
-                        })
-                        }
-                      </div>
-                    </div>
-                  </div>
-                )
-                :
-                (null)
-              }
-            </div>
-          </section>
-        </div>
-
-        <div class="mt-10 border rounded-lg">
-          {
-            <div class="flex justify-center">
-              <div class={checkNoPost == true ? "my-10 m-auto text-center"
-                : "hidden"}>{checkNoPost == true ? "아직 아무 글도 작성하지 않았어요 😥" : ""}</div>
-            </div>
-          }
-          {writingList.map((item, index) => {
-            if (item.img != null) {
-              return (
-                <button
-                  className="Writing"
-                  class="flex border bg-white h-48 px-10 py-5 gap-5 text-left"
-                  value={item.id}
-                  onClick={(e) => {
-                    navigate('/blog/detail/' + e.currentTarget.value);
-                  }}
-                >
-                  <div class="w-[45.5rem] h-36 flex flex-col justify-between">
-                    <div class="">
-                      <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                        <h>나</h>
-                        <h>{item.date}</h>
-                      </div>
-                      <button class="py-1 text-blue-400 text-lg">
-                        {item.title}
-                      </button>
-                      <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
-                    </div>
-                    <div class="flex gap-2">
-                      {item.tag.map((item) => {
-                        return (
-                          <div class="bg-indigo-50 text-sm border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
-                            {item.name}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                  <div class="w-grow">
-                    <div class=" w-32 h-32 mb-2">
-                      <img
-                        src={"data:image/" + item.imgtype + ";base64," + item.img}
-                        class="w-full z-full z-40 min-h-[8rem] max-h-[8rem]"
-                      />
-                    </div>
-                    <div class="w-32 grid grid-cols-2 text-sm ">
-                      <div>🧡 {item.like}</div>
-                      <div>💬 {item.comment}</div>
-                    </div>
-                  </div>
-                </button>
-              );
-            } else {
-              return (
-                <button
-                  className="Writing"
-                  class="border bg-white h-48 px-10 py-5 gap-5 text-left"
-                  value={item.id}
-                  onClick={(e) => {
-                    navigate('/blog/detail/' + e.currentTarget.value);
-                  }}
-                >
-                  <div class="w-[45.5rem] h-36 flex flex-col justify-between">
-                    <div class="">
-                      <div class="text-sm flex gap-6 text-gray-400 font-ltest">
-                        <h>나</h>
-                        <h>{item.date}</h>
-                      </div>
-                      <button class="py-1 text-blue-400 text-lg">
-                        {item.title}
-                      </button>
-                      <div class="font-ltest">{writingTextList[index].slice(0, 150) + "..."}</div>
-                    </div>
-                    <div class="flex gap-2">
-                      {item.tag.map((item) => {
-                        return (
-                          <div class="bg-indigo-50 text-sm border border-indigo-300 text-indigo-300 rounded-lg px-2 py-1">
-                            {item.name}
-                          </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-                  <div class="flex">
-                    <div class="w-[47rem]"></div>
-                    <div class="w-32 grid grid-cols-2 text-sm">
-                      <div>🧡 {item.like}</div>
-                      <div>💬 {item.comment}</div>
-                    </div>
-                  </div>
-                </button>
-              );
-            }
-          })}
-        </div>
-        <div class="flex justify-center">
-          <nav class="my-6">
-            <ul class="inline-flex items-center -space-x-px">
-              <li>
-                <button
-                  onClick={() => { onPreviousPageHandler() }}
-                  class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
-                </button>
-              </li>
-
-              {
-                pageList.map((page) => {
+            <div class="flex flex-col gap-2 items-cetenr w-full text-gray-500">
+              <div class="text-gray-700 text-xl font-sbtest">Follower</div>
+              <div class="flex gap-1 text-center">✨ <div class="flex"><div class="text-indigo-400">{followingCount}</div>명이 내 블로그를 구독하고 있어요!</div></div>
+              <div class="flex flex-col gap-2 pl-5 border-l-[6px] border-gray-200 font-ltest text-lg">
+                {follower.map((item) => {
                   return (
-                    <li>
-                      <button
-                        onClick={() => { onCurrentPageHandler(page) }}
-                        class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                      >{page}</button>
-                    </li>
-                  );
-                })
-              }
+                    <div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-gray-300"></div><div>{item.nickname}</div></div>
+                  )
+                })}
+                <div class="w-fit self-center flex gap-2 border rounded-lg py-1 px-2 font-sbtest">
+                  <Page />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="w-[60rem] pt-5">
 
-              <li>
-                <button
-                  onClick={() => { onNextPageHandler() }}
-                  class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                  <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
-                </button>
-              </li>
-            </ul>
-          </nav>
+          <div class="flex flex-col gap-10 pt-6">
+            <section className="Streak grow">
+              <Streak
+                workingSum={workingSum}
+                streak={streak}
+              />
+            </section>
+          </div>
+
+          <div class="mt-10 border rounded-lg">
+            {
+              <div class="flex justify-center">
+                <div class={checkNoPost == true ? "my-10 m-auto text-center"
+                  : "hidden"}>{checkNoPost == true ? "아직 아무 글도 작성하지 않았어요 😥" : ""}</div>
+              </div>
+            }
+            <BlogWritingList
+              writingList={writingList}
+              onWritingClickHandler={(e) => { navigate('/blog/detail/' + e.currentTarget.value) }}
+              writingTextList={writingTextList}
+            />
+          </div>
+          <div class="flex justify-center">
+            <nav class="my-6">
+              <ul class="inline-flex items-center -space-x-px">
+                <li>
+                  <button
+                    onClick={() => { onPreviousPageHandler() }}
+                    class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                  </button>
+                </li>
+
+                {
+                  pageList.map((page) => {
+                    return (
+                      <li>
+                        <button
+                          onClick={() => { onCurrentPageHandler(page) }}
+                          class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                        >{page}</button>
+                      </li>
+                    );
+                  })
+                }
+
+                <li>
+                  <button
+                    onClick={() => { onNextPageHandler() }}
+                    class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                  </button>
+                </li>
+              </ul>
+            </nav>
+          </div>
         </div>
       </div >
     </div >

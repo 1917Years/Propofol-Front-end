@@ -77,6 +77,8 @@ module.exports = {
         dolce: ["dolce"],
         timeless: ["timeless"],
         timelessB: ["timelessB"],
+        good_brush: ["good_brush"],
+        ba: ["bodo_amat"],
       },
       fontWeight: {
         ssbold: 500,

@@ -54,7 +54,7 @@ export function ApplyingModal(props) { // props-> setShowApplyingModal, applying
             })
             .then((res) => {
                 console.log(res);
-                setTotalPage(res.data.data.pageTotalCount);
+                setTotalPage(res.data.data.totalPageCount);
                 setProjectList([...res.data.data.boards]);
             })
             .catch((err) => {
@@ -82,56 +82,58 @@ export function ApplyingModal(props) { // props-> setShowApplyingModal, applying
 
     return (
         <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
-            <div class="bg-white w-[41%] min-w-[45rem] min-h-[40rem] h-[65%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
-                <div class="flex justify-between border-b border-gray-300 pb-3">
-                    <div class="ml-2 text-3xl font-sbtest">
-                        신청 중인 프로젝트 목록
+            <div class="bg-white w-[41%] min-w-[45rem] min-h-[40rem] h-[65%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5 flex flex-col justify-between">
+                <div>
+                    <div class="flex justify-between border-b border-gray-300 pb-3">
+                        <div class="ml-2 text-3xl font-sbtest">
+                            신청 중인 프로젝트 목록
+                        </div>
+                        <button class="text-2xl"
+                            onClick={() => { props.setShowApplyingModal(false) }}
+                        >x
+                        </button>
                     </div>
-                    <button class="text-2xl"
-                        onClick={() => { props.setShowApplyingModal(false) }}
-                    >x
-                    </button>
-                </div>
-                <div class="w-full mt-10 flex flex-col border-t border-gray-300">
-                    {projectList.map((item) => {
-                        console.log("뭐야시발");
-                        return (
-                            <div class="flex gap-2 items-center border-b py-1">
-                                <div class="px-3 py-2 w-4/5 break-all">
-                                    <div class=" font-sbtest text-lg">{item.title}</div>
-                                    <div class="flex mt-2 gap-3">
-                                        <div class="bg-gray-100 font-ltest text-gray-700 text-sm">참여 인원 : {item.recruited}/{item.recruit}</div>
-                                        <div class="bg-gray-100 font-ltest text-gray-700 text-sm">{item.startDate} ~{item.endDate}</div>
+                    <div class="w-full mt-10 flex flex-col border-t border-gray-300">
+                        {projectList.map((item) => {
+                            console.log("뭐야시발");
+                            return (
+                                <div class="flex gap-2 items-center border-b py-1">
+                                    <div class="px-3 py-2 w-4/5 break-all">
+                                        <div class=" font-sbtest text-lg">{item.title}</div>
+                                        <div class="flex mt-2 gap-3">
+                                            <div class="bg-gray-100 font-ltest text-gray-700 text-sm">참여 인원 : {item.recruited}/{item.recruit}</div>
+                                            <div class="bg-gray-100 font-ltest text-gray-700 text-sm">{item.startDate} ~{item.endDate}</div>
+                                        </div>
+                                        <div class="flex mt-1 gap-1">
+                                            {item.tagInfos.map((tag) => {
+                                                return (
+                                                    <div class="bg-gray-100 font-ltest text-gray-700 text-sm">
+                                                        #{tag.name}
+                                                    </div>
+                                                )
+                                            })}
+                                        </div>
                                     </div>
-                                    <div class="flex mt-1">
-                                        {item.tagInfos.map((tag) => {
-                                            return (
-                                                <div class="bg-gray-100 font-ltest text-gray-700 text-sm">
-                                                    #{tag.name}
-                                                </div>
-                                            )
-                                        })}
+                                    <div class="grow mr-3 flex flex-col gap-2">
+                                        <button
+                                            class="bg-white border border-gray-300 text-gray-600 text-lg font-ltest w-full"
+                                            value={item.id}
+                                            onClick={(e) => { navigate("/pm/detail/" + e.target.value) }}
+                                        >
+                                            상세 보기
+                                        </button>
+                                        <button
+                                            class="bg-white border border-gray-300 text-gray-600 text-lg font-ltest w-full"
+                                            value={item.id}
+                                            onClick={(e) => { cancleProject(e.target.value) }}
+                                        >
+                                            신청 취소
+                                        </button>
                                     </div>
                                 </div>
-                                <div class="grow mr-3 flex flex-col gap-2">
-                                    <button
-                                        class="bg-white border border-gray-300 text-gray-600 text-lg font-ltest w-full"
-                                        value={item.id}
-                                        onClick={(e) => { navigate("/pm/detail/" + e.target.value) }}
-                                    >
-                                        상세 보기
-                                    </button>
-                                    <button
-                                        class="bg-white border border-gray-300 text-gray-600 text-lg font-ltest w-full"
-                                        value={item.id}
-                                        onClick={(e) => { cancleProject(e.target.value) }}
-                                    >
-                                        신청 취소
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    })}
+                            );
+                        })}
+                    </div>
                 </div>
                 <div class="flex gap-2 justify-center w-full px-2">
                     <button
@@ -175,13 +177,28 @@ export function ScheduleViewModal(props) {// props -> setShowScheduleViewModal
             tmpScheduleList.push(item);
         })
         scheduleList = tmpScheduleList;
-        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, scheduleList);
+        fillScheduleStyleList(scheduleStyleList, setScheduleStyleList, props.timeTables);
     }
+    useEffect(() => {
+        console.log(props.timeTables);
+        loadPropsSchedule();
+    }, [])
     return (
         <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
             <div class="bg-white w-[38%] min-w-[46rem] min-h-[49rem] h-[60%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
                 <div class="flex justify-between border-b border-gray-300 pb-3">
-                    <div class="ml-2 text-3xl font-sbtest">
+                    <div class="ml-2 text-3xl font-sbtest flex">
+                        {props.isPerson ?
+                            <>
+                                <div class="text-indigo-500"> {props.name} </div>
+                                {"님의 "}
+                            </>
+                            :
+                            <>
+                                <div class="text-indigo-500"> {props.name} </div>
+                                {"의 "}
+                            </>
+                        }
                         시간표
                     </div>
                     <button class="text-2xl"
@@ -912,7 +929,7 @@ export function TagModal(props) { // props -> setShowTagModal, selectedTagList, 
                 <div class="relative px-2 mt-5 grow">
                     {loadingComplete ? (
                         <div class="flex flex-col justify-between h-full">
-                            <div class="flex flex-col justify-around grow mb-10">
+                            <div class="flex flex-col justify-start gap-[1px] grow mb-10">
                                 {tagList.tag.map((item) => {
                                     let tmpSelctedTagList = props.selectedTagList;
                                     if (checkTagList(item.id, tmpSelctedTagList)) {

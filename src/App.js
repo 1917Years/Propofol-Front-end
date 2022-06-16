@@ -50,10 +50,9 @@ axios.interceptors.response.use(
   },
   async function (error) {
     if (error == null) {
-      console.log(error.response);
       console.log("시발");
     }
-    console.log(error);
+    console.log(error.response);
     console.log("왜안돼!!!!");
     if (
       error != null &&
@@ -62,12 +61,19 @@ axios.interceptors.response.use(
     ) {
       const originalRequest = error.config;
       console.log("왜안돼!!!!!!!!!!!!!!!!!");
-      axios.defaults.headers.common[
-        "Authorization"
-      ] = `Bearer ${getAccessToken()}`;
+      if (getAccessToken() != "no access_token") {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${getAccessToken()}`;
+      }
+    }
+    else if (error.response.data != null && error.response.data.message == "JWT strings must contain exactly 2 period characters. Found: 0") {
+      const originalRequest = error.config;
+      originalRequest.headers["Authorization"] = null;
+      axios.defaults.headers.common['Authorization'] = null;
       return await axios.request(originalRequest);
     }
-    if (
+    else if (
       error != null &&
       error != undefined &&
       error.response.data.data == "Please RefreshToken."
@@ -85,20 +91,22 @@ axios.interceptors.response.use(
         const refreshToken = Data.refreshToken;
         console.log("access-token = " + accessToken);
         setAccessTokenToCookie(accessToken);
-        originalRequest.headers["Authorization"] = `Bearer ${getAccessToken()}`;
-        //console.log("refresh-token = " + refreshToken);
-        //originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-        console.log(
-          "access-token = " + originalRequest.headers["Authorization"]
-        );
-        console.log(originalRequest);
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${getAccessToken()}`;
+        if (getAccessToken() != "no access_token") {
+          originalRequest.headers["Authorization"] = `Bearer ${getAccessToken()}`;
+          //console.log("refresh-token = " + refreshToken);
+          //originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+          console.log(
+            "access-token = " + originalRequest.headers["Authorization"]
+          );
+          console.log(originalRequest);
+          axios.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${getAccessToken()}`;
+        }
         setRefreshTokenToCookie(refreshToken);
         return await axios.request(originalRequest);
       } catch (error) {
-        console.log(error);
+        console.log(error.response);
       }
       /*
       axios
@@ -220,6 +228,7 @@ function App() {
           <Route path="/portfolio/template/samplet2" element={<SampleT2 />} />
           <Route path="/portfolio/template/samplet3" element={<SampleT3 />} />
           <Route path="/portfolio/template/samplet4" element={<SampleT4 />} />
+          <Route path="/gitime/dashboard" element={<SampleT4 />} />
         </Routes>
       </BrowserRouter>
     </>

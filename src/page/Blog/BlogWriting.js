@@ -1,7 +1,7 @@
 import { React, useState, useEffect, useRef } from "react";
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import BlogEditor from "../../Component/BlogEditor";
+import BlogEditor from "../../Component/Blog/BlogEditor";
 
 function BlogWriting() {
   const [htmlContent, setHtmlContent] = useState("");

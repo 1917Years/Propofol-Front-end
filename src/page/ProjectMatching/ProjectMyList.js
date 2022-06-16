@@ -2,9 +2,10 @@ import { React, useState, useEffect } from "react";
 import { useNavigate, Navigate } from "react-router-dom";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
-import ProjectSearchBar from "../../Component/ProjectSearchBar";
+import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal, ApplyingModal } from "../../Component/Modal";
 import { htmlDetailToText } from "../../utils/html";
+import { getUserDataToken } from "../../utils/user";
 
 function ProjectMyList() {
     const navigate = useNavigate();
@@ -17,6 +18,7 @@ function ProjectMyList() {
     const [showRecruiting, setShowRecruiting] = useState(true);
     const [showJoining, setShowJoining] = useState(false);
     //
+    const [userNickname, setUserNickname] = useState(null);
     function Project(props) { //projectList, projectTextList
         return (
             <div>
@@ -28,10 +30,11 @@ function ProjectMyList() {
                                 class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
                             >
                                 <div class="w-[47rem]">
-                                    <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                    <div class="text-sm text-gray-400 flex gap-2 items-center font-ltest">
                                         {item.status == "ACTIVE" ? (
                                             <>
                                                 <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
+                                                <div class="text-sm font-ltest text-gray-400">{item.startDate + " ~ " + item.endDate}</div>
                                                 <button
                                                     class="ml-auto"
                                                     onClick={async () => {
@@ -43,7 +46,12 @@ function ProjectMyList() {
                                             </>
                                         )
                                             :
-                                            (<div class="px-2 bg-red-300 text-black">모집완료</div>)
+
+                                            (<>
+                                                <div class="px-2 bg-red-300 text-black">모집완료</div>
+                                                <div class="text-sm font-ltest text-gray-400">{item.startDate + " ~ " + item.endDate}</div>
+                                            </>
+                                            )
                                         }
                                     </div>
                                     <button
@@ -55,13 +63,12 @@ function ProjectMyList() {
                                     <div class="flex gap-2">
                                         {item.tagInfos.map((tags) => {
                                             return (
-                                                <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                <div class="px-1 font-ltest text-sm w-fit mt-4 rounded-lg border">
                                                     {tags.name}
                                                 </div>
                                             )
                                         })}
                                     </div>
-                                    <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
                                 </div>
                                 <div class="w-grow">
                                     <div class="w-32 h-32 mb-2">
@@ -83,23 +90,22 @@ function ProjectMyList() {
                                 className="Writing"
                                 class="flex border-b bg-white h-54 px-10 pt-3 gap-5 text-left w-[59.5rem]"
                             >
-                                <div class="w-[47rem]">
-                                    <div class="text-sm text-gray-400 flex items-center font-ltest">
+                                <div class="w-[47rem] py-2">
+                                    <div class="text-sm text-gray-400 flex gap-2 items-center font-ltest">
                                         {item.status == "ACTIVE" ? (
                                             <>
                                                 <div class="w-fit px-2 bg-green-300 text-black">모집중</div>
-                                                <button
-                                                    class="ml-auto"
-                                                    onClick={() => { navigate("/pm/writing?No=" + item.id) }}
-                                                >{">"} 수정하기</button>
                                             </>
                                         )
                                             :
                                             (<div class="px-2 bg-red-300 text-black">모집완료</div>)
                                         }
+                                        <div class="text-sm font-ltest text-gray-400 mt-1">{item.startDate + " ~ " + item.endDate}</div>
                                     </div>
                                     <button
-                                        onClick={() => navigate("/pm/myproject/" + item.id)}
+                                        onClick={
+                                            props.isRecruiting ? () => navigate("/pm/detail/" + item.id) : () => navigate("/pm/myproject/" + item.id)
+                                        }
                                         class="mt-1 py-1 text-black text-xl">
                                         {item.title}
                                     </button>
@@ -107,15 +113,14 @@ function ProjectMyList() {
                                     <div class="flex gap-2">
                                         {item.tagInfos.map((tags) => {
                                             return (
-                                                <div class="px-1 font-ltest text-sm w-fit mt-4 bg-gray-200 rounded-none border">
+                                                <div class="px-1 font-ltest text-sm w-fit mt-2 rounded-lg border">
                                                     {tags.name}
                                                 </div>
                                             )
                                         })}
                                     </div>
-                                    <div class="text-sm font-ltest text-gray-400">{item.startDate + "~" + item.endDate}</div>
                                 </div>
-                                <div class="w-grow">
+                                <div class="w-grow flex flex-col items-start justify-end">
                                     {props.isRecruiting ? (
                                         <button
                                             class="border p-1"
@@ -209,7 +214,7 @@ function ProjectMyList() {
         return (
             <>
                 <div class="mt-10 text-2xl font-btest">
-                    유진님이 모집 중인 프로젝트예요.
+                    {userNickname}님이 모집 중인 프로젝트예요.
                 </div>
                 <div class="mt-4 border rounded-lg">
                     <Project
@@ -324,7 +329,7 @@ function ProjectMyList() {
             <>
                 <div class="flex mt-10 ">
                     <div class="text-2xl font-btest">
-                        유진님이 참여 중인 프로젝트예요.
+                        {userNickname}님이 참여 중인 프로젝트예요.
                     </div>
                     <button
                         class="ml-auto text-lg mr-2"
@@ -371,7 +376,10 @@ function ProjectMyList() {
     //
 
     useEffect(() => {
-
+        if (getUserDataToken()) {
+            console.log(getUserDataToken());
+            setUserNickname(getUserDataToken().nickname);
+        }
     }, []);
 
     return (
