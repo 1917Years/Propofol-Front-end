@@ -69,13 +69,16 @@ function PortfolioMain() {
   const [contentAfter, setContentAfter] = useState([]);
   const [dateAfter, setDateAfter] = useState([]);
 
+  const [userTagInfo, setUserTagInfo] = useState([]);
+
   const navigate = useNavigate();
   const id = useParams().id;
 
   function htmlDetailToText(htmlContent) {
     let text = htmlContent.replace(/(<([^>]+)>)/gi, "");
-    text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;)/g, (s) => {
+    text = text.replace(/(&amp;|&lt;|&gt;|&quot;|&#39;|&nbsp;)/g, (s) => {
       const entityMap = {
+        "&nbsp;": " ",
         "&amp;": "&",
         "&lt;": "<",
         "&gt;": ">",
@@ -663,6 +666,11 @@ function PortfolioMain() {
       formData.append("skills", skill.id);
     });
 
+    userTagInfo.map((skill) => {
+      formData.append("skills", skill.id);
+    })
+
+
     formData.append("template", template);
     formData.append("github", githubInput);
     formData.append("job", jobInput);
@@ -673,46 +681,55 @@ function PortfolioMain() {
       formData.append("awardDates", award.date);
     });
 
+    let tmpCareerContents = [];
+
     firstCareerInfo.map((car) => {
       formData.append("careerTitles", car.title);
-      formData.append("careerContents", car.content);
+      tmpCareerContents.push(car.content);
       formData.append("careerStartTerms", car.startTerm);
       formData.append("careerEndTerms", car.endTerm);
     });
 
+    formData.append("careerContents", tmpCareerContents);
+
+    let tmpProjectContents = [];
+
     firstProjectInfo.map((prj) => {
       formData.append("prjTitles", prj.title);
-      formData.append("prjContents", prj.content);
+      tmpProjectContents.push(prj.content);
       formData.append("prjJobs", prj.job);
       formData.append("prjStartTerms", prj.startTerm);
       formData.append("prjEndTerms", prj.endTerm);
       formData.append("prjSkillCount", prj.projectSkillsCount);
-
       prj.projectSkills.map((skill) => {
         formData.append("prjSkills", skill.id);
       });
     });
 
+    formData.append("prjContents", tmpProjectContents);
+
     prjImageList.map((image) => {
-      formData.append("file", image);
+      formData.append("files", image);
     });
 
+    let axiosFinish = false;
     axios
       .post(SERVER_URL + "/ptf-service/api/v1/portfolio", formData)
       .then((res) => {
         console.log(res);
-        setAxiosFinish(true);
+        axiosFinish = true;
+        if (axiosFinish) {
+          if (template == "TYPE_1") navigate("/portfolio/template/t1");
+          else if (template == "TYPE_2") navigate("/portfolio/template/t2");
+          else if (template == "TYPE_3") navigate("/portfolio/template/t3");
+          else if (template == "TYPE_4") navigate("/portfolio/template/t4");
+        }
       })
       .catch((err) => {
         console.log(err);
       });
 
-    if (axiosFinish) {
-      if (template == "TYPE_1") navigate("/portfolio/template/t1");
-      else if (template == "TYPE_2") navigate("/portfolio/template/t2");
-      else if (template == "TYPE_3") navigate("/portfolio/template/t3");
-      else if (template == "TYPE_4") navigate("/portfolio/template/t4");
-    }
+
   };
 
   async function onSkillGetHandler() {
@@ -915,20 +932,29 @@ function PortfolioMain() {
           console.log("뭐야 ㅅㅄㅄ");
         });
 
-      console.log("dwfe" + tmpCm.id);
       await axios
         .get(SERVER_URL + "/user-service/api/v1/members/info/" + tmpCm.id)
         .then((res) => {
           console.log("안녕 나는 두번째...");
           console.log(res);
+
+          console.log("시발");
+          console.log(res.data);
+
           if (res.data.profileType == null) {
             console.log("프로필 없삼");
             setCheckProfile(false);
+
+            let tagInfos = [...res.data.tagInfos];
+
+            setUserTagInfo(tagInfos);
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.profileType);
             setProfileImg(res.data.profileString);
             setCheckProfile(true);
+            let tagInfos = [...res.data.tagInfos];
+            setUserTagInfo(tagInfos);
           }
         })
         .catch((err) => {
@@ -944,6 +970,7 @@ function PortfolioMain() {
         setCheckCreate(false);
         setLoadingComplete(true);
         setTemplate("TYPE_1"); //default
+        updateTopPost();
       } else {
         let tmpCm = [];
         await axios
@@ -1374,6 +1401,13 @@ function PortfolioMain() {
                           <>
                             <div class="flex">
                               <div class="flex flex-wrap items-center gap-3">
+                                {userTagInfo.map((item) => {
+                                  return (
+                                    <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
+                                      {item.name}
+                                    </div>
+                                  );
+                                })}
                                 {selectedSkillList.map((item) => {
                                   return (
                                     <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
@@ -1405,6 +1439,13 @@ function PortfolioMain() {
                           </>
                         ) : (
                           <div class="flex flex-wrap items-center gap-3">
+                            {userTagInfo.map((item) => {
+                              return (
+                                <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
+                                  {item.name}
+                                </div>
+                              );
+                            })}
                             {selectedSkillList.map((item) => {
                               return (
                                 <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
@@ -2372,14 +2413,14 @@ function PortfolioMain() {
                                       maxWidth: "16rem",
                                     }}
                                   />
-                                  <label
+                                  {/* <label
                                     for="input-prjimg"
                                     class="w-full flex justify-end"
                                   >
                                     <div class="mt-3 w-1/4 py-1 text-base text-white bg-gray-400 rounded-xl text-center focus:outline-0 flex flex-col justify-center cursor-pointer">
                                       <div>사진 수정</div>
                                     </div>
-                                  </label>
+                                  </label> */}
                                 </div>
                               ) : (
                                 <div>
@@ -2533,14 +2574,15 @@ function PortfolioMain() {
                           (실제로 등록된 글이 삭제되지는 않습니다.)
                         </a>
                       </div>
-                      <div class="flex justify-end">
+                      {checkCreate ? <div class="flex justify-end">
                         <button
                           class=" text-base text-gray-500"
                           onClick={() => updateTopPost()}
                         >
                           🔄추천수 상위글 갱신하기
                         </button>
-                      </div>
+                      </div> : null}
+
                       {checkCreate ? (
                         <>
                           {topRecommendPost.map((item, index) => {
@@ -2604,8 +2646,8 @@ function PortfolioMain() {
                           </div>
                         </>
                       ) : (
-                        <div class="mt-1">
-                          블로그 글은 포트폴리오 생성 후에 확인할 수 있어요!
+                        <div class="mt-2">
+                          블로그 글은 포트폴리오 1회 생성 후 조회 및 등록이 가능합니다.
                         </div>
                       )}
                     </>

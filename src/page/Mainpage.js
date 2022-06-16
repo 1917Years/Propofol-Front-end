@@ -200,7 +200,7 @@ function Mainpage(props) {
                     포트폴리오
                   </h3>
                   <p class="font-ltest mt-2 text-xl leading-relaxed text-gray-600">
-                    "아이스크림 같지?"
+                    "아이스크림 같지?"fewfe
                   </p>
 
                 </div>

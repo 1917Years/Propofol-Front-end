@@ -133,6 +133,11 @@
   src: url("./font/Bodo\ Amat.ttf");
 }
 
+.swal2-popup {
+  font-size: 1rem !important;
+  font-family: "pretend-medium" !important;
+}
+
 .App-header {
   background-color: #282c34;
   min-height: 100vh;

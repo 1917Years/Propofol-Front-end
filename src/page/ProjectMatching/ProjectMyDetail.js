@@ -7,6 +7,7 @@ import { TeamScheduleModal, ScheduleViewModal } from "../../Component/Modal"
 import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
 import { getUserDataToken } from "../../utils/user";
+import Swal from "sweetalert2";
 
 function ProjectMyDetail() {
     const navigate = useNavigate();
@@ -30,6 +31,7 @@ function ProjectMyDetail() {
     const [timeTable, setTimeTable] = useState([]);
     const [name, setName] = useState("");
     //let timeTable;
+    const Swal = require("sweetalert2");
 
     function Page(props) { // props --> startPage, totalPage, load__함수, setSelected, selected
         let endPage = (props.startPage + 9 > props.totalPage ? props.totalPage : props.startPage + 9);
@@ -221,7 +223,9 @@ function ProjectMyDetail() {
                                             <button class="mt-1 font-test text-sm"
                                                 id={item.id}
                                                 value={item.nickName}
-                                                onClick={(e) => loadPersonSchedule(e.currentTarget)}
+                                                onClick={(e) => {
+                                                    loadPersonSchedule(e.currentTarget.value);
+                                                }}
                                             >⏱ 시간표 확인하기 {">"}</button>
                                             <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
 
@@ -290,7 +294,15 @@ function ProjectMyDetail() {
                                         </div>
                                         <div class="ml-4 my-auto flex flex-col items-start">
                                             <div class="text-2xl font-btest">{item.nickName}</div>
-                                            <button class="mt-1 font-test text-sm">⏱ 시간표 확인하기 {">"}</button>
+                                            <button
+                                                class="mt-1 font-test text-sm"
+                                                id={item.id}
+                                                value={item.nickName}
+                                                onClick={(e) => {
+                                                    loadPersonSchedule(e.currentTarget.value);
+                                                }}
+                                            >⏱ 시간표 확인하기 {">"}
+                                            </button>
                                             <button class="mt-1 font-test text-sm">📄 포트폴리오 확인하기 {">"}</button>
                                         </div>
                                         <div class="w-[30%] ml-auto text-right text-sm self-center">
@@ -372,6 +384,10 @@ function ProjectMyDetail() {
             })
     }
 
+    function seePortfolio() {
+        navigate();
+    }
+
     function deleteProject() {
         axios.delete(SERVER_URL + "/matching-service/api/v1/matchings/" + id)
             .then((res) => {
@@ -398,6 +414,53 @@ function ProjectMyDetail() {
                 //loadRecommendedDev(1);
                 //loadApplyDev(1);
                 //loadParticipants(1);
+            })
+            .catch((err) => {
+                console.log(err.response);
+            })
+    }
+
+    function completeProject() {
+        const params = new URLSearchParams();
+        axios.get(SERVER_URL + "/matching-service/api/v1/members/" + id + "/membersList/noPage"
+        )
+            .then((res) => {
+                console.log(res.data.data);
+                res.data.data.map((item) => {
+                    params.append('memberId', item.id);
+                })
+                console.log(params.getAll('memberId'));
+
+                Swal.fire({
+                    title: '프로젝트 모집이 완료됐습니다. ',
+                    text: "Gitime로 이동하시겠습니까?",
+                    confirmButtonText: "Yes",
+                    confirmButtonColor: '#171717',
+                    cancelButtonText: 'No',
+                    cancelButtonColor: '#d33',
+                    icon: 'success',
+                    showConfirmButton: true,
+                    showCancelButton: true,
+                })
+                    .then((result) => {
+                        console.log("뭐냐");
+                        axios.get(SERVER_URL + "/matching-service/api/v1/matchings/completeTeam",
+                            { params: params }
+                        )
+                            .then((res) => {
+                                console.log(res);
+                                if (result.isCancled) {
+                                    navigate("/pm/mylist");
+                                }
+                                else {
+                                    navigate("/pm/mylist");
+                                }
+                            })
+                            .catch((err) => {
+                                console.log(err.response);
+                            })
+                    })
+
             })
             .catch((err) => {
                 console.log(err.response);
@@ -453,6 +516,11 @@ function ProjectMyDetail() {
                             <button
                                 onClick={() => { deleteProject() }}
                             >프로젝트 삭제 {">"} </button>
+                            <button
+                                class="text-red-600"
+                                onClick={() => { completeProject() }}
+                            >모집 완료하기
+                            </button>
                         </div>
                         <div class="flex gap-3 justify-around mt-5 items-center text-xl font-btest mb-3">
                             <button
