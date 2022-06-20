@@ -251,7 +251,8 @@ function ProjectDetail() {
                     </div>
                     <div class="flex flex-col gap-2">
                       <div class="ml-4 my-auto text-2xl font-btest">{project.nickName}</div>
-                      <button class="ml-4 my-auto text-sm font-test">📄 포트폴리오 {">"}</button>
+                      <button class="ml-4 my-auto text-sm font-test"
+                      >📄 포트폴리오 {">"}</button>
                     </div>
                   </div>
                 </div>
