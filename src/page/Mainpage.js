@@ -21,33 +21,33 @@ function Mainpage(props) {
       "url(https://cdn.discordapp.com/attachments/766266146520563785/980038822052102184/whiteboard_-_1658_Original.mp4)",
   };
 
-  useEffect(() => {
-    console.log("이친구 왜 실행이 안될까...........?");
-    if (getAccessToken != "no access_token") {
-      axios
-        .get(SERVER_URL + "/ptf-service/api/v1/portfolio/checkPortfolio")
-        .then((res) => {
-          console.log("기존에 포폴 있는지 조회하기");
-          console.log(res);
+  // useEffect(() => {
+  //   console.log("이친구 왜 실행이 안될까...........?");
+  //   if (getAccessToken != "no access_token") {
+  //     axios
+  //       .get(SERVER_URL + "/ptf-service/api/v1/portfolio/checkPortfolio")
+  //       .then((res) => {
+  //         console.log("기존에 포폴 있는지 조회하기");
+  //         console.log(res);
 
-          if (res.data.data != "no") {
-            setCookie("portfolioId", res.data.data);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }, [userMove]);
+  //         if (res.data.data != "no") {
+  //           setCookie("portfolioId", res.data.data);
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // }, [userMove]);
 
   return (
     <div class="text-gray-800 antialiased z-1">
       <main>
-        <div class="pt-20 bg-black w-[100%] h-[100vh]" style={{ minHeight: "54rem" }}>
-          <div
-            class=""
-            style={style}
-          ></div>
+        <div
+          class="pt-20 bg-black w-[100%] h-[100vh]"
+          style={{ minHeight: "54rem" }}
+        >
+          <div class="" style={style}></div>
           <video
             autoPlay
             muted
@@ -158,7 +158,6 @@ function Mainpage(props) {
                 </h3>
                 <p class="font-test text-xl font-light leading-relaxed mt-4 text-gray-700">
                   오늘의 공부, 프로포폴이 책임질게요!
-
                 </p>
                 <p class="font-test text-xl font-light leading-relaxed mt-1 text-gray-700">
                   개발자를 위한 일일학습 특화 블로그 TIL은
@@ -168,17 +167,20 @@ function Mainpage(props) {
                 </p>
 
                 <div class="flex flex-col gap-2 font-ltest text-gray-500 text-lg">
-                  <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-gray-600"></div>
-                    본인의 학습 기록을 점검할 수 있는 스트릭 기능 제공</div>
-                  <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-gray-600"></div>
-                    바로 결과를 확인할 수 있는 코드 컴파일 기능 제공</div>
-                  <div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-gray-600"></div>
-                    원하는 분야만 찾아보고 분류할 수 있는 태그 기능 제공</div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-gray-600"></div>
+                    본인의 학습 기록을 점검할 수 있는 스트릭 기능 제공
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-gray-600"></div>
+                    바로 결과를 확인할 수 있는 코드 컴파일 기능 제공
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-gray-600"></div>
+                    원하는 분야만 찾아보고 분류할 수 있는 태그 기능 제공
+                  </div>
                 </div>
-                <button
-                  class="font-sbtest w-1/2 mt-10 text-xl bg-indigo-100 rounded-lg px-4 py-4"
-
-                >
+                <button class="font-sbtest w-1/2 mt-10 text-xl bg-indigo-100 rounded-lg px-4 py-4">
                   학습하러 가기
                 </button>
               </div>
@@ -190,19 +192,15 @@ function Mainpage(props) {
           <div
             class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
             style={{ height: "80px", transform: "translateZ(0px)" }}
-          >
-          </div>
+          ></div>
           <div class="container mx-auto px-4">
             <div class="items-center flex flex-wrap">
               <div class="mx-auto w-full md:w-full px-4">
                 <div class="">
-                  <h3 class="font-test text-6xl font-semibold">
-                    포트폴리오
-                  </h3>
+                  <h3 class="font-test text-6xl font-semibold">포트폴리오</h3>
                   <p class="font-ltest mt-2 text-xl leading-relaxed text-gray-600">
                     "아이스크림 같지?"fewfe
                   </p>
-
                 </div>
               </div>
               <div class="relative min-h-[40rem] w-full">
@@ -241,9 +239,7 @@ function Mainpage(props) {
           <div
             class="bottom-auto top-0 left-0 right-0 w-full absolute pointer-events-none overflow-hidden -mt-20"
             style={{ height: "80px", transform: "translateZ(0px)" }}
-          >
-
-          </div>
+          ></div>
           <div class="container mx-auto px-4 lg:pt-24 lg:pb-64">
             <div class="flex flex-wrap text-center justify-center">
               <div class="w-full lg:w-6/12 px-4">
