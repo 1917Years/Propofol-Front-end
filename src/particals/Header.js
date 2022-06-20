@@ -6,6 +6,7 @@ import axios from "axios";
 import { getCookie } from "../utils/cookie";
 import { getAccessToken, getRefreshToken, removeJWT } from "../utils/auth";
 import See from "../utils/sse";
+import { getUserDataToken, deleteUserData } from "../utils/user";
 
 function Header({ }) {
   const navigate = useNavigate();
@@ -13,17 +14,18 @@ function Header({ }) {
   const [userMove, setUserMove] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
-  useEffect(() => {
-    console.log("쿠키 나와");
-    console.log(getCookie("portfolioId"));
-    setPortfolioId(getCookie("portfolioId"));
-  }, [userMove]);
+  // useEffect(() => {
+  //   console.log("쿠키 나와");
+  //   console.log(getCookie("portfolioId"));
+  //   setPortfolioId(getCookie("portfolioId"));
+  // }, [userMove]);
 
   const checkPtf = () => {
-    console.log("포폴 아이디 주삼");
-    console.log(portfolioId);
-    if (portfolioId != null) navigate("/portfolio/main/" + portfolioId);
-    else navigate("/portfolio/main");
+    if (getUserDataToken() != null) {
+      let memberId = getUserDataToken().id;
+      if (memberId != null) navigate("/portfolio/main/" + memberId);
+      else navigate("/portfolio/main");
+    }
   };
 
   useEffect(() => {
@@ -74,6 +76,7 @@ function Header({ }) {
               class="relative font-ltest"
               onClick={() => {
                 removeJWT();
+                deleteUserData();
                 setIsLogin(false);
               }}
             >

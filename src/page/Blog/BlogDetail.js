@@ -331,6 +331,7 @@ function BlogDetail() {
                 console.log(res);
                 loadComment();
                 loadWritings();
+                setCommentInput("");
             })
             .catch((err) => {
                 console.log("안녕하세요? 전 에러에요.");
@@ -343,6 +344,7 @@ function BlogDetail() {
         axios.post(SERVER_URL + "/til-service/api/v1/boards/" + id + "/" + gid + "/comment", { content: replyCommentInput })
             .then((res) => {
                 console.log(res);
+                setReplyCommentInput("");
                 loadComment();
                 loadWritings();
             })
@@ -542,6 +544,7 @@ function BlogDetail() {
                     <textarea
                         class="resize-none border border-gray-300 w-full px-5 py-3 min-h-[7rem] focus:outline-0 font-ltest"
                         placeholder="바르고 고운 말을 사용해주세요."
+                        value={commentInput}
                         onChange={(e) => { setCommentInput(e.target.value) }}
                     />
                     <div class="flex w-full justify-between items-center">
@@ -618,6 +621,7 @@ function BlogDetail() {
                                                         <textarea
                                                             class="w-4/5 mt-5 resize-none border border-gray-300 px-5 py-3 min-h-[7rem] focus:outline-0 font-ltest"
                                                             placeholder="바르고 고운 말을 사용해주세요."
+                                                            value={replyCommentInput}
                                                             onChange={(e) => { setReplyCommentInput(e.target.value) }}
                                                         />
                                                         <div class="w-4/5 flex justify-end text-gray-500 bg-white border-b border-l border-r border-gray-300">

@@ -418,6 +418,7 @@ function BlogEditor(props) {
       .then((res) => {
         console.log("성공.");
         console.log(res);
+        navigate("/blog/main/" + 1);
       })
       .catch((err) => {
         console.log("실패.");

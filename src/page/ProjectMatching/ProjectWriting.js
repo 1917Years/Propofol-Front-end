@@ -376,6 +376,7 @@ function ProjectWriting() {
       .post(SERVER_URL + "/matching-service/api/v1/matchings", formData_Save)
       .then((res) => {
         console.log(res);
+        navigate("/pm/main");
       })
       .catch((err) => {
         console.log(err.response);

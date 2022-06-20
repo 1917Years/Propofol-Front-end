@@ -118,25 +118,6 @@ function Mainpage(props) {
                 <p>프로포폴과 함께라면, 편하게 해결할 수 있어요.</p>
               </p>
             </div>
-            <button
-              class="bg-white w-12 z-40 text-black font-test"
-              onClick={() => {
-                axios
-                  .get(SERVER_URL + "/user-service/api/v1/members")
-                  .then((res) => {
-                    console.log(res);
-                  })
-                  .catch((err) => {
-                    if (err.response) {
-                      console.log(err.response);
-                      console.log(getAccessToken());
-                      console.log(getRefreshToken());
-                    }
-                  });
-              }}
-            >
-              버튼11111
-            </button>
           </div>
         </div>
 

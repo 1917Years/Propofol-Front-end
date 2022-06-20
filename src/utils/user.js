@@ -17,3 +17,7 @@ export function getUserDataToken() {
         return null;
     }
 }
+
+export function deleteUserData() {
+    cookies.remove('user_data');
+}

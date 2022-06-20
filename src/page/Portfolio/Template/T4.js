@@ -21,8 +21,8 @@ function T4() {
       await axios
         .get(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/memberPortfolio?memberId=" +
-            id
+          "/ptf-service/api/v1/portfolio/getPortfolio?memberId=" +
+          id
         )
         .then((res) => {
           console.log("서버에서 보내준 값");

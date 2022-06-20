@@ -41,6 +41,8 @@ import {
 } from "./utils/auth";
 import BlogWr2 from "./page/Blog/BlogWr2";
 import BlogDetail from "./page/Blog/BlogDetail";
+import { deleteUserData } from "./utils/user";
+import ProjectMySchedule from "./page/ProjectMatching/ProejctMySchedule";
 
 axios.interceptors.response.use(
   function (response) {
@@ -69,7 +71,7 @@ axios.interceptors.response.use(
     } else if (
       error.response.data != null &&
       error.response.data.message ==
-        "JWT strings must contain exactly 2 period characters. Found: 0"
+      "JWT strings must contain exactly 2 period characters. Found: 0"
     ) {
       const originalRequest = error.config;
       originalRequest.headers["Authorization"] = null;
@@ -106,6 +108,10 @@ axios.interceptors.response.use(
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${getAccessToken()}`;
+        }
+        else {
+          removeJWT();
+          deleteUserData();
         }
         setRefreshTokenToCookie(refreshToken);
         return await axios.request(originalRequest);
@@ -212,6 +218,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/pm/writing" element={<ProjectWriting />} />
           <Route path="/pm/main" element={<ProjectMain />} />
+          <Route path="/pm/myschedule" element={<ProjectMySchedule />} />
           <Route path="/pm/myproject/:id" element={<ProjectMyDetail />} />
           <Route path="/pm/mylist" element={<ProjectMyList />} />
           <Route path="/pm/detail/:id" element={<ProjectDetail />} />

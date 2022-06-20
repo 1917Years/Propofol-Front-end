@@ -67,6 +67,7 @@ function Register() {
       .then((res) => {
         console.log("여기 찍힘?");
         console.log(res);
+        navigate('/');
       })
       .catch((err) => {
         console.log(err);
@@ -254,11 +255,11 @@ function Register() {
     let valid = false;
     valid = emailVaild && emailCheckValid && nickNameVaild && pwdVaild && pwdCheckVaild;
     if (valid == true) {
-      alert("우왕굿");
+      alert("회원가입에 성공하였습니다.");
       console.log(t);
       postRegister(t);
     } else {
-      alert("안돼임마");
+      //alert("안돼임마");
     }
   };
 

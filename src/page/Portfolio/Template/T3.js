@@ -22,8 +22,8 @@ function T3() {
       await axios
         .get(
           SERVER_URL +
-            "/ptf-service/api/v1/portfolio/memberPortfolio?memberId=" +
-            id
+          "/ptf-service/api/v1/portfolio/getPortfolio?memberId=" +
+          id
         )
         .then((res) => {
           console.log("서버에서 보내준 값");
@@ -205,7 +205,7 @@ function T3() {
               </div>
             </div>
             {portfolioInfo.skills.length != 0 &&
-            portfolioInfo.awards.length != 0 ? (
+              portfolioInfo.awards.length != 0 ? (
               <section class="relative">
                 <div class="w-1/2 mt-10 mx-auto flex justify-center border-b border-gray-400 pb-12">
                   <div class="w-[50%]">
