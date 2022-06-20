@@ -66,14 +66,16 @@ axios.interceptors.response.use(
           "Authorization"
         ] = `Bearer ${getAccessToken()}`;
       }
-    }
-    else if (error.response.data != null && error.response.data.message == "JWT strings must contain exactly 2 period characters. Found: 0") {
+    } else if (
+      error.response.data != null &&
+      error.response.data.message ==
+        "JWT strings must contain exactly 2 period characters. Found: 0"
+    ) {
       const originalRequest = error.config;
       originalRequest.headers["Authorization"] = null;
-      axios.defaults.headers.common['Authorization'] = null;
+      axios.defaults.headers.common["Authorization"] = null;
       return await axios.request(originalRequest);
-    }
-    else if (
+    } else if (
       error != null &&
       error != undefined &&
       error.response.data.data == "Please RefreshToken."
@@ -92,7 +94,9 @@ axios.interceptors.response.use(
         console.log("access-token = " + accessToken);
         setAccessTokenToCookie(accessToken);
         if (getAccessToken() != "no access_token") {
-          originalRequest.headers["Authorization"] = `Bearer ${getAccessToken()}`;
+          originalRequest.headers[
+            "Authorization"
+          ] = `Bearer ${getAccessToken()}`;
           //console.log("refresh-token = " + refreshToken);
           //originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
           console.log(
@@ -220,10 +224,14 @@ function App() {
           <Route path="/oauth2/kakao/login" element={<KakOauth />} />
           <Route path="/portfolio/main" element={<PortfolioMain />} />
           <Route path="/portfolio/main/:id" element={<PortfolioMain />} />
-          <Route path="/portfolio/template/t1" element={<T1 />} />
-          <Route path="/portfolio/template/t2" element={<T2 />} />
-          <Route path="/portfolio/template/t3" element={<T3 />} />
-          <Route path="/portfolio/template/t4" element={<T4 />} />
+          {/* <Route path="/portfolio/template/t1" element={<T1 />} /> */}
+          <Route path="/portfolio/template/t1/:id" element={<T1 />} />
+          {/* <Route path="/portfolio/template/t2" element={<T2 />} /> */}
+          <Route path="/portfolio/template/t2/:id" element={<T2 />} />
+          {/* <Route path="/portfolio/template/t3" element={<T3 />} /> */}
+          <Route path="/portfolio/template/t3/:id" element={<T3 />} />
+          {/* <Route path="/portfolio/template/t4" element={<T4 />} /> */}
+          <Route path="/portfolio/template/t4/:id" element={<T4 />} />
           <Route path="/portfolio/template/samplet1" element={<SampleT1 />} />
           <Route path="/portfolio/template/samplet2" element={<SampleT2 />} />
           <Route path="/portfolio/template/samplet3" element={<SampleT3 />} />

@@ -14,14 +14,22 @@ function T4() {
   const [profileType, setProfileType] = useState();
   const navigate = useNavigate();
 
+  const id = useParams().id;
+
   useEffect(() => {
     async function fetchData() {
       await axios
-        .get(SERVER_URL + "/ptf-service/api/v1/portfolio/myPortfolio")
+        .get(
+          SERVER_URL +
+            "/ptf-service/api/v1/portfolio/memberPortfolio?memberId=" +
+            id
+        )
         .then((res) => {
           console.log("서버에서 보내준 값");
           console.log(res);
           let tmpCm = {
+            // 만약 멤버 id 보내주면
+            // id: res.data.data.id,
             email: res.data.data.email,
             phone: res.data.data.phoneNumber,
             username: res.data.data.username,
@@ -121,6 +129,13 @@ function T4() {
                   <div class="py-2 text-base">
                     {portfolioInfo.username}님의 포트폴리오예요 😚 :
                   </div>
+                  {/* 만약 id 받아오면 추가해주기! */}
+                  {/* {portfolioInfo.id == id ? <button
+                    class="font-test py-2 px-4"
+                    onClick={downloadPdfDocument}
+                  >
+                    📄 <a class="text-red-500">PDF</a>로 다운받기
+                  </button> : null} */}
                   <button
                     class="font-test py-2 px-4"
                     onClick={downloadPdfDocument}
