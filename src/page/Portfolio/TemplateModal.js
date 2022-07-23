@@ -13,23 +13,21 @@ export function TemplateModal(props) {
   };
 
   const onTemplateUpdateHandler = (e) => {
-    if (props.checkCreate) {
-      axios
-        .post(
-          SERVER_URL +
-            "/ptf-service/api/v1/portfolio/" +
-            props.id +
-            "/template?template=" +
-            props.template
-        )
-        .then((res) => {
-          console.log("템플릿 변경");
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
+    axios
+      .post(
+        SERVER_URL +
+          "/ptf-service/api/v1/portfolio/" +
+          props.id +
+          "/template?template=" +
+          props.template
+      )
+      .then((res) => {
+        console.log("템플릿 변경");
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     props.setOpenTemplate(!props.openTemplate);
   };
 
@@ -43,7 +41,7 @@ export function TemplateModal(props) {
           <button
             type="button"
             class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-            onClick={() => onTemplateUpdateHandler()}
+            onClick={() => props.setOpenTemplate(!props.openTemplate)}
           >
             <svg
               class="w-5 h-5"
@@ -137,6 +135,14 @@ export function TemplateModal(props) {
                 TYPE 4
               </button>
             </div>
+          </div>
+          <div class="flex justify-end">
+            <button
+              class="font-test text-gray-500 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
+              onClick={() => onTemplateUpdateHandler()}
+            >
+              등록하기
+            </button>
           </div>
         </div>
       </div>

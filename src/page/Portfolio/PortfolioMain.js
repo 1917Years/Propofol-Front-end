@@ -56,21 +56,12 @@ function PortfolioMain() {
   const [awardInfo, setAwardInfo] = useState([]);
   const [projectInfo, setProjectInfo] = useState([]);
 
-  const [firstCareerInfo, setFirstCareerInfo] = useState([]);
-  const [careerIndex, setCareerIndex] = useState(0);
-  const [firstAwardInfo, setFirstAwardInfo] = useState([]);
-  const [awardIndex, setAwardIndex] = useState(0);
-  const [firstProjectInfo, setFirstProjectInfo] = useState([]);
-  const [projectIndex, setProjectIndex] = useState(0);
-  const [axiosFinish, setAxiosFinish] = useState(false);
-
   const [topRecommendPost, setTopRecommendPost] = useState([]);
   const [noPost, setNoPost] = useState(false);
   const [contentAfter, setContentAfter] = useState([]);
   const [dateAfter, setDateAfter] = useState([]);
 
   const [userTagInfo, setUserTagInfo] = useState([]);
-  const [portfolioId, setPortfolioId] = useState(0);
 
   const navigate = useNavigate();
   const id = useParams().id;
@@ -92,187 +83,118 @@ function PortfolioMain() {
   }
 
   async function onWorkInputHandler() {
-    if (checkCreate) {
-      let tmpWork = {
-        title: workNameInput,
-        content: workDetailInput,
-        startTerm: workStart,
-        endTerm: workEnd,
-      };
-      tmpWorkList = tmpWork;
-      console.log(tmpWork);
+    let tmpWork = {
+      title: workNameInput,
+      content: workDetailInput,
+      startTerm: workStart,
+      endTerm: workEnd,
+    };
+    tmpWorkList = tmpWork;
+    console.log(tmpWork);
 
-      await axios
-        .post(
-          SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/career",
-          tmpWork
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    await axios
+      .post(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/career",
+        tmpWork
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-      setWorkNameInput(null);
-      setWorkDetailInput(null);
-      setWorkStart(null);
-      setWorkEnd(null);
-      setWorkAdd(false);
-      onCareerGetHandler();
-    } else {
-      let tmpWork = {
-        id: careerIndex,
-        title: workNameInput,
-        content: workDetailInput,
-        startTerm: workStart,
-        endTerm: workEnd,
-        update: false,
-        delete: false,
-      };
-      tmpWorkList.push(tmpWork);
-      setFirstCareerInfo(tmpWorkList);
-      setWorkAdd(false);
-      setWorkNameInput(null);
-      setWorkDetailInput(null);
-      setWorkStart(null);
-      setWorkEnd(null);
-      setCareerIndex(careerIndex + 1);
-      console.log(tmpWorkList);
-    }
+    setWorkNameInput(null);
+    setWorkDetailInput(null);
+    setWorkStart(null);
+    setWorkEnd(null);
+    setWorkAdd(false);
+    onCareerGetHandler();
   }
 
   async function onAwardInputHandler() {
-    if (checkCreate) {
-      let tmpAward = {
-        name: awardName,
-        date: awardDate,
-      };
-      tmpAwardList = tmpAward;
-      console.log(tmpAward);
+    let tmpAward = {
+      name: awardName,
+      date: awardDate,
+    };
+    tmpAwardList = tmpAward;
+    console.log(tmpAward);
 
-      await axios
-        .post(
-          SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/award",
-          tmpAward
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+    await axios
+      .post(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/award",
+        tmpAward
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-      setAwardName(null);
-      setAwardDate(null);
-      setAwardAdd(false);
-      onAwardGetHandler();
-    } else {
-      let tmpAward = {
-        id: awardIndex,
-        name: awardName,
-        date: awardDate,
-        update: false,
-        delete: false,
-      };
-      tmpAwardList.push(tmpAward);
-      setFirstAwardInfo(tmpAwardList);
-      setAwardIndex(awardIndex + 1);
-
-      setAwardName(null);
-      setAwardDate(null);
-      setAwardAdd(false);
-
-      console.log(tmpAwardList);
-    }
+    setAwardName(null);
+    setAwardDate(null);
+    setAwardAdd(false);
+    onAwardGetHandler();
   }
 
   async function onProjectInputHandler() {
-    if (checkCreate) {
-      const formData = new FormData();
-      let tmpProject = {
-        title: prjName,
-        content: prjDetailInput,
-        job: prjDev,
-        startTerm: prjDevStart,
-        endTerm: prjDevEnd,
-        projectSkills: selectedTagList,
-        image: prjImg,
-      };
-      tmpPrjList = tmpProject;
-      console.log(tmpProject);
+    const formData = new FormData();
+    let tmpProject = {
+      title: prjName,
+      content: prjDetailInput,
+      job: prjDev,
+      startTerm: prjDevStart,
+      endTerm: prjDevEnd,
+      projectSkills: selectedTagList,
+      image: prjImg,
+    };
+    tmpPrjList = tmpProject;
+    console.log(tmpProject);
 
-      formData.append("portfolioId", id);
-      formData.append("title", tmpProject.title);
-      formData.append("content", tmpProject.content);
-      formData.append("job", tmpProject.job);
-      formData.append("startTerm", tmpProject.startTerm);
-      formData.append("endTerm", tmpProject.endTerm);
+    formData.append("portfolioId", id);
+    formData.append("title", tmpProject.title);
+    formData.append("content", tmpProject.content);
+    formData.append("job", tmpProject.job);
+    formData.append("startTerm", tmpProject.startTerm);
+    formData.append("endTerm", tmpProject.endTerm);
 
-      let tmpTag = [];
-      selectedTagList.map((tag) => {
-        tmpTag.push(tag.id);
+    let tmpTag = [];
+    selectedTagList.map((tag) => {
+      tmpTag.push(tag.id);
+    });
+    formData.append("skills", tmpTag);
+
+    prjImageList.map((image) => {
+      formData.append("file", image);
+    });
+
+    console.log("이미지 리스트 확인~~");
+    console.log(prjImageList);
+
+    await axios
+      .post(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/project",
+        formData
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
       });
-      formData.append("skills", tmpTag);
 
-      prjImageList.map((image) => {
-        formData.append("file", image);
-      });
+    setProjectAdd(false);
+    setPrjName(null);
+    setPrjDev(null);
+    setPrjDevStart(null);
+    setPrjDevEnd(null);
+    setPrjSkillsList([]);
+    setPrjDetailInput(null);
+    setPrjImageList(null);
+    tmpPrjImgList = [];
 
-      console.log("이미지 리스트 확인~~");
-      console.log(prjImageList);
-
-      await axios
-        .post(
-          SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/project",
-          formData
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      setProjectAdd(false);
-      setPrjName(null);
-      setPrjDev(null);
-      setPrjDevStart(null);
-      setPrjDevEnd(null);
-      setPrjSkillsList([]);
-      setPrjDetailInput(null);
-      setPrjImageList(null);
-      tmpPrjImgList = [];
-
-      onProjectGetHandler();
-    } else {
-      let tmpProject = {
-        id: projectIndex,
-        title: prjName,
-        content: prjDetailInput,
-        job: prjDev,
-        startTerm: prjDevStart,
-        endTerm: prjDevEnd,
-        projectSkills: selectedTagList,
-        projectSkillsCount: selectedTagList.length,
-        image: prjImg,
-      };
-
-      console.log("태그가 잘 들어갔는지...?");
-      tmpPrjList.push(tmpProject);
-      setFirstProjectInfo(tmpPrjList);
-
-      setProjectAdd(false);
-      setPrjName(null);
-      setPrjDev(null);
-      setPrjDevStart(null);
-      setPrjDevEnd(null);
-      setPrjSkillsList([]);
-      setPrjDetailInput(null);
-      setPrjImg(null);
-      setProjectIndex(projectIndex + 1);
-      console.log(tmpPrjList);
-    }
+    onProjectGetHandler();
   }
 
   const onProfileButtonHandler = (e) => {
@@ -309,27 +231,6 @@ function PortfolioMain() {
 
   const onIntroInputHandler = (e) => {
     setIntroInput(e.target.value);
-  };
-
-  const onTemplateUpdateHandler = (e) => {
-    if (checkCreate) {
-      axios
-        .post(
-          SERVER_URL +
-          "/ptf-service/api/v1/portfolio/" +
-          portfolioId +
-          "/template?template=" +
-          template
-        )
-        .then((res) => {
-          console.log("템플릿 변경");
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    setOpenTemplate(!openTemplate);
   };
 
   const onWorkStartInputHandler = (e) => {
@@ -402,7 +303,7 @@ function PortfolioMain() {
 
     await axios
       .post(
-        SERVER_URL + "/ptf-service/api/v1/portfolio/" + portfolioId + "/skill",
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/skill",
         formData
       )
       .then((res) => {
@@ -417,131 +318,78 @@ function PortfolioMain() {
 
   async function onUpdateCareerHandler(params, title, content, start, end, e) {
     console.log("경력 수정");
-    if (checkCreate) {
-      let tmpWork = {
-        title: workNameInput,
-        content: workDetailInput,
-        startTerm: workStart,
-        endTerm: workEnd,
-      };
+    let tmpWork = {
+      title: workNameInput,
+      content: workDetailInput,
+      startTerm: workStart,
+      endTerm: workEnd,
+    };
 
-      if (workNameInput == null) tmpWork.title = title;
-      if (workDetailInput == null) tmpWork.content = content;
-      if (workStart == null) tmpWork.startTerm = start;
-      if (workEnd == null) tmpWork.endTerm = end;
+    if (workNameInput == null) tmpWork.title = title;
+    if (workDetailInput == null) tmpWork.content = content;
+    if (workStart == null) tmpWork.startTerm = start;
+    if (workEnd == null) tmpWork.endTerm = end;
 
-      tmpWorkList = tmpWork;
+    tmpWorkList = tmpWork;
 
-      await axios
-        .post(
-          SERVER_URL +
+    await axios
+      .post(
+        SERVER_URL +
           "/ptf-service/api/v1/portfolio/" +
-          portfolioId +
+          id +
           "/career/" +
           params,
-          tmpWork
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        tmpWork
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-      const findIndex = careerInfo.findIndex((element) => element.id == params);
-      let copyCareer = [...careerInfo];
-      copyCareer[findIndex] = {
-        ...copyCareer[findIndex],
-        update: false,
-      };
-      setCareerInfo(copyCareer);
-      onCareerGetHandler();
-    } else {
-      let tmpWork = {
-        id: params,
-        title: workNameInput,
-        content: workDetailInput,
-        startTerm: workStart,
-        endTerm: workEnd,
-        update: false,
-        delete: false,
-      };
-
-      if (workNameInput == null) tmpWork.title = title;
-      if (workDetailInput == null) tmpWork.content = content;
-      if (workStart == null) tmpWork.startTerm = start;
-      if (workEnd == null) tmpWork.endTerm = end;
-
-      // 기존에 있던 애 복사해두기
-      let copyCareer = [...tmpWorkList];
-      // 인덱스 찾기
-      const findIndex = tmpWorkList.findIndex(
-        (element) => element.id == params
-      );
-
-      // 값 바꿔주기
-      copyCareer[findIndex] = tmpWork;
-      setFirstCareerInfo(copyCareer);
-    }
+    const findIndex = careerInfo.findIndex((element) => element.id == params);
+    let copyCareer = [...careerInfo];
+    copyCareer[findIndex] = {
+      ...copyCareer[findIndex],
+      update: false,
+    };
+    setCareerInfo(copyCareer);
+    onCareerGetHandler();
   }
 
   async function onUpdateAwardHandler(params, date, name, e) {
     console.log("수상 수정");
+    let tmpAward = {
+      name: awardName,
+      date: awardDate,
+    };
+    if (awardName == null) tmpAward.name = name;
+    if (awardDate == null) tmpAward.date = date;
 
-    if (checkCreate) {
-      let tmpAward = {
-        name: awardName,
-        date: awardDate,
-      };
-      if (awardName == null) tmpAward.name = name;
-      if (awardDate == null) tmpAward.date = date;
+    tmpAwardList = tmpAward;
+    console.log(tmpAwardList);
 
-      tmpAwardList = tmpAward;
-      console.log(tmpAwardList);
+    await axios
+      .post(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/award/" + params,
+        tmpAward
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
 
-      await axios
-        .post(
-          SERVER_URL +
-          "/ptf-service/api/v1/portfolio/" +
-          portfolioId +
-          "/award/" +
-          params,
-          tmpAward
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-
-      const findIndex = awardInfo.findIndex((element) => element.id == params);
-      let copyAward = [...awardInfo];
-      copyAward[findIndex] = {
-        ...copyAward[findIndex],
-        update: false,
-      };
-      setAwardInfo(copyAward);
-      onAwardGetHandler();
-    } else {
-      let tmpAward = {
-        id: params,
-        name: awardName,
-        date: awardDate,
-        update: false,
-        delete: false,
-      };
-
-      if (awardName == null) tmpAward.name = name;
-      if (awardDate == null) tmpAward.date = date;
-
-      let copyAward = [...tmpAwardList];
-      const findIndex = tmpAwardList.findIndex(
-        (element) => element.id == params
-      );
-      copyAward[findIndex] = tmpAward;
-      setFirstAwardInfo(copyAward);
-    }
+    const findIndex = awardInfo.findIndex((element) => element.id == params);
+    let copyAward = [...awardInfo];
+    copyAward[findIndex] = {
+      ...copyAward[findIndex],
+      update: false,
+    };
+    setAwardInfo(copyAward);
+    onAwardGetHandler();
   }
 
   async function onUpdateBlogHandler() {
@@ -564,7 +412,7 @@ function PortfolioMain() {
 
     axios
       .post(
-        SERVER_URL + "/ptf-service/api/v1/portfolio/" + portfolioId + "/blog",
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/blog",
         formData
       )
       .then((res) => {
@@ -629,80 +477,6 @@ function PortfolioMain() {
     else setAwardName(params);
 
     console.log(awardName);
-  };
-
-
-  const onPortfolioCreateHandler = (e) => {
-    const formData = new FormData();
-    selectedSkillList.map((skill) => {
-      formData.append("skills", skill.id);
-    });
-
-    userTagInfo.map((skill) => {
-      formData.append("skills", skill.id);
-    });
-
-    formData.append("template", template);
-    formData.append("github", githubInput);
-    formData.append("job", jobInput);
-    formData.append("content", introInput);
-
-    firstAwardInfo.map((award) => {
-      formData.append("awardNames", award.name);
-      formData.append("awardDates", award.date);
-    });
-
-    let tmpCareerContents = [];
-
-    firstCareerInfo.map((car) => {
-      formData.append("careerTitles", car.title);
-      tmpCareerContents.push(car.content);
-      formData.append("careerStartTerms", car.startTerm);
-      formData.append("careerEndTerms", car.endTerm);
-    });
-
-    formData.append("careerContents", tmpCareerContents);
-
-    let tmpProjectContents = [];
-
-    firstProjectInfo.map((prj) => {
-      formData.append("prjTitles", prj.title);
-      tmpProjectContents.push(prj.content);
-      formData.append("prjJobs", prj.job);
-      formData.append("prjStartTerms", prj.startTerm);
-      formData.append("prjEndTerms", prj.endTerm);
-      formData.append("prjSkillCount", prj.projectSkillsCount);
-      prj.projectSkills.map((skill) => {
-        formData.append("prjSkills", skill.id);
-      });
-    });
-
-    formData.append("prjContents", tmpProjectContents);
-
-    prjImageList.map((image) => {
-      formData.append("files", image);
-    });
-
-    let axiosFinish = false;
-    axios
-      .post(SERVER_URL + "/ptf-service/api/v1/portfolio", formData)
-      .then((res) => {
-        console.log(res);
-        axiosFinish = true;
-        if (axiosFinish) {
-          if (template == "TYPE_1")
-            navigate("/portfolio/template/t1/" + userInfo.id);
-          else if (template == "TYPE_2")
-            navigate("/portfolio/template/t2/" + userInfo.id);
-          else if (template == "TYPE_3")
-            navigate("/portfolio/template/t3/" + userInfo.id);
-          else if (template == "TYPE_4")
-            navigate("/portfolio/template/t4/" + userInfo.id);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   async function onSkillGetHandler() {
@@ -780,69 +554,46 @@ function PortfolioMain() {
   }
 
   function onCareerDeleteHandler(params, e) {
-    if (checkCreate) {
-      axios
-        .delete(
-          SERVER_URL +
-          "/ptf-service/api/v1/portfolio/" +
-          id +
-          "/career/" +
-          params
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      tmpWorkList = tmpWorkList.filter((career) => career.id !== params);
-      setFirstCareerInfo(tmpWorkList);
-    }
+    axios
+      .delete(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/career/" + params
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function onAwardDeleteHandler(params, e) {
-    if (checkCreate) {
-      axios
-        .delete(
-          SERVER_URL +
-          "/ptf-service/api/v1/portfolio/" +
-          id +
-          "/award/" +
-          params
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      tmpAwardList = tmpAwardList.filter((award) => award.id !== params);
-      setFirstAwardInfo(tmpAwardList);
-    }
+    axios
+      .delete(
+        SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/award/" + params
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function onProjectDeleteHandler(params, e) {
-    if (checkCreate) {
-      axios
-        .delete(
-          SERVER_URL +
+    axios
+      .delete(
+        SERVER_URL +
           "/ptf-service/api/v1/portfolio/" +
           id +
           "/project/" +
           params
-        )
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      tmpPrjList = tmpPrjList.filter((prj) => prj.id !== params);
-      setFirstProjectInfo(tmpPrjList);
-    }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function onTopPostDeleteHandler(params, e) {
@@ -881,7 +632,6 @@ function PortfolioMain() {
     setBasicInfo(copyBasic);
   };
 
-
   let ptfId = 0;
 
   useEffect(() => {
@@ -890,24 +640,7 @@ function PortfolioMain() {
 
     console.log("id가 찍힐까...?"); // memberId...!
     console.log(id);
-
-    async function checkPtfId() {
-      await axios
-        .get(SERVER_URL + "/ptf-service/api/v1/portfolio/findPortfolioId?memberId=" + id)
-        .then((res) => {
-          console.log("ressssssssssssss");
-          console.log(res);
-          console.log("포폴 id 조회");
-          console.log(res.data);
-          ptfId = res.data;
-          setPortfolioId(res.data);
-
-          fetchData();
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-    }
+    fetchData();
 
     async function fetchData() {
       let tmpCm;
@@ -942,18 +675,19 @@ function PortfolioMain() {
             console.log("프로필 없삼");
             setCheckProfile(false);
 
-            let tagInfos = [...res.data.tagInfos];
-
+            // 나중에 본 프로젝트랑 합칠 때는 tagInfos로 바꾸기!!! 지금은 tags임 (업데이트 안 돼서 ㅠㅠ)
+            // let tagInfos = [...res.data.tagInfos];
+            let tagInfos = [...res.data.tags];
             setUserTagInfo(tagInfos);
           } else {
             console.log("이미 프로필 이미지 있삼");
             setProfileType(res.data.profileType);
             setProfileImg(res.data.profileString);
             setCheckProfile(true);
-            let tagInfos = [...res.data.tagInfos];
+            let tagInfos = [...res.data.tags];
+            // let tagInfos = [...res.data.tagInfos];
             setUserTagInfo(tagInfos);
           }
-
 
           fetchData2();
         })
@@ -962,33 +696,23 @@ function PortfolioMain() {
         });
     }
 
-
     async function fetchData2() {
-      console.log("포폴 id!!!!!!!!!!!!!!!!!!!!!!!!!!");
-      console.log(ptfId);
+      let tmpCm = [];
 
-      if (ptfId == 0) {
-        console.log("포폴 생성 페이지가 되어야 해요~~");
-        setCheckCreate(false);
-        setLoadingComplete(true);
-        setTemplate("TYPE_1"); //default
-        updateTopPost();
-      } else {
-        let tmpCm = [];
+      console.log("memberId 호출");
+      console.log(id);
 
-        console.log("memberId 호출");
-        console.log(id);
-
-        await axios
-          .get(
-            SERVER_URL +
-            "/ptf-service/api/v1/portfolio/getPortfolio?memberId=" +
+      await axios
+        .get(
+          SERVER_URL +
+            "/ptf-service/api/v1/portfolio/memberPortfolio?memberId=" +
             id
-          )
-          .then((res) => {
-            console.log("서버에서 보내준 값");
-            console.log(res);
+        )
+        .then((res) => {
+          console.log("서버에서 보내준 값");
+          console.log(res);
 
+          if (res.data.data.portfolio != undefined) {
             tmpCm = {
               email: res.data.data.email,
               phone: res.data.data.phoneNumber,
@@ -1003,7 +727,7 @@ function PortfolioMain() {
               template: res.data.data.portfolio.template,
               boards: res.data.data.portfolio.boards,
             };
-            console.log("포트폴리오 정보 조회하기~~~");
+            console.log("포트폴리오 정보 조회하기~~~!!!!!");
             console.log(tmpCm);
             setPortfolioInfo(tmpCm);
 
@@ -1097,19 +821,17 @@ function PortfolioMain() {
             setCareerInfo(newCareer);
             setAwardInfo(newAward);
             setProjectInfo(newProject);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
 
-        setCheckCreate(true);
-        setLoadingComplete(true);
-        setTemplate(tmpCm.template);
-      }
+      setCheckCreate(true);
+      setLoadingComplete(true);
+      setTemplate(tmpCm.template);
     }
-
-    checkPtfId();
-
+    // checkPtfId();
   }, []);
 
   async function updateTopPost() {
@@ -1118,12 +840,34 @@ function PortfolioMain() {
       .then((res) => {
         console.log("추천수 높은 글을 가져올거예요~~~^^");
         console.log(res);
-        setTopRecommendPost([...res.data]);
+        // 원래는 .data로 접근해야 함!!
+        // setTopRecommendPost([...res.data]);
+        setTopRecommendPost([...res.data.data]);
+
         let tmpContentAfter = [];
         let tmpDate = [];
 
-        if (res.data.message != "아직 작성된 글이 없습니다.") {
-          res.data.map((item) => {
+        // if (res.data.message != "아직 작성된 글이 없습니다.") {
+        //   res.data.map((item) => {
+        //     tmpContentAfter.push(
+        //       htmlDetailToText(item.content).substring(0, 300) + "..."
+        //     );
+        //     tmpDate.push(item.createdDate);
+        //   });
+
+        //   let tmpDateAfter = [];
+        //   tmpDate.map((item) => {
+        //     tmpDateAfter.push(item.substring(0, 10));
+        //   });
+
+        //   setContentAfter([...tmpContentAfter]);
+        //   setDateAfter([...tmpDateAfter]);
+        // } else {
+        //   setNoPost(true);
+        // }
+
+        if (res.data.data.message != "아직 작성된 글이 없습니다.") {
+          res.data.data.map((item) => {
             tmpContentAfter.push(
               htmlDetailToText(item.content).substring(0, 300) + "..."
             );
@@ -1167,34 +911,26 @@ function PortfolioMain() {
           <div class="w-2/3 mt-10 mx-auto border rounded-lg">
             <section class="lg:flex gap-5 items-center">
               <div class="ml-10 mt-10 grow font-sbtest text-2xl">
-                {checkCreate ? portfolioInfo.username : userInfo.username}님을
-                위한 포트폴리오예요 😊
+                {userInfo.username}님을 위한 포트폴리오예요 😊
               </div>
             </section>
             <div class="mt-4 mx-auto h-0.25 bg-gray-300"></div>
             <div class="flex justify-end text-base font-test">
               <button
                 class="px-4 py-2 rounded-xl"
-                onClick={() => onTemplateUpdateHandler()}
+                onClick={() => setOpenTemplate(!openTemplate)}
               >
-                {checkCreate ? "🖼 템플릿 수정" : "🖼 템플릿 선택"}
+                {"🖼 템플릿 선택하기"}
               </button>
               <button
                 class="pr-5 py-2 rounded-xl"
-                onClick={
-                  checkCreate
-                    ? onPortfolioCheckHandler
-                    : onPortfolioCreateHandler
-                }
+                onClick={() => onPortfolioCheckHandler()}
               >
-                {checkCreate
-                  ? "✨ 포트폴리오 확인하기"
-                  : "✨ 포트폴리오 생성하기"}
+                {"✨ 포트폴리오 확인하기"}
               </button>
             </div>
             {openTemplate ? (
               <TemplateModal
-                checkCreate={checkCreate}
                 setTemplate={setTemplate}
                 template={template}
                 setOpenTemplate={setOpenTemplate}
@@ -1233,9 +969,9 @@ function PortfolioMain() {
                                 checkProfile == false
                                   ? profileImage
                                   : "data:image/" +
-                                  profileType +
-                                  ";base64," +
-                                  profileImg
+                                    profileType +
+                                    ";base64," +
+                                    profileImg
                               }
                               class="w-24 h-24 rounded-full drop-shadow-md"
                               alt="profile"
@@ -1288,23 +1024,17 @@ function PortfolioMain() {
                         직무
                       </td>
                       <td class="border border-slate-300">
-                        {basicInfo.update ? (
+                        {basicInfo.job == null ? (
+                          <input
+                            class=" w-full pl-2 py-2 focus:outline-0 text-lg font-ltest min-w-[20rem]"
+                            placeholder="간단한 직무명을 입력해주세요."
+                            onChange={onJobInputHandler}
+                          />
+                        ) : (
                           <input
                             class="w-full pl-2 py-2 focus:outline-0 text-lg font-ltest min-w-[20rem]"
                             defaultValue={basicInfo.job}
                             type="text"
-                            onChange={onJobInputHandler}
-                          />
-                        ) : checkCreate ? (
-                          <input
-                            class="text-gray-500 bg-gray-100 w-full pl-2 py-2 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                            placeholder={basicInfo.job}
-                            disabled
-                          />
-                        ) : (
-                          <input
-                            class=" w-full pl-2 py-2 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                            placeholder="간단한 직무명을 입력해주세요."
                             onChange={onJobInputHandler}
                           />
                         )}
@@ -1315,23 +1045,17 @@ function PortfolioMain() {
                         깃허브 주소
                       </td>
                       <td class="border border-slate-300">
-                        {basicInfo.update ? (
+                        {basicInfo.github == null ? (
                           <input
                             class="w-full pl-2 py-2 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                            defaultValue={basicInfo.github}
-                            type="text"
+                            placeholder={"https://github.com/userId"}
                             onChange={onGithubInputHandler}
-                          />
-                        ) : checkCreate ? (
-                          <input
-                            class="text-gray-500 bg-gray-100 w-full pl-2 py-2 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                            placeholder={basicInfo.github}
-                            disabled
                           />
                         ) : (
                           <input
                             class="w-full pl-2 py-2 focus:outline-0 text-lg font-ltest min-w-[20rem]"
-                            placeholder={"https://github.com/userId"}
+                            defaultValue={basicInfo.github}
+                            type="text"
                             onChange={onGithubInputHandler}
                           />
                         )}
@@ -1342,27 +1066,19 @@ function PortfolioMain() {
                         한줄소개
                       </td>
                       <td class="border border-slate-300">
-                        {basicInfo.update ? (
+                        {basicInfo.content == null ? (
                           <div class="w-full pl-2 py-2 text-lg font-ltest min-w-[20rem] ">
                             <textarea
                               class="w-full mt-5 focus:outline-0 resize-none bg-inherit pb-3 min-h-[10rem] "
-                              defaultValue={basicInfo.content}
+                              placeholder="자기소개를 입력해주세요."
                               onChange={onIntroInputHandler}
-                            />
-                          </div>
-                        ) : checkCreate ? (
-                          <div class="bg-gray-100 w-full pl-2 py-2 text-lg font-ltest min-w-[20rem] ">
-                            <textarea
-                              class="text-gray-500 w-full mt-5 focus:outline-0 resize-none bg-inherit pb-3 min-h-[10rem] "
-                              placeholder={basicInfo.content}
-                              disabled
                             />
                           </div>
                         ) : (
                           <div class="w-full pl-2 py-2 text-lg font-ltest min-w-[20rem] ">
                             <textarea
                               class="w-full mt-5 focus:outline-0 resize-none bg-inherit pb-3 min-h-[10rem] "
-                              placeholder="자기소개를 입력해주세요."
+                              defaultValue={basicInfo.content}
                               onChange={onIntroInputHandler}
                             />
                           </div>
@@ -1371,30 +1087,16 @@ function PortfolioMain() {
                     </tr>
                   </tbody>
                 </table>
-                {checkCreate ? (
-                  <div class="flex justify-end">
-                    {basicInfo && basicInfo.update ? (
-                      <button
-                        class="ml-full py-3 mt-2 border border-gray-300 px-6 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                        onClick={() => {
-                          onUpdateBasicInfoHandler();
-                        }}
-                      >
-                        수정완료
-                      </button>
-                    ) : (
-                      <button
-                        class="ml-full py-3 mt-2 border border-gray-300 px-6 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                        onClick={() => {
-                          let copyBasic = { ...basicInfo, update: true };
-                          setBasicInfo(copyBasic);
-                        }}
-                      >
-                        수정하기
-                      </button>
-                    )}
-                  </div>
-                ) : null}
+                <div class="flex justify-end">
+                  <button
+                    class="ml-full py-3 mt-2 border border-gray-300 px-6 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                    onClick={() => {
+                      onUpdateBasicInfoHandler();
+                    }}
+                  >
+                    수정하기
+                  </button>
+                </div>
               </div>
             </section>
             <section class="mt-10">
@@ -1407,72 +1109,45 @@ function PortfolioMain() {
                         사용 기술
                       </td>
                       <td class="border border-slate-300">
-                        {checkCreate ? (
-                          <>
-                            <div class="flex">
-                              <div class="flex flex-wrap items-center gap-3">
-                                {userTagInfo.map((item) => {
-                                  return (
-                                    <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
-                                      {item.name}
-                                    </div>
-                                  );
-                                })}
-                                {selectedSkillList.map((item) => {
-                                  return (
-                                    <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
-                                      {item.name}
-                                    </div>
-                                  );
-                                })}
-                              </div>
-                              <div class="flex flex-col ml-auto">
-                                <button
-                                  class="w-full py-2 px-6 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[8rem]"
-                                  onClick={() => {
-                                    setShowSkillModal(true);
-                                  }}
-                                >
-                                  수정하기
-                                </button>
-                                <button
-                                  class="w-full py-2 px-4 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest"
-                                  onClick={() => {
-                                    onUpdateSkillHandler();
-                                    // setShowSkillModal(true);
-                                  }}
-                                >
-                                  수정완료
-                                </button>
-                              </div>
+                        <>
+                          <div class="flex">
+                            <div class="flex flex-wrap items-center gap-3">
+                              {userTagInfo.map((item) => {
+                                return (
+                                  <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
+                                    {item.name}
+                                  </div>
+                                );
+                              })}
+                              {selectedSkillList.map((item) => {
+                                return (
+                                  <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
+                                    {item.name}
+                                  </div>
+                                );
+                              })}
                             </div>
-                          </>
-                        ) : (
-                          <div class="flex flex-wrap items-center gap-3">
-                            {userTagInfo.map((item) => {
-                              return (
-                                <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
-                                  {item.name}
-                                </div>
-                              );
-                            })}
-                            {selectedSkillList.map((item) => {
-                              return (
-                                <div class="text-center border border-gray-300 rounded-lg  py-2 px-4 bg-white focus:outline-0 text-base font-ltest">
-                                  {item.name}
-                                </div>
-                              );
-                            })}
-                            <button
-                              class="rounded-lg w-1/6 py-2 px-4 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest"
-                              onClick={() => {
-                                setShowSkillModal(true);
-                              }}
-                            >
-                              +
-                            </button>
+                            <div class="flex flex-col ml-auto">
+                              <button
+                                class="w-full py-2 px-6 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[8rem]"
+                                onClick={() => {
+                                  setShowSkillModal(true);
+                                }}
+                              >
+                                수정하기
+                              </button>
+                              <button
+                                class="w-full py-2 px-4 border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest"
+                                onClick={() => {
+                                  onUpdateSkillHandler();
+                                  // setShowSkillModal(true);
+                                }}
+                              >
+                                수정완료
+                              </button>
+                            </div>
                           </div>
-                        )}
+                        </>
                       </td>
                     </tr>
                     <tr>
@@ -1481,356 +1156,170 @@ function PortfolioMain() {
                       </td>
                       <td class="border border-slate-300">
                         <div>
-                          {checkCreate
-                            ? careerInfo &&
-                            careerInfo.map((item) => {
-                              return (
-                                <div>
-                                  {item.delete ? null : (
-                                    <div
-                                      class={
-                                        item.update
-                                          ? "border-b border-gray-300 w-full px-4 text-gray-500 bg-white text-base font-ltest min-w-[20rem]"
-                                          : "border-b border-gray-300 w-full px-4 text-gray-500 bg-gray-50 text-base font-ltest min-w-[20rem]"
-                                      }
-                                    >
-                                      {item.update ? (
-                                        <input
-                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 "
-                                          defaultValue={item.title}
-                                          onChange={(e) =>
-                                            onUpdateWorknameInput(
-                                              e.currentTarget.value,
-                                              item.title,
-                                              e
-                                            )
-                                          }
-                                        />
-                                      ) : (
-                                        <input
-                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 bg-inherit"
-                                          placeholder={item.title}
-                                          disabled
-                                        />
-                                      )}
+                          {careerInfo.map((item) => {
+                            return (
+                              <div>
+                                {item.delete ? null : (
+                                  <div
+                                    class={
+                                      item.update
+                                        ? "border-b border-gray-300 w-full px-4 text-gray-500 bg-white text-base font-ltest min-w-[20rem]"
+                                        : "border-b border-gray-300 w-full px-4 text-gray-500 bg-gray-50 text-base font-ltest min-w-[20rem]"
+                                    }
+                                  >
+                                    {item.update ? (
+                                      <input
+                                        class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 "
+                                        defaultValue={item.title}
+                                        onChange={(e) =>
+                                          onUpdateWorknameInput(
+                                            e.currentTarget.value,
+                                            item.title,
+                                            e
+                                          )
+                                        }
+                                      />
+                                    ) : (
+                                      <input
+                                        class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 bg-inherit"
+                                        placeholder={item.title}
+                                        disabled
+                                      />
+                                    )}
 
-                                      {item.update ? (
-                                        <textarea
-                                          class="w-full mt-5 focus:outline-0 resize-none pb-3 border-b border-gray-300  min-h-[10rem] "
-                                          defaultValue={item.content}
-                                          onChange={(e) =>
-                                            onUpdateWorkDetailInput(
-                                              e.currentTarget.value,
-                                              item.content,
-                                              e
-                                            )
-                                          }
-                                        />
-                                      ) : (
-                                        <textarea
-                                          class="w-full mt-5 focus:outline-0 resize-none text-gray-500 bg-inherit pb-3 border-b border-gray-300  min-h-[10rem] "
-                                          placeholder={item.content}
-                                          disabled
-                                        />
-                                      )}
+                                    {item.update ? (
+                                      <textarea
+                                        class="w-full mt-5 focus:outline-0 resize-none pb-3 border-b border-gray-300  min-h-[10rem] "
+                                        defaultValue={item.content}
+                                        onChange={(e) =>
+                                          onUpdateWorkDetailInput(
+                                            e.currentTarget.value,
+                                            item.content,
+                                            e
+                                          )
+                                        }
+                                      />
+                                    ) : (
+                                      <textarea
+                                        class="w-full mt-5 focus:outline-0 resize-none text-gray-500 bg-inherit pb-3 border-b border-gray-300  min-h-[10rem] "
+                                        placeholder={item.content}
+                                        disabled
+                                      />
+                                    )}
 
-                                      <div class="font-ltest text-lg text-gray-400 pb-4">
-                                        경력 기간
-                                        <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
-                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0">
-                                            {item.update ? (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2"
-                                                defaultValue={item.startTerm}
-                                                onChange={(e) =>
-                                                  onUpdateWorkStartInput(
-                                                    e.currentTarget.value,
-                                                    item.startTerm,
-                                                    e
-                                                  )
-                                                }
-                                              />
-                                            ) : (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                placeholder={item.startTerm}
-                                                disabled
-                                              />
-                                            )}
-                                          </div>
-                                          <div>~</div>
-                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0">
-                                            {item.update ? (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2"
-                                                defaultValue={item.endTerm}
-                                                onChange={(e) =>
-                                                  onUpdateWorkEndInput(
-                                                    e.currentTarget.value,
-                                                    item.endTerm,
-                                                    e
-                                                  )
-                                                }
-                                              />
-                                            ) : (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                placeholder={item.endTerm}
-                                                disabled
-                                              />
-                                            )}
-                                          </div>
+                                    <div class="font-ltest text-lg text-gray-400 pb-4">
+                                      경력 기간
+                                      <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
+                                        <div class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0">
+                                          {item.update ? (
+                                            <input
+                                              class="w-full focus:outline-0 pt-1 pb-2"
+                                              defaultValue={item.startTerm}
+                                              onChange={(e) =>
+                                                onUpdateWorkStartInput(
+                                                  e.currentTarget.value,
+                                                  item.startTerm,
+                                                  e
+                                                )
+                                              }
+                                            />
+                                          ) : (
+                                            <input
+                                              class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                                              placeholder={item.startTerm}
+                                              disabled
+                                            />
+                                          )}
+                                        </div>
+                                        <div>~</div>
+                                        <div class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0">
+                                          {item.update ? (
+                                            <input
+                                              class="w-full focus:outline-0 pt-1 pb-2"
+                                              defaultValue={item.endTerm}
+                                              onChange={(e) =>
+                                                onUpdateWorkEndInput(
+                                                  e.currentTarget.value,
+                                                  item.endTerm,
+                                                  e
+                                                )
+                                              }
+                                            />
+                                          ) : (
+                                            <input
+                                              class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
+                                              placeholder={item.endTerm}
+                                              disabled
+                                            />
+                                          )}
                                         </div>
                                       </div>
-                                      <div class="w-full flex justify-end gap-5">
-                                        {item.update ? (
-                                          <button
-                                            class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                            onClick={(e) =>
-                                              onUpdateCareerHandler(
-                                                item.id,
-                                                item.title,
-                                                item.content,
-                                                item.startTerm,
-                                                item.endTerm,
-                                                e
-                                              )
-                                            }
-                                          >
-                                            수정완료
-                                          </button>
-                                        ) : (
-                                          <>
-                                            {" "}
-                                            <button
-                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={() => {
-                                                const findIndex =
-                                                  careerInfo.findIndex(
-                                                    (element) =>
-                                                      element.id == item.id
-                                                  );
-                                                let copyCareer = [
-                                                  ...careerInfo,
-                                                ];
-                                                copyCareer[findIndex] = {
-                                                  ...copyCareer[findIndex],
-                                                  update: true,
-                                                };
-                                                setCareerInfo(copyCareer);
-                                              }}
-                                            >
-                                              수정하기
-                                            </button>
-                                            <button
-                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={(e) => {
-                                                onCareerDeleteHandler(
-                                                  item.id,
-                                                  e
-                                                );
-                                                const findIndex =
-                                                  careerInfo.findIndex(
-                                                    (element) =>
-                                                      element.id == item.id
-                                                  );
-                                                let copyCareer = [
-                                                  ...careerInfo,
-                                                ];
-                                                copyCareer[findIndex] = {
-                                                  ...copyCareer[findIndex],
-                                                  delete: true,
-                                                };
-                                                setCareerInfo(copyCareer);
-                                              }}
-                                            >
-                                              삭제하기
-                                            </button>
-                                          </>
-                                        )}
-                                      </div>
                                     </div>
-                                  )}
-                                </div>
-                              );
-                            })
-                            : firstCareerInfo.map((item) => {
-                              return (
-                                <div>
-                                  {item.delete ? null : (
-                                    <div
-                                      class={
-                                        item.update
-                                          ? "border-b border-gray-300 w-full px-4 text-gray-500 bg-white text-base font-ltest min-w-[20rem]"
-                                          : "border-b border-gray-300 w-full px-4 text-gray-500 bg-gray-50 text-base font-ltest min-w-[20rem]"
-                                      }
-                                    >
+                                    <div class="w-full flex justify-end gap-5">
                                       {item.update ? (
-                                        <input
-                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 "
-                                          defaultValue={item.title}
-                                          onChange={(e) =>
-                                            onUpdateWorknameInput(
-                                              e.currentTarget.value,
+                                        <button
+                                          class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                          onClick={(e) =>
+                                            onUpdateCareerHandler(
+                                              item.id,
                                               item.title,
-                                              e
-                                            )
-                                          }
-                                        />
-                                      ) : (
-                                        <input
-                                          class="text-lg w-full focus:outline-0 border-b border-gray-300 pt-3 pb-2 bg-inherit"
-                                          placeholder={item.title}
-                                          disabled
-                                        />
-                                      )}
-
-                                      {item.update ? (
-                                        <textarea
-                                          class="w-full mt-5 focus:outline-0 resize-none pb-3 border-b border-gray-300  min-h-[10rem] "
-                                          defaultValue={item.content}
-                                          onChange={(e) =>
-                                            onUpdateWorkDetailInput(
-                                              e.currentTarget.value,
                                               item.content,
+                                              item.startTerm,
+                                              item.endTerm,
                                               e
                                             )
                                           }
-                                        />
+                                        >
+                                          수정완료
+                                        </button>
                                       ) : (
-                                        <textarea
-                                          class="w-full mt-5 focus:outline-0 resize-none text-gray-500 bg-inherit pb-3 border-b border-gray-300  min-h-[10rem] "
-                                          placeholder={item.content}
-                                          disabled
-                                        />
-                                      )}
-
-                                      <div class="font-ltest text-lg text-gray-400 pb-4">
-                                        경력 기간
-                                        <div class="mt-4 flex justify-between items-center text-base text-center text-gray-500 ">
-                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-2 px-3 focus:outline-0">
-                                            {item.update ? (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2"
-                                                defaultValue={item.startTerm}
-                                                onChange={(e) =>
-                                                  onUpdateWorkStartInput(
-                                                    e.currentTarget.value,
-                                                    item.startTerm,
-                                                    e
-                                                  )
-                                                }
-                                              />
-                                            ) : (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                placeholder={item.startTerm}
-                                                disabled
-                                              />
-                                            )}
-                                          </div>
-                                          <div>~</div>
-                                          <div class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0">
-                                            {item.update ? (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2"
-                                                defaultValue={item.endTerm}
-                                                onChange={(e) =>
-                                                  onUpdateWorkEndInput(
-                                                    e.currentTarget.value,
-                                                    item.endTerm,
-                                                    e
-                                                  )
-                                                }
-                                              />
-                                            ) : (
-                                              <input
-                                                class="w-full focus:outline-0 pt-1 pb-2 bg-inherit"
-                                                placeholder={item.endTerm}
-                                                disabled
-                                              />
-                                            )}
-                                          </div>
-                                        </div>
-                                      </div>
-                                      <div class="w-full flex justify-end gap-5">
-                                        {item.update ? (
+                                        <>
+                                          {" "}
                                           <button
                                             class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                            onClick={(e) =>
-                                              onUpdateCareerHandler(
-                                                item.id,
-                                                item.title,
-                                                item.content,
-                                                item.startTerm,
-                                                item.endTerm,
-                                                e
-                                              )
-                                            }
+                                            onClick={() => {
+                                              const findIndex =
+                                                careerInfo.findIndex(
+                                                  (element) =>
+                                                    element.id == item.id
+                                                );
+                                              let copyCareer = [...careerInfo];
+                                              copyCareer[findIndex] = {
+                                                ...copyCareer[findIndex],
+                                                update: true,
+                                              };
+                                              setCareerInfo(copyCareer);
+                                            }}
                                           >
-                                            수정완료
+                                            수정하기
                                           </button>
-                                        ) : (
-                                          <>
-                                            {" "}
-                                            <button
-                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={() => {
-                                                const findIndex =
-                                                  firstCareerInfo.findIndex(
-                                                    (element) =>
-                                                      element.id == item.id
-                                                  );
-                                                let copyCareer = [
-                                                  ...firstCareerInfo,
-                                                ];
-                                                copyCareer[findIndex] = {
-                                                  ...copyCareer[findIndex],
-                                                  update: true,
-                                                };
-
-                                                console.log(copyCareer);
-                                                setFirstCareerInfo(
-                                                  copyCareer
+                                          <button
+                                            class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                            onClick={(e) => {
+                                              onCareerDeleteHandler(item.id, e);
+                                              const findIndex =
+                                                careerInfo.findIndex(
+                                                  (element) =>
+                                                    element.id == item.id
                                                 );
-                                              }}
-                                            >
-                                              수정하기
-                                            </button>
-                                            <button
-                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={(e) => {
-                                                onCareerDeleteHandler(
-                                                  item.id,
-                                                  e
-                                                );
-                                                const findIndex =
-                                                  firstCareerInfo.findIndex(
-                                                    (element) =>
-                                                      element.id == item.id
-                                                  );
-                                                let copyCareer = [
-                                                  ...firstCareerInfo,
-                                                ];
-                                                copyCareer[findIndex] = {
-                                                  ...copyCareer[findIndex],
-                                                  delete: true,
-                                                };
-                                                // setFirstCareerInfo(
-                                                //   copyCareer
-                                                // );
-                                              }}
-                                            >
-                                              삭제하기
-                                            </button>
-                                          </>
-                                        )}
-                                      </div>
+                                              let copyCareer = [...careerInfo];
+                                              copyCareer[findIndex] = {
+                                                ...copyCareer[findIndex],
+                                                delete: true,
+                                              };
+                                              setCareerInfo(copyCareer);
+                                            }}
+                                          >
+                                            삭제하기
+                                          </button>
+                                        </>
+                                      )}
                                     </div>
-                                  )}
-                                </div>
-                              );
-                            })}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
                           {workAdd ? (
                             <div class="w-full mt-2 py-2 px-4  bg-white text-base font-ltest min-w-[20rem] ">
                               <input
@@ -1894,231 +1383,111 @@ function PortfolioMain() {
                         수상 이력
                       </td>
                       <td class="border border-slate-300">
-                        {checkCreate
-                          ? awardInfo &&
-                          awardInfo.map((item) => {
-                            return (
-                              <div class="xl:flex justify-between w-full">
-                                {item.delete ? null : (
-                                  <>
-                                    {item.update ? (
-                                      <>
-                                        <div class="w-[30%]">
-                                          <input
-                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                            defaultValue={item.date}
-                                            onChange={(e) =>
-                                              onUpdateAwardDateInput(
-                                                e.currentTarget.value,
-                                                item.date,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        </div>
-                                        <div class="w-[60%]">
-                                          <input
-                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                            defaultValue={item.name}
-                                            onChange={(e) =>
-                                              onUpdateAwardNameInput(
-                                                e.currentTarget.value,
-                                                item.name,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        </div>
-                                        <button
-                                          class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-test min-w-[5rem]"
-                                          onClick={(e) =>
-                                            onUpdateAwardHandler(
-                                              item.id,
+                        {awardInfo.map((item) => {
+                          return (
+                            <div class="xl:flex justify-between w-full">
+                              {item.delete ? null : (
+                                <>
+                                  {item.update ? (
+                                    <>
+                                      <div class="w-[30%]">
+                                        <input
+                                          class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                          defaultValue={item.date}
+                                          onChange={(e) =>
+                                            onUpdateAwardDateInput(
+                                              e.currentTarget.value,
                                               item.date,
+                                              e
+                                            )
+                                          }
+                                        />
+                                      </div>
+                                      <div class="w-[60%]">
+                                        <input
+                                          class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                          defaultValue={item.name}
+                                          onChange={(e) =>
+                                            onUpdateAwardNameInput(
+                                              e.currentTarget.value,
                                               item.name,
                                               e
                                             )
                                           }
-                                        >
-                                          수정완료
-                                        </button>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <div class="w-[40%]">
-                                          <input
-                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                            placeholder={item.date}
-                                            type="text"
-                                            disabled
-                                          />
-                                        </div>
-                                        <div class="w-[60%]">
-                                          <input
-                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                            placeholder={item.name}
-                                            type="text"
-                                            disabled
-                                          />
-                                        </div>
-                                        <button
-                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                          onClick={() => {
-                                            const findIndex =
-                                              awardInfo.findIndex(
-                                                (element) =>
-                                                  element.id == item.id
-                                              );
-                                            let copyAward = [...awardInfo];
-                                            copyAward[findIndex] = {
-                                              ...copyAward[findIndex],
-                                              update: true,
-                                            };
-                                            setAwardInfo(copyAward);
-                                          }}
-                                        >
-                                          수정하기
-                                        </button>
-                                        <button
-                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                          onClick={(e) => {
-                                            onAwardDeleteHandler(item.id, e);
-                                            const findIndex =
-                                              awardInfo.findIndex(
-                                                (element) =>
-                                                  element.id == item.id
-                                              );
-                                            let copyAward = [...awardInfo];
-                                            copyAward[findIndex] = {
-                                              ...copyAward[findIndex],
-                                              delete: true,
-                                            };
-                                            setAwardInfo(copyAward);
-                                          }}
-                                        >
-                                          삭제하기
-                                        </button>
-                                      </>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            );
-                          })
-                          : firstAwardInfo.map((item) => {
-                            return (
-                              <div class="xl:flex justify-between w-full">
-                                {item.delete ? null : (
-                                  <>
-                                    {item.update ? (
-                                      <>
-                                        <div class="w-[30%]">
-                                          <input
-                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                            defaultValue={item.date}
-                                            onChange={(e) =>
-                                              onUpdateAwardDateInput(
-                                                e.currentTarget.value,
-                                                item.date,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        </div>
-                                        <div class="w-[60%]">
-                                          <input
-                                            class="text-gray-500 py-2 w-full h-full border border-gray-300 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                            defaultValue={item.name}
-                                            onChange={(e) =>
-                                              onUpdateAwardNameInput(
-                                                e.currentTarget.value,
-                                                item.name,
-                                                e
-                                              )
-                                            }
-                                          />
-                                        </div>
-                                        <button
-                                          class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-test min-w-[5rem]"
-                                          onClick={(e) =>
-                                            onUpdateAwardHandler(
-                                              item.id,
-                                              item.date,
-                                              item.name,
-                                              e
-                                            )
-                                          }
-                                        >
-                                          수정완료
-                                        </button>
-                                      </>
-                                    ) : (
-                                      <>
-                                        <div class="w-[40%]">
-                                          <input
-                                            class="px-2 text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
-                                            placeholder={item.date}
-                                            type="text"
-                                            disabled
-                                          />
-                                        </div>
-                                        <div class="w-[60%]">
-                                          <input
-                                            class="px-2 text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
-                                            placeholder={item.name}
-                                            type="text"
-                                            disabled
-                                          />
-                                        </div>
-                                        <button
-                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                          onClick={() => {
-                                            const findIndex =
-                                              firstAwardInfo.findIndex(
-                                                (element) =>
-                                                  element.id == item.id
-                                              );
-                                            let copyAward = [
-                                              ...firstAwardInfo,
-                                            ];
-                                            copyAward[findIndex] = {
-                                              ...copyAward[findIndex],
-                                              update: true,
-                                            };
-                                            setFirstAwardInfo(copyAward);
-                                          }}
-                                        >
-                                          수정하기
-                                        </button>
-                                        <button
-                                          class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                                          onClick={(e) => {
-                                            onAwardDeleteHandler(item.id, e);
-                                            const findIndex =
-                                              firstAwardInfo.findIndex(
-                                                (element) =>
-                                                  element.id == item.id
-                                              );
-                                            let copyAward = [
-                                              ...firstAwardInfo,
-                                            ];
-                                            copyAward[findIndex] = {
-                                              ...copyAward[findIndex],
-                                              delete: true,
-                                            };
-                                            // setFirstAwardInfo(copyAward);
-                                          }}
-                                        >
-                                          삭제하기
-                                        </button>
-                                      </>
-                                    )}
-                                  </>
-                                )}
-                              </div>
-                            );
-                          })}
-
+                                        />
+                                      </div>
+                                      <button
+                                        class="py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 bg-inherit text-gray-500 text-base font-test min-w-[5rem]"
+                                        onClick={(e) =>
+                                          onUpdateAwardHandler(
+                                            item.id,
+                                            item.date,
+                                            item.name,
+                                            e
+                                          )
+                                        }
+                                      >
+                                        수정완료
+                                      </button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <div class="w-[40%]">
+                                        <input
+                                          class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[10rem]"
+                                          placeholder={item.date}
+                                          type="text"
+                                          disabled
+                                        />
+                                      </div>
+                                      <div class="w-[60%]">
+                                        <input
+                                          class="text-gray-500 py-2 w-full h-full border border-gray-300 bg-gray-50 focus:outline-0 text-base font-ltest min-w-[20rem]"
+                                          placeholder={item.name}
+                                          type="text"
+                                          disabled
+                                        />
+                                      </div>
+                                      <button
+                                        class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                                        onClick={() => {
+                                          const findIndex = awardInfo.findIndex(
+                                            (element) => element.id == item.id
+                                          );
+                                          let copyAward = [...awardInfo];
+                                          copyAward[findIndex] = {
+                                            ...copyAward[findIndex],
+                                            update: true,
+                                          };
+                                          setAwardInfo(copyAward);
+                                        }}
+                                      >
+                                        수정하기
+                                      </button>
+                                      <button
+                                        class="bg-gray-50 py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                                        onClick={(e) => {
+                                          onAwardDeleteHandler(item.id, e);
+                                          const findIndex = awardInfo.findIndex(
+                                            (element) => element.id == item.id
+                                          );
+                                          let copyAward = [...awardInfo];
+                                          copyAward[findIndex] = {
+                                            ...copyAward[findIndex],
+                                            delete: true,
+                                          };
+                                          setAwardInfo(copyAward);
+                                        }}
+                                      >
+                                        삭제하기
+                                      </button>
+                                    </>
+                                  )}
+                                </>
+                              )}
+                            </div>
+                          );
+                        })}
                         {awardAdd ? (
                           <div class="xl:flex justify-between w-full">
                             <div class="w-[30%]">
@@ -2161,245 +1530,116 @@ function PortfolioMain() {
                         참여한 프로젝트
                       </td>
                       <td class="border border-slate-300">
-                        {checkCreate ? (
-                          <>
-                            {projectInfo &&
-                              projectInfo.map((item) => {
-                                return (
-                                  <>
-                                    {item.delete ? null : (
-                                      <div class="text-base font-test bg-gray-100 rounded-xl border border-gray-300 px-10 pt-8 pb-4">
-                                        <input
-                                          class=" text-gray-500 w-full border-b border-gray-300 pb-2 font-test text-lg mb-2 bg-inherit  focus:outline-0"
-                                          placeholder={item.title}
-                                          type="text"
-                                          disabled
-                                        />
+                        {projectInfo.map((item) => {
+                          return (
+                            <>
+                              {item.delete ? null : (
+                                <div class="text-base font-test bg-gray-100 rounded-xl border border-gray-300 px-10 pt-8 pb-4">
+                                  <input
+                                    class=" text-gray-500 w-full border-b border-gray-300 pb-2 font-test text-lg mb-2 bg-inherit  focus:outline-0"
+                                    placeholder={item.title}
+                                    type="text"
+                                    disabled
+                                  />
 
-                                        <div class="flex justify-center gap-5 mt-5">
-                                          <div class="flex flex-col items-center">
-                                            <img
-                                              class="w-40rem h-50rem border border-gray-300"
-                                              src={
-                                                "data:image/" +
-                                                item.imageType +
-                                                ";base64," +
-                                                item.imageBytes
-                                              }
-                                              style={{
-                                                minHeight: "12rem",
-                                                minWidth: "16rem",
-                                                maxHeight: "12rem",
-                                                maxWidth: "16rem",
-                                              }}
-                                            />
-                                          </div>
-                                          <div class="text-gray-500 w-full flex flex-col gap-4 px-3 justify-center">
-                                            <div class="text-base mr-3 font-test text-xl px-1">
-                                              개발 날짜
-                                              <div class="font-ltest text-gray-500 mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
-                                                <input
-                                                  class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                  placeholder={item.startTerm}
-                                                  disabled
-                                                />
-                                                <div>~</div>
-                                                <input
-                                                  class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                  placeholder={item.endTerm}
-                                                  disabled
-                                                />
-                                              </div>
-                                            </div>
-                                            <div class="text-gray-500 flex gap-6 font-test text-base items-center">
-                                              <div class="font-test text-base pl-1 pr-3 border-r border-gray-300 ">
-                                                맡은 직군
-                                              </div>
-                                              <input
-                                                class="bg-gray-100 font-ltest text-gray-600 w-1/2 focus:outline-0"
-                                                placeholder={item.job}
-                                              />
-                                            </div>
-
-                                            <div class="mr-3 font-test text-base">
-                                              <div class="border-b border-gray-400 w-full px-1 pb-2">
-                                                사용 기술
-                                              </div>
-                                              <div class="text-gray-500 grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
-                                                {item.tagId &&
-                                                  item.tagId.map((tag) => {
-                                                    return (
-                                                      <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
-                                                        {tag.name}
-                                                      </div>
-                                                    );
-                                                  })}
-                                              </div>
-                                            </div>
-                                          </div>
-                                        </div>
-
-                                        <div class="text-gray-500 mt-5 font-test text-base break-all border-b border-gray-300">
-                                          <div class="border-b border-gray-300 w-full pb-2 mb-2 ">
-                                            프로젝트 설명
-                                          </div>
-                                          <textarea
-                                            class="font-ltest w-full bg-inherit min-h-[10rem]"
-                                            placeholder={item.content}
+                                  <div class="flex justify-center gap-5 mt-5">
+                                    <div class="flex flex-col items-center">
+                                      <img
+                                        class="w-40rem h-50rem border border-gray-300"
+                                        src={
+                                          "data:image/" +
+                                          item.imageType +
+                                          ";base64," +
+                                          item.imageBytes
+                                        }
+                                        style={{
+                                          minHeight: "12rem",
+                                          minWidth: "16rem",
+                                          maxHeight: "12rem",
+                                          maxWidth: "16rem",
+                                        }}
+                                      />
+                                    </div>
+                                    <div class="text-gray-500 w-full flex flex-col gap-4 px-3 justify-center">
+                                      <div class="text-base mr-3 font-test text-xl px-1">
+                                        개발 날짜
+                                        <div class="font-ltest text-gray-500 mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
+                                          <input
+                                            class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                                            placeholder={item.startTerm}
                                             disabled
                                           />
-                                          <div class="flex justify-end gap-2">
-                                            <button
-                                              class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                              onClick={(e) => {
-                                                onProjectDeleteHandler(
-                                                  item.id,
-                                                  e
-                                                );
-                                                const findIndex =
-                                                  projectInfo.findIndex(
-                                                    (element) =>
-                                                      element.id == item.id
-                                                  );
-                                                let copyProject = [
-                                                  ...projectInfo,
-                                                ];
-                                                copyProject[findIndex] = {
-                                                  ...copyProject[findIndex],
-                                                  delete: true,
-                                                };
-                                                setProjectInfo(copyProject);
-                                              }}
-                                            >
-                                              삭제하기
-                                            </button>
-                                          </div>
-                                        </div>
-                                      </div>
-                                    )}
-                                  </>
-                                );
-                              })}
-                          </>
-                        ) : (
-                          <>
-                            {firstProjectInfo.map((item) => {
-                              return (
-                                <>
-                                  {item.delete ? null : (
-                                    <div class="text-base font-test bg-gray-100 rounded-xl border border-gray-300 px-10 pt-8 pb-4">
-                                      <input
-                                        class=" text-gray-500 w-full border-b border-gray-300 pb-2 font-test text-lg mb-2 bg-inherit  focus:outline-0"
-                                        placeholder={item.title}
-                                        type="text"
-                                        disabled
-                                      />
-
-                                      <div class="flex justify-center gap-5 mt-5">
-                                        <div class="flex flex-col items-center">
-                                          <img
-                                            class="w-40rem h-50rem border border-gray-300"
-                                            src={item.image}
-                                            style={{
-                                              minHeight: "12rem",
-                                              minWidth: "16rem",
-                                              maxHeight: "12rem",
-                                              maxWidth: "16rem",
-                                            }}
+                                          <div>~</div>
+                                          <input
+                                            class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
+                                            placeholder={item.endTerm}
+                                            disabled
                                           />
                                         </div>
-                                        <div class="text-gray-500 w-full flex flex-col gap-4 px-3 justify-center">
-                                          <div class="text-base mr-3 font-test text-xl px-1">
-                                            개발 날짜
-                                            <div class="font-ltest text-gray-500 mt-1 flex justify-between items-center text-base text-center text-gray-500 ">
-                                              <input
-                                                class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                placeholder={item.startTerm}
-                                                disabled
-                                              />
-                                              <div>~</div>
-                                              <input
-                                                class="bg-gray-100 border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
-                                                placeholder={item.endTerm}
-                                                disabled
-                                              />
-                                            </div>
-                                          </div>
-                                          <div class="text-gray-500 flex gap-6 font-test text-base items-center">
-                                            <div class="font-test text-base pl-1 pr-3 border-r border-gray-300 ">
-                                              맡은 직군
-                                            </div>
-                                            <input
-                                              class="bg-gray-100 font-ltest text-gray-600 w-1/2 focus:outline-0"
-                                              placeholder={item.job}
-                                            />
-                                          </div>
-
-                                          <div class="mr-3 font-test text-base">
-                                            <div class="border-b border-gray-400 w-full px-1 pb-2">
-                                              사용 기술
-                                            </div>
-                                            <div class="text-gray-500 grid grid-cols-3 text-base mt-3 gap-3">
-                                              {item.projectSkills &&
-                                                item.projectSkills.map(
-                                                  (skill) => {
-                                                    return (
-                                                      <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
-                                                        {skill.name}
-                                                      </div>
-                                                    );
-                                                  }
-                                                )}
-                                            </div>
-                                          </div>
-                                        </div>
                                       </div>
-                                      <div class="text-gray-500 mt-5 font-test text-base break-all border-b border-gray-300">
-                                        <div class="border-b border-gray-300 w-full pb-2 mb-2 ">
-                                          프로젝트 설명
+                                      <div class="text-gray-500 flex gap-6 font-test text-base items-center">
+                                        <div class="font-test text-base pl-1 pr-3 border-r border-gray-300 ">
+                                          맡은 직군
                                         </div>
-                                        <textarea
-                                          class="font-ltest w-full bg-inherit min-h-[10rem]"
-                                          placeholder={item.content}
-                                          disabled
+                                        <input
+                                          class="bg-gray-100 font-ltest text-gray-600 w-1/2 focus:outline-0"
+                                          placeholder={item.job}
                                         />
-                                        <div class="flex justify-end gap-2">
-                                          <button
-                                            class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
-                                            onClick={(e) => {
-                                              onProjectDeleteHandler(
-                                                item.id,
-                                                e
+                                      </div>
+
+                                      <div class="mr-3 font-test text-base">
+                                        <div class="border-b border-gray-400 w-full px-1 pb-2">
+                                          사용 기술
+                                        </div>
+                                        <div class="text-gray-500 grid grid-cols-3 text-gray-600 text-base mt-3 gap-3">
+                                          {item.tagId &&
+                                            item.tagId.map((tag) => {
+                                              return (
+                                                <div class="text-base w-full rounded-lg border border-gray-300 px-2 text-center py-1 ">
+                                                  {tag.name}
+                                                </div>
                                               );
-                                              const findIndex =
-                                                firstProjectInfo.findIndex(
-                                                  (element) =>
-                                                    element.id == item.id
-                                                );
-                                              let copyProject = [
-                                                ...firstProjectInfo,
-                                              ];
-                                              copyProject[findIndex] = {
-                                                ...copyProject[findIndex],
-                                                delete: true,
-                                              };
-                                              // setFirstProjectInfo(
-                                              //   copyProject
-                                              // );
-                                            }}
-                                          >
-                                            삭제하기
-                                          </button>
+                                            })}
                                         </div>
                                       </div>
                                     </div>
-                                  )}
-                                </>
-                              );
-                            })}
-                          </>
-                        )}
+                                  </div>
 
+                                  <div class="text-gray-500 mt-5 font-test text-base break-all border-b border-gray-300">
+                                    <div class="border-b border-gray-300 w-full pb-2 mb-2 ">
+                                      프로젝트 설명
+                                    </div>
+                                    <textarea
+                                      class="font-ltest w-full bg-inherit min-h-[10rem]"
+                                      placeholder={item.content}
+                                      disabled
+                                    />
+                                    <div class="flex justify-end gap-2">
+                                      <button
+                                        class="w-[15%] ml-full mb-2 py-1 border border-gray-300 px-4 bg-inherit text-gray-500 text-base font-test rounded-md min-w-[5rem]"
+                                        onClick={(e) => {
+                                          onProjectDeleteHandler(item.id, e);
+                                          const findIndex =
+                                            projectInfo.findIndex(
+                                              (element) => element.id == item.id
+                                            );
+                                          let copyProject = [...projectInfo];
+                                          copyProject[findIndex] = {
+                                            ...copyProject[findIndex],
+                                            delete: true,
+                                          };
+                                          setProjectInfo(copyProject);
+                                        }}
+                                      >
+                                        삭제하기
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })}
                         {projectAdd ? (
                           <div class="text-base font-test bg-white rounded-xl text-gray-900  border border-gray-300 px-10 pt-8 pb-4">
                             <input
@@ -2482,14 +1722,14 @@ function PortfolioMain() {
                                       class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
                                       onChange={onPrjDevStartInputHandler}
                                       placeholder="시작 일자(yyyy.mm)"
-                                    // value={prjDevStart}
+                                      // value={prjDevStart}
                                     />
                                     <div>~</div>
                                     <input
                                       class="border border-gray-300 rounded-md text-md w-[45%] py-1 px-3 focus:outline-0"
                                       onChange={onPrjEndInputHandler}
                                       placeholder="종료 일자(yyyy.mm)"
-                                    // value={prjDevEnd}
+                                      // value={prjDevEnd}
                                     />
                                   </div>
                                 </div>
@@ -2584,85 +1824,75 @@ function PortfolioMain() {
                           (실제로 등록된 글이 삭제되지는 않습니다.)
                         </a>
                       </div>
-                      {checkCreate ? (
-                        <div class="flex justify-end">
-                          <button
-                            class=" text-base text-gray-500"
-                            onClick={() => updateTopPost()}
-                          >
-                            🔄추천수 상위글 갱신하기
-                          </button>
-                        </div>
-                      ) : null}
-
-                      {checkCreate ? (
-                        <>
-                          {topRecommendPost.map((item, index) => {
-                            return (
-                              <div class="w-full mt-4 pt-3 pb-6 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]">
-                                <div>
-                                  <div class="text-gray-500 flex w-full border-b border-gray-300 pb-1 mb-3 mt-2 ">
-                                    <div class="">추천수 상위글</div>
-                                    <button
-                                      class="ml-auto pr-2"
-                                      onClick={(e) =>
-                                        onTopPostDeleteHandler(index, e)
-                                      }
-                                    >
-                                      ✂ 삭제하기
-                                    </button>
-                                  </div>
-                                  <div class="w-full flex px-5 items-center gap-5 text-gray-500 text-md">
-                                    <div class="w-3 h-3 rounded-full bg-gray-500"></div>
-                                    <div class="grow">{item.title}</div>
-                                    <div>추천수 : {item.recommend}</div>
-                                    <div>{dateAfter[index]}</div>
-                                  </div>
-
-                                  <div
-                                    class="px-5 flex justify-center items-center mt-3 gap-6"
-                                    style={{
-                                      maxHeight: "10rem",
-                                      minWidth: "48rem",
-                                    }}
+                      <div class="flex justify-end">
+                        <button
+                          class=" text-base text-gray-500"
+                          onClick={() => updateTopPost()}
+                        >
+                          🔄추천수 상위글 갱신하기
+                        </button>
+                      </div>
+                      <>
+                        {topRecommendPost.map((item, index) => {
+                          return (
+                            <div class="w-full mt-4 pt-3 pb-6 px-4 border border-gray-300 rounded-xl bg-gray-50 focus:outline-0 text-lg font-ltest min-w-[20rem]">
+                              <div>
+                                <div class="text-gray-500 flex w-full border-b border-gray-300 pb-1 mb-3 mt-2 ">
+                                  <div class="">추천수 상위글</div>
+                                  <button
+                                    class="ml-auto pr-2"
+                                    onClick={(e) =>
+                                      onTopPostDeleteHandler(index, e)
+                                    }
                                   >
-                                    <div class="bg-white rounded-lg border border-gray-300 py-4 grow">
-                                      <div class="relative py-2 px-2 break-all text-gray-500">
-                                        {contentAfter[index]}{" "}
-                                        {
-                                          <button
-                                            class=" text-gray-600"
-                                            onClick={() =>
-                                              navigate(
-                                                "/blog/detail/" + item.boardId
-                                              )
-                                            }
-                                          >
-                                            {"("}🔗더보기 {")"}
-                                          </button>
-                                        }
-                                      </div>
+                                    ✂ 삭제하기
+                                  </button>
+                                </div>
+                                <div class="w-full flex px-5 items-center gap-5 text-gray-500 text-md">
+                                  <div class="w-3 h-3 rounded-full bg-gray-500"></div>
+                                  <div class="grow">{item.title}</div>
+                                  <div>추천수 : {item.recommend}</div>
+                                  <div>{dateAfter[index]}</div>
+                                </div>
+
+                                <div
+                                  class="px-5 flex justify-center items-center mt-3 gap-6"
+                                  style={{
+                                    maxHeight: "10rem",
+                                    minWidth: "48rem",
+                                  }}
+                                >
+                                  <div class="bg-white rounded-lg border border-gray-300 py-4 grow">
+                                    <div class="relative py-2 px-2 break-all text-gray-500">
+                                      {contentAfter[index]}{" "}
+                                      {
+                                        <button
+                                          class=" text-gray-600"
+                                          onClick={() =>
+                                            navigate(
+                                              "/blog/detail/" + item.boardId
+                                            )
+                                          }
+                                        >
+                                          {"("}🔗더보기 {")"}
+                                        </button>
+                                      }
                                     </div>
                                   </div>
                                 </div>
                               </div>
-                            );
-                          })}
-                          <div class="flex justify-end mt-5">
-                            <button
-                              class="rounded-lg py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
-                              onClick={(e) => onUpdateBlogHandler()}
-                            >
-                              등록하기
-                            </button>
-                          </div>
-                        </>
-                      ) : (
-                        <div class="mt-2">
-                          블로그 글은 포트폴리오 1회 생성 후 조회 및 등록이
-                          가능합니다.
+                            </div>
+                          );
+                        })}
+                        <div class="flex justify-end mt-5">
+                          <button
+                            class="rounded-lg py-2 w-[20rem] xl:w-[15%] h-full border border-gray-300 text-gray-500 text-base font-test min-w-[5rem]"
+                            onClick={(e) => onUpdateBlogHandler()}
+                          >
+                            등록하기
+                          </button>
                         </div>
-                      )}
+                      </>
                     </>
                   ) : (
                     <>
