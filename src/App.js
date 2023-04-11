@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { BrowserRouter as Router } from "react-router-dom";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import axios from "axios";
 import "./App.css";
 import MyPage from "./page/Mypage";
@@ -28,7 +27,6 @@ import SampleT4 from "./page/Portfolio/sample/sampleT4";
 import Header from "./particals/Header";
 
 import { SERVER_URL } from "./utils/SRC";
-import { createRoot } from "react-dom/client";
 import "tailwindcss/tailwind.css";
 import KakaoOauth from "./utils/oauth/KakaoOauth";
 import {
@@ -36,7 +34,6 @@ import {
   setAccessTokenToCookie,
   getRefreshToken,
   getAccessToken,
-  refreshJWT,
   removeJWT,
 } from "./utils/auth";
 import BlogWr2 from "./page/Blog/BlogWr2";
@@ -47,22 +44,17 @@ import ProjectMySchedule from "./page/ProjectMatching/ProejctMySchedule";
 axios.interceptors.response.use(
   function (response) {
     console.log("안녕?");
-    //console.log(response);
     return response;
   },
   async function (error) {
     if (error == null) {
-      console.log("시발");
     }
     console.log(error.response);
-    console.log("왜안돼!!!!");
     if (
       error != null &&
       error != undefined &&
       error.response.data.data == "No Jwt Token"
     ) {
-      const originalRequest = error.config;
-      console.log("왜안돼!!!!!!!!!!!!!!!!!");
       if (getAccessToken() != "no access_token") {
         axios.defaults.headers.common[
           "Authorization"
@@ -71,7 +63,7 @@ axios.interceptors.response.use(
     } else if (
       error.response.data != null &&
       error.response.data.message ==
-      "JWT strings must contain exactly 2 period characters. Found: 0"
+        "JWT strings must contain exactly 2 period characters. Found: 0"
     ) {
       const originalRequest = error.config;
       originalRequest.headers["Authorization"] = null;
@@ -83,7 +75,6 @@ axios.interceptors.response.use(
       error.response.data.data == "Please RefreshToken."
     ) {
       try {
-        console.log("왜안!ㅇㄴㅁ!!!");
         const originalRequest = error.config;
         const Data = await (
           await axios.get(SERVER_URL + "/user-service/auth/refresh", {
@@ -99,8 +90,6 @@ axios.interceptors.response.use(
           originalRequest.headers[
             "Authorization"
           ] = `Bearer ${getAccessToken()}`;
-          //console.log("refresh-token = " + refreshToken);
-          //originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
           console.log(
             "access-token = " + originalRequest.headers["Authorization"]
           );
@@ -108,8 +97,7 @@ axios.interceptors.response.use(
           axios.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${getAccessToken()}`;
-        }
-        else {
+        } else {
           removeJWT();
           deleteUserData();
         }
@@ -118,50 +106,6 @@ axios.interceptors.response.use(
       } catch (error) {
         console.log(error.response);
       }
-      /*
-      axios
-        .get(SERVER_URL + "/user-service/auth/refresh",
-          {
-            headers: { "refresh-token": getRefreshToken() }, // 갱신을 위해 헤더에 refresh-token 첨부
-          })
-        .then((res) => {
-          const at = res.data.data.accessToken;
-          console.log("엑세스 토큰 : " + at);
-          originalRequest.headers['Authorization'] = at;
-          console.log("리프레쉬 토큰 : " + res.data.data.refreshToken);
-          //axios.defaults.headers.common['Authorization'] = null;
-          axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
-          setRefreshTokenToCookie(res.data.data.refreshToken);
-          console.log(axios.defaults.headers.common['Authorization']);
-          console.log(originalRequest.headers['Authorization']);
-          return axios.request(originalRequest);
-          //return Promise.reject(error);
-        })
-        .catch((err) => {
-          console.log("에러!!!!!!!");
-          console.log(err);
-          removeJWT();
-        });
-        */
-      //refreshJWT(originalRequest);
-      //console.log("여기로는 왜 안오지..");
-      //console.log(accessToken);
-      //console.log(axios.defaults.headers.common['Authorization']);
-      //originalRequest.headers['Authorization'] = accessToken;
-      //return Promise.reject(error);
-      // return await axios.request(originalRequest);
-      /*
-      const data = await client.get('auth/refreshtoken')
-      if (data) {
-        const { accessToken, refreshToken } = data.data
-        localStorage.removeItem('user')
-        localStorage.setItem('user', JSON.stringify(data.data, ['accessToken', 'refreshToken']))
-        originalRequest.headers['accessToken'] = accessToken;
-        originalRequest.headers['refreshToken'] = refreshToken;
-        return await client.request(originalRequest);
-        
-      }
-      */
       return Promise.reject(error);
     }
     return Promise.reject(error);
@@ -169,42 +113,12 @@ axios.interceptors.response.use(
 );
 
 function App() {
-  //const cors = require('cors');
-  // 요청받은 정보를 담아줄 변수 선언
-  let id, keyword, option;
-  const [testStr, setTestStr] = useState("");
-
-  // 변수 초기화
-  function callback(str) {
-    setTestStr(str);
-  }
-
-  // 첫 번째 렌더링을 마친 후 실행
-  /*
-    useEffect(() => {
-      axios({
-        url: SERVER_URL + "/test",
-        method: "GET",
-      }).then((res) => {
-        console.log(res.data);
-        callback(res.data);
-      }).catch((err) => {
-        //console.log("왜안돼");
-        if (err.response) {
-        }
-      });
-    }, []);
-  */
   const Main = (props) => {
     return <Mainpage {...props}></Mainpage>;
   };
 
   const KakOauth = (props) => {
     return <KakaoOauth {...props}></KakaoOauth>;
-  };
-
-  const Detail = (props) => {
-    return <BlogDetail {...props}></BlogDetail>;
   };
 
   return (
@@ -249,5 +163,4 @@ function App() {
     </>
   );
 }
-//app.use(cors());
 export default App;

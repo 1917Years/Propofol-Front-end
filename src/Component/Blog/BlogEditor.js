@@ -1,5 +1,5 @@
-import { React, useState, useEffect, useMemo, useRef } from "react";
-import { useNavigate, Navigate } from "react-router-dom";
+import { React, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ReactQuill, { Quill } from "react-quill";
 import axios from "axios";
 import { SERVER_URL } from "../../utils/SRC";
@@ -7,9 +7,6 @@ import "react-quill/dist/quill.snow.css";
 import hljs from "highlight.js";
 import "highlight.js/styles/vs2015.css";
 import { TagModal } from "../Modal";
-import { set } from "date-fns";
-//import EditorToolbar, { modules, formats } from "./EditorToolbar";
-
 
 const modules = {
   toolbar: {
@@ -18,8 +15,8 @@ const modules = {
   syntax: {
     value: (text) => hljs.highlightAuto(text).language,
     highlight: (text) => {
-      return (hljs.highlightAuto(text).value);
-    }
+      return hljs.highlightAuto(text).value;
+    },
   },
 };
 
@@ -105,7 +102,7 @@ function BlogEditor(props) {
   const [prev_Content, setPrev_Content] = useState("");
   const [title, setTitle] = useState("");
   const [open, setOpen] = useState(true);
-  const [writingInfo, setWritingInfo] = useState({ "title": null, "detail": null });
+  const [writingInfo, setWritingInfo] = useState({ title: null, detail: null });
   const [baseUrlList, setBaseUrlList] = useState([]);
   const [imgFileList, setImgFileList] = useState([]);
   const [imgList, setImgList] = useState([]);
@@ -124,7 +121,7 @@ function BlogEditor(props) {
   useState(() => {
     console.log("로드 결과는~");
     console.log(props.loadWritingInfo);
-    if (props.isModify && (props.loadWritingInfo != null)) {
+    if (props.isModify && props.loadWritingInfo != null) {
       console.log("하이루");
       console.log(props.loadWritingInfo.detail);
       setSelectedTagList(props.loadWritingInfo.tag);
@@ -142,7 +139,7 @@ function BlogEditor(props) {
       quill?.clipboard.dangerouslyPasteHTML(5, '&nbsp;<b>World</b>');
       */
     }
-  }, [])
+  }, []);
 
   useState(() => {
     console.log("prevCon은");
@@ -152,7 +149,7 @@ function BlogEditor(props) {
       //setHtmlContent(props.loadWritingInfo.detail);
       loadImage(prevContent);
     }
-  }, [prevContent])
+  }, [prevContent]);
   const CustomTmpSave = () => {
     return (
       <button class="z-40 w-[5rem] rounded-[18px] bg-none border border-gray-400 text-gray-600 font-sbtest px-5 py-1 flex bg-white items-center gap-2">
@@ -197,7 +194,6 @@ function BlogEditor(props) {
     languages: ["javascript", "ruby", "python", "c", "c++", "java"],
   });
 
-
   /*
   const modules = useMemo(() => ({
     toolbar: {
@@ -217,8 +213,7 @@ function BlogEditor(props) {
   useEffect(() => {
     console.log(codeInput);
     console.log(language);
-  }, [codeInput, language])
-
+  }, [codeInput, language]);
 
   /*
     const modules = useMemo(() => ({
@@ -243,7 +238,6 @@ function BlogEditor(props) {
     }), []);
   */
 
-
   /* 커스텀 툴바 */
   async function loadImage(tmpInfo) {
     let tmpimgsrc = [];
@@ -252,8 +246,8 @@ function BlogEditor(props) {
     let start = 0;
     let end = 0;
     let k = 0;
-    while (tmpInfo.detail.indexOf("<img src=\"http://", end) != -1) {
-      start = tmpInfo.detail.indexOf("<img src=\"http://");
+    while (tmpInfo.detail.indexOf('<img src="http://', end) != -1) {
+      start = tmpInfo.detail.indexOf('<img src="http://');
       end = tmpInfo.detail.indexOf(">", start);
       tmpimgsrc.push(tmpInfo.detail.slice(start + 10, end - 1));
       tmpimgsrctype.push(tmpimgsrc[k].slice(-3));
@@ -265,11 +259,14 @@ function BlogEditor(props) {
       k++;
     }
     for (let i = 0; i < tmpimgsrc.length; i++) {
-      await axios.get(tmpimgsrc[i])
+      await axios
+        .get(tmpimgsrc[i])
         .then((res) => {
           console.log("이미지 바이트를 가져왔어요~");
           console.log(res);
-          tmploadbyte.push("data:image/" + tmpimgsrctype[i] + ";base64," + res.data);
+          tmploadbyte.push(
+            "data:image/" + tmpimgsrctype[i] + ";base64," + res.data
+          );
           console.log(tmploadbyte[i]);
         })
         .catch((err) => {
@@ -283,27 +280,30 @@ function BlogEditor(props) {
     }
     console.log("달라진 디테일은~");
     console.log(detailAfter);
-  };
+  }
 
   function findImage(isUpdated, imgByteList, imgByteTypeList) {
-    //content 내부의 image를 string 검색으로 찾아냄. 
+    //content 내부의 image를 string 검색으로 찾아냄.
     //해당 이미지들을 imgByteList에 push하고, 해당 이미지의 type들도 imgByteTypeList에 push함.
-    // --> imgByteList , imgByteTypeList 
+    // --> imgByteList , imgByteTypeList
     let start = 0;
     let end = 0;
     let k = 0;
     let tmpContent;
-    if (isUpdated || !(props.isModify)) { //만약 업데이트가 되었거나, props.isModify가 거짓일 경우(글 수정이 아니라 작성 중일 경우)
+    if (isUpdated || !props.isModify) {
+      //만약 업데이트가 되었거나, props.isModify가 거짓일 경우(글 수정이 아니라 작성 중일 경우)
       tmpContent = htmlContent; //tmpContent에 htmlContent 넣어줌.
-    }
-    else { // 글 수정중이고, 업데이트도 되지 않았을 경우
+    } else {
+      // 글 수정중이고, 업데이트도 되지 않았을 경우
       tmpContent = props.loadWritingInfo.detail; //props.loadWritingInfo에서 받아온 기존 글의 detail을 넣어줌.
     }
-    while (tmpContent.indexOf("<img src=\"data:image/", end) != -1) {
-      start = tmpContent.indexOf("<img src=\"data:image/", end);
+    while (tmpContent.indexOf('<img src="data:image/', end) != -1) {
+      start = tmpContent.indexOf('<img src="data:image/', end);
       end = tmpContent.indexOf(">", start);
       imgByteList.push(tmpContent.slice(start + 10, end - 1));
-      imgByteTypeList.push(imgByteList[k].slice(11, imgByteList[k].indexOf(";", 11)));
+      imgByteTypeList.push(
+        imgByteList[k].slice(11, imgByteList[k].indexOf(";", 11))
+      );
       console.log(k + "번째고 저는 이미지바이트에용");
       console.log(start);
       console.log(end);
@@ -324,7 +324,10 @@ function BlogEditor(props) {
       fileName.push(Math.random().toString(36).substring(2, 11));
     }
     for (let i = 0; i < imgByteList.length; i++) {
-      let imgB = imgByteList[i].replace("data:image/" + imgByteTypeList[i] + ";base64,", "");
+      let imgB = imgByteList[i].replace(
+        "data:image/" + imgByteTypeList[i] + ";base64,",
+        ""
+      );
       let bstr = atob(imgB);
       let n = bstr.length;
       let u8arr = new Uint8Array(n);
@@ -333,18 +336,19 @@ function BlogEditor(props) {
       }
       console.log("파일 구조체 만드는중~!");
       console.log(u8arr);
-      let file = new File([u8arr], fileName[i] + "." + imgByteTypeList[i], { type: 'image/' + imgByteTypeList[i], lastModified: new Date() });
+      let file = new File([u8arr], fileName[i] + "." + imgByteTypeList[i], {
+        type: "image/" + imgByteTypeList[i],
+        lastModified: new Date(),
+      });
       console.log(imgB);
       console.log(file);
-      formData_Image.append('file', file);
-      console.log(formData_Image.get('file'));
+      formData_Image.append("file", file);
+      console.log(formData_Image.get("file"));
     }
   }
 
   function postWriting() {
-    console.log(formData_Save.get('content'));
-
-
+    console.log(formData_Save.get("content"));
   }
 
   async function saveHandler() {
@@ -355,17 +359,23 @@ function BlogEditor(props) {
     await findImage(true, imgByteList, imgByteTypeList);
     await makeImageFileStruct(imgByteList, imgByteTypeList);
 
-    if (imgByteList.length != 0) { //이미지가 존재할 때 
+    if (imgByteList.length != 0) {
+      //이미지가 존재할 때
       let htmlContent_after;
       await axios // 이미지 File 객체가 저장 된 formData_Image를 backend에 post.
         .post(SERVER_URL + "/til-service/api/v1/boards/image", formData_Image)
-        .then((res) => { // 이미지 File 객체들이 저장된 주소를 받아와, 기존 htmlContent의 base64 코드를 받아온 url로 대체함.
+        .then((res) => {
+          // 이미지 File 객체들이 저장된 주소를 받아와, 기존 htmlContent의 base64 코드를 받아온 url로 대체함.
           console.log(res);
           res.data.data.map((result) => {
             let tmpUrlList = imgUrlList;
             let tmpNameList = imgNameList;
-            let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
-            let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+            let IMG_URL = result
+              .toString()
+              .replace("http://localhost:8000", SERVER_URL);
+            let imageName = result
+              .toString()
+              .replace("http://localhost:8000/til-service/api/v1/images/", "");
 
             //console.log("유알엘 : " + IMG_URL);
             //console.log("이름 : " + imageName);
@@ -374,18 +384,21 @@ function BlogEditor(props) {
             tmpNameList.push(imageName);
             setImgUrlList([...tmpUrlList]);
             setImgNameList([...tmpNameList]);
-          })
-          imgNameList.map((fileName) => { //formData_Save에 파일 이름(백에 저장된 이름) 저장
-            formData_Save.append('fileName', fileName);
+          });
+          imgNameList.map((fileName) => {
+            //formData_Save에 파일 이름(백에 저장된 이름) 저장
+            formData_Save.append("fileName", fileName);
             console.log("fileName = " + fileName);
-          })
+          });
           // htmlContent의 base64를 url로 대체하고 결과를 formData_Save에 저장
           htmlContent_after = htmlContent;
           for (let i = 0; i < imgUrlList.length; i++) {
-            htmlContent_after = htmlContent_after.toString().replace(imgByteList[i], imgUrlList[i]);
+            htmlContent_after = htmlContent_after
+              .toString()
+              .replace(imgByteList[i], imgUrlList[i]);
           }
           console.log("content..추가했다...");
-          formData_Save.append('content', htmlContent_after);
+          formData_Save.append("content", htmlContent_after);
           console.log(htmlContent_after);
         })
         .catch((err) => {
@@ -395,22 +408,22 @@ function BlogEditor(props) {
         });
       console.log("이미지 유알엘 리스트 : ");
       console.log(imgUrlList);
-    }
-    else { //이미지가 없을 시, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
+    } else {
+      //이미지가 없을 시, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
       console.log("이미지 리스트가 없어용~");
       console.log(htmlContent);
-      formData_Save.append('content', htmlContent);
+      formData_Save.append("content", htmlContent);
     }
     //제목과 공개여부를 formData_Save에 저장
-    formData_Save.append('title', title);
-    formData_Save.append('open', open);
+    formData_Save.append("title", title);
+    formData_Save.append("open", open);
     //tagList의 id를 formData_Save에 추가
     let tmpTagIdList = [];
     selectedTagList.map((item) => {
       tmpTagIdList.push(item.id);
-    })
+    });
     console.log(tmpTagIdList);
-    formData_Save.append('tagId', tmpTagIdList);
+    formData_Save.append("tagId", tmpTagIdList);
 
     //제목, 내용, 공개여부, 태그가 포함 된 formData_Save를 backend에 post.
     await axios
@@ -426,18 +439,16 @@ function BlogEditor(props) {
           console.log(err.response.data);
         }
       });
-
-  };
+  }
 
   useEffect(() => {
     console.log("타이틀은 " + title);
-
-  }, [title])
+  }, [title]);
 
   async function modifyHandler() {
-    // saveHandler와 동일하게 정보를 보냄. 
+    // saveHandler와 동일하게 정보를 보냄.
     // 기존 내용에서 수정되지 않았을 경우를 if문으로 처리해줌.
-    // 이미지를 보낼 때 boardId도 함께 보내줌. 
+    // 이미지를 보낼 때 boardId도 함께 보내줌.
     let imgByteList = [];
     let imgByteTypeList = [];
     console.log("모디파이핸들러입니다!! 안녕하세요><");
@@ -445,20 +456,25 @@ function BlogEditor(props) {
 
     console.log(title);
     console.log(open);
-    if (htmlContent == "") { // content에 변화가 없어 setState로 관리되는 htmlContent가 비어있을 때 
+    if (htmlContent == "") {
+      // content에 변화가 없어 setState로 관리되는 htmlContent가 비어있을 때
       await findImage(false, imgByteList, imgByteTypeList); // findImage에 내용 변화가 없었음을 전달
-    }
-    else { // 내용 변화가 있었을 경우
+    } else {
+      // 내용 변화가 있었을 경우
       await findImage(true, imgByteList, imgByteTypeList); // findImage에 내용 변화가 있었음을 전달
     }
     await makeImageFileStruct(imgByteList, imgByteTypeList);
-    formData_Save.append('open', open);
-    if (title == "") { formData_Save.append('title', props.loadWritingInfo.title); } // 제목에 변화가 없었을 시 기존 제목 formData_Save에 넣어줌.
-    else { formData_Save.append('title', title); }
+    formData_Save.append("open", open);
+    if (title == "") {
+      formData_Save.append("title", props.loadWritingInfo.title);
+    } // 제목에 변화가 없었을 시 기존 제목 formData_Save에 넣어줌.
+    else {
+      formData_Save.append("title", title);
+    }
 
     if (imgByteList.length != 0) {
       let htmlContent_after;
-      formData_Image.append('boardId', props.boardId);
+      formData_Image.append("boardId", props.boardId);
       await axios
         .post(SERVER_URL + "/til-service/api/v1/boards/image", formData_Image)
         .then((res) => {
@@ -466,32 +482,41 @@ function BlogEditor(props) {
           res.data.data.map((result) => {
             let tmpUrlList = imgUrlList;
             let tmpNameList = imgNameList;
-            let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
-            let imageName = result.toString().replace("http://localhost:8000/til-service/api/v1/images/", "");
+            let IMG_URL = result
+              .toString()
+              .replace("http://localhost:8000", SERVER_URL);
+            let imageName = result
+              .toString()
+              .replace("http://localhost:8000/til-service/api/v1/images/", "");
             console.log("유알엘 : " + IMG_URL);
             console.log("이름 : " + imageName);
             tmpUrlList.push(IMG_URL);
             tmpNameList.push(imageName);
             setImgUrlList(tmpUrlList);
             setImgNameList(tmpNameList);
-          })
+          });
           imgNameList.map((fileName) => {
-            formData_Save.append('fileName', fileName);
+            formData_Save.append("fileName", fileName);
             console.log("fileName = " + fileName);
-          })
+          });
 
-          if (htmlContent == "") { // 내용 수정이 없었을 시, props.loadWritingInfo.detail에서 image src 교체
-            console.log("내용수정이 없었네용~ prevContent는 " + props.loadWritingInfo.detail);
+          if (htmlContent == "") {
+            // 내용 수정이 없었을 시, props.loadWritingInfo.detail에서 image src 교체
+            console.log(
+              "내용수정이 없었네용~ prevContent는 " +
+                props.loadWritingInfo.detail
+            );
             htmlContent_after = props.loadWritingInfo.detail;
             //formData_Save.append('content', props.loadWritingInfo.detail);
-          }
-          else {
+          } else {
             htmlContent_after = htmlContent;
           }
           for (let i = 0; i < imgUrlList.length; i++) {
-            htmlContent_after = htmlContent_after.toString().replace(imgByteList[i], imgUrlList[i]);
+            htmlContent_after = htmlContent_after
+              .toString()
+              .replace(imgByteList[i], imgUrlList[i]);
           }
-          formData_Save.append('content', htmlContent_after);
+          formData_Save.append("content", htmlContent_after);
           //console.log("content..추가했다...");
           //console.log(htmlContent_after);
         })
@@ -504,25 +529,32 @@ function BlogEditor(props) {
       console.log(imgUrlList);
       console.log("open은");
       console.log(props.loadWritingInfo.open);
-    }
-    else { //이미지가 없을 시
+    } else {
+      //이미지가 없을 시
       console.log("이미지 리스트가 없어용~");
       console.log(htmlContent);
-      if (htmlContent == "") { // 내용 변화가 없었으므로 기존 내용을 formData_save에 'content' 키값으로 저장
-        console.log("내용수정이 없었네용~ prevContent는 " + props.loadWritingInfo.detail);
-        formData_Save.append('content', props.loadWritingInfo.detail);
-      } else { //, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
-        formData_Save.append('content', htmlContent);
+      if (htmlContent == "") {
+        // 내용 변화가 없었으므로 기존 내용을 formData_save에 'content' 키값으로 저장
+        console.log(
+          "내용수정이 없었네용~ prevContent는 " + props.loadWritingInfo.detail
+        );
+        formData_Save.append("content", props.loadWritingInfo.detail);
+      } else {
+        //, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
+        formData_Save.append("content", htmlContent);
       }
     }
     let tmpTagIdList = [];
     selectedTagList.map((item) => {
       tmpTagIdList.push(item.id);
-    })
+    });
     console.log(tmpTagIdList);
-    formData_Save.append('tagId', tmpTagIdList);
+    formData_Save.append("tagId", tmpTagIdList);
     await axios
-      .post(SERVER_URL + "/til-service/api/v1/boards/" + props.boardId, formData_Save)
+      .post(
+        SERVER_URL + "/til-service/api/v1/boards/" + props.boardId,
+        formData_Save
+      )
       .then((res) => {
         console.log("성공.");
         console.log(res);
@@ -535,13 +567,11 @@ function BlogEditor(props) {
       });
   }
 
-  const tmpSaveHandler = (e) => {
-
-  };
+  const tmpSaveHandler = (e) => {};
 
   const onTitleInputHandler = (e) => {
     setTitle(e.target.value);
-  }
+  };
 
   const onHtmlChangeHandler = (value) => {
     //console.log(htmlContent);
@@ -551,17 +581,14 @@ function BlogEditor(props) {
 
   return (
     <div class="bg-gradient-to-b from-gray-100 w-full h-screen font-test">
-      {
-        showTagMoadl ?
-          (<TagModal
-            setShowTagModal={setShowTagModal}
-            selectedTagList={selectedTagList}
-            setSelectedTagList={setSelectedTagList}
-          />)
-          : (null)
-      }
-      <EditorToolbar
-      />
+      {showTagMoadl ? (
+        <TagModal
+          setShowTagModal={setShowTagModal}
+          selectedTagList={selectedTagList}
+          setSelectedTagList={setSelectedTagList}
+        />
+      ) : null}
+      <EditorToolbar />
       <div class="w-full h-12"></div>
       <div class="relative bg-white w-[66rem] inset-x-1/2 transform -translate-x-1/2 border-r border-l px-[6rem]">
         <input
@@ -584,9 +611,7 @@ function BlogEditor(props) {
       <div class="w-full h-24"></div>
       <div class="flex flex-col justify-between fixed w-full h-28 bottom-0 z-50 ">
         <div class="bg-white border-t border-gray-300 flex gap-3 px-8 h-12 py-2 justify-end items-center">
-          <div class="text-lg text-gray-500 font-test">
-            #
-          </div>
+          <div class="text-lg text-gray-500 font-test">#</div>
           {selectedTagList.map((item) => {
             return (
               <button
@@ -595,18 +620,16 @@ function BlogEditor(props) {
                 onClick={() => {
                   let tmpSelctedTagList = selectedTagList;
                   console.log(tmpSelctedTagList);
-                  tmpSelctedTagList = tmpSelctedTagList.filter((element) => element.id != item.id)
+                  tmpSelctedTagList = tmpSelctedTagList.filter(
+                    (element) => element.id != item.id
+                  );
                   setSelectedTagList(tmpSelctedTagList);
                 }}
               >
-                <div>
-                  {item.name}
-                </div>
-                <div>
-                  x
-                </div>
+                <div>{item.name}</div>
+                <div>x</div>
               </button>
-            )
+            );
           })}
         </div>
         <div class="flex h-16 justify-end items-center gap-5 bg-gray-100 border border-gray-300 px-2">
@@ -621,7 +644,9 @@ function BlogEditor(props) {
           </div>
           <button
             class="rounded-[18px] bg-none border border-gray-400 text-gray-600 font-sbtest px-5 py-2 flex items-center gap-2"
-            onClick={() => { setShowTagModal(true) }}
+            onClick={() => {
+              setShowTagModal(true);
+            }}
           >
             <div class="text-center">태그 추가</div>
             <div class="h-3/5 w-1 border-l border-gray-400"></div>
@@ -639,20 +664,23 @@ function BlogEditor(props) {
             <button
               class="rounded-[18px] bg-gray-700 text-white font-sbtest px-6 py-2 mr-6"
               onClick={() => {
-                modifyHandler()
+                modifyHandler();
                 //navigate("/blog/main/1");
               }}
             >
               수정하기
-            </button>) : (<button
+            </button>
+          ) : (
+            <button
               class="rounded-[18px] bg-gray-700 text-white font-sbtest px-6 py-2 mr-6"
               onClick={() => {
-                saveHandler()
+                saveHandler();
                 //navigate("/blog/main/1");
               }}
             >
               작성하기
-            </button>)}
+            </button>
+          )}
         </div>
       </div>
     </div>

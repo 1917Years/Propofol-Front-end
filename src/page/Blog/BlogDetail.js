@@ -2,7 +2,6 @@ import { React, useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
 import axios from "axios";
-
 import profileImage from "../../assets/img/profile.jpg";
 import ReactQuill from "react-quill";
 import hljs from "highlight.js";

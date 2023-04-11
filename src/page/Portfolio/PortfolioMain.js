@@ -6,9 +6,6 @@ import profileImage from "../../assets/img/profile.jpg";
 import { TagModal } from "../../Component/Modal";
 import { TemplateModal } from "./TemplateModal";
 
-let tmpWorkList = [];
-let tmpAwardList = [];
-let tmpPrjList = [];
 let tmpPrjImgList = [];
 
 function PortfolioMain() {
@@ -89,7 +86,6 @@ function PortfolioMain() {
       startTerm: workStart,
       endTerm: workEnd,
     };
-    tmpWorkList = tmpWork;
     console.log(tmpWork);
 
     await axios
@@ -117,7 +113,6 @@ function PortfolioMain() {
       name: awardName,
       date: awardDate,
     };
-    tmpAwardList = tmpAward;
     console.log(tmpAward);
 
     await axios
@@ -149,7 +144,6 @@ function PortfolioMain() {
       projectSkills: selectedTagList,
       image: prjImg,
     };
-    tmpPrjList = tmpProject;
     console.log(tmpProject);
 
     formData.append("portfolioId", id);
@@ -237,25 +231,6 @@ function PortfolioMain() {
     const regex = /^[0-9\b .]{0,7}$/;
     if (regex.test(e.target.value)) {
       console.log(e.target.value.length);
-
-      /** 비교하려고 했는데 우선 스킵... */
-      // if (e.target.value.length == 4) {
-      //   console.log(parseInt(e.target.value));
-      //   if (
-      //     parseInt(2000) > parseInt(e.target.value) ||
-      //     parseInt(e.target.value) >= parseInt(2023)
-      //   ) {
-      //     setWorkStartMsg(
-      //       "올바른 날짜를 입력해주세요. (2000~2022년 사이의 경력만 작성 가능합니다.)"
-      //     );
-      //     setWorkStartValid(false);
-      //   }
-      // }
-      // if (e.target.value.length == 7) {
-      //   console.log("입력값");
-      //   console.log(e.target.value);
-      // }
-
       setWorkStart(e.target.value);
     }
   };
@@ -330,8 +305,6 @@ function PortfolioMain() {
     if (workStart == null) tmpWork.startTerm = start;
     if (workEnd == null) tmpWork.endTerm = end;
 
-    tmpWorkList = tmpWork;
-
     await axios
       .post(
         SERVER_URL +
@@ -366,10 +339,7 @@ function PortfolioMain() {
     };
     if (awardName == null) tmpAward.name = name;
     if (awardDate == null) tmpAward.date = date;
-
-    tmpAwardList = tmpAward;
-    console.log(tmpAwardList);
-
+    console.log(tmpAward);
     await axios
       .post(
         SERVER_URL + "/ptf-service/api/v1/portfolio/" + id + "/award/" + params,
@@ -448,8 +418,6 @@ function PortfolioMain() {
     console.log(params);
     if (params == null) setWorkStart(start);
     else setWorkStart(params);
-
-    // console.log(workStart);
   };
 
   const onUpdateWorkEndInput = (params, end, e) => {
@@ -659,7 +627,6 @@ function PortfolioMain() {
         })
         .catch((err) => {
           console.log(err);
-          console.log("뭐야 ㅅㅄㅄ");
         });
 
       await axios
