@@ -1,26 +1,22 @@
 import { React, useState, useEffect } from "react";
 import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
-import { useNavigate, Navigate } from "react-router-dom";
 import profileImage from "../assets/img/profile.jpg";
 
 function MyPage() {
   const [userInfo, setUserInfo] = useState([]);
   const [checkProfile, setCheckProfile] = useState(false);
-
+  /*입력*/
   const [nickNameInput, setNickNameInput] = useState("");
   const [pwdInput, setPwdInput] = useState("");
   const [pwdCheckInput, setPwdCheckInput] = useState("");
   const [phoneInput, setPhoneInput] = useState("");
   const [phoneCheckInput, setPhoneCheckInput] = useState("");
-  const [phoneCheckValid, setPhoneCheckValid] = useState(false); // 나중에 백이랑 통신 후 추가
-
+  /*메시지*/
   const [nickNameMsg, setNickNameMsg] = useState("");
   const [pwdMsg, setPwdMsg] = useState("");
   const [pwdCheckMsg, setPwdCheckMsg] = useState("");
-  const [phoneMsg, setPhoneMsg] = useState("");
-  const [phoneCheckMsg, setPhoneCheckMsg] = useState("");
-
+  /*유효성*/
   const [nickNameVaild, setNickNameVaild] = useState(false);
   const [pwdVaild, setPwdVaild] = useState(false);
   const [pwdCheckVaild, setPwdCheckVaild] = useState(false);
@@ -28,49 +24,6 @@ function MyPage() {
 
   const [profileImg, setProfileImg] = useState();
   const [profileType, setProfileType] = useState();
-
-  function updateInfo(data) {
-    console.log("확인");
-    console.log(data);
-    axios
-      .post(
-        SERVER_URL + "/user-service/api/v1/members/update",
-        JSON.stringify(data),
-        {
-          headers: { "Content-Type": "application/json" },
-        }
-      )
-      .then((res) => {
-        console.log("여기 찍힘?");
-        console.log(res);
-      })
-      .catch((err) => {
-        console.log(err);
-        console.log("뭐야 ㅅㅄㅄ");
-        console.log(err.request);
-      });
-  }
-
-  function postNickName(data) {
-    console.log(data);
-    console.log(JSON.stringify(data));
-    axios
-      .post(SERVER_URL + "/user-service/auth/nickname", JSON.stringify(data), {
-        headers: { "Content-Type": "application/json" },
-      })
-      .then((res) => {
-        console.log(res.data.result);
-        setNickNameVaild(true);
-        setNickNameMsg("사용 가능한 닉네임입니다.");
-      })
-      .catch((err) => {
-        console.log(err.request);
-        setNickNameVaild(false);
-        setNickNameMsg(
-          "이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요."
-        );
-      });
-  }
 
   const onNickNameInputHandler = (e) => {
     setNickNameInput(e.target.value);
@@ -87,11 +40,9 @@ function MyPage() {
   const onPasswordInputHandler = (e) => {
     setPwdInput(e.target.value);
     if (e.target.value.length > 16) {
-      //setPwdInput("");
       setPwdMsg("비밀번호가 너무 깁니다. 16글자 이하로 입력해주세요.");
       setPwdVaild(false);
     } else if (e.target.value.length < 8) {
-      //setPwdInput("");
       setPwdMsg("비밀번호가 너무 짧습니다. 8글자 이상으로 입력해주세요.");
       setPwdVaild(false);
     } else {
@@ -102,7 +53,6 @@ function MyPage() {
         setPwdVaild(true);
       } else {
         // 둘 중 하나 없을 시
-        //setPwdInput("");
         setPwdMsg("숫자와 알파벳을 조합한 비밀번호를 입력해주세요.");
         setPwdVaild(false);
       }
@@ -115,7 +65,6 @@ function MyPage() {
       setPwdCheckMsg("");
       setPwdCheckVaild(true);
     } else {
-      // setPwdCheckInput("");
       setPwdCheckMsg("비밀번호가 다릅니다. 다시 한 번 확인해주세요.");
       setPwdCheckVaild(false);
     }
@@ -132,8 +81,6 @@ function MyPage() {
     const regex = /^[0-9\b -]{0,4}$/;
     if (regex.test(e.target.value)) {
       setPhoneCheckInput(e.target.value);
-      //console.log("인증번호 : " + phoneCheckInput);
-      /* 일단 임시로 true로 해놓음. 나중에 백이랑 통신 후 인증 성공 시에만 true로 바꾸고, 실패시엔 false로 바꾸기 */
       setPhoneVaild(true);
     }
   };
@@ -146,12 +93,11 @@ function MyPage() {
   const onProfileInputHandler = (e) => {
     const formData = new FormData();
     formData.append("profile", e.target.files[0]);
-    // console.log(e.target.files[0]);
 
     axios
       .post(SERVER_URL + "/user-service/api/v1/members/profile", formData)
       .then((res) => {
-        console.log("프로필 이미지 확인ㅇㅇㅇ");
+        console.log("프로필 이미지 확인");
         console.log(res.data.data);
         setProfileType(res.data.data.profileType);
         setProfileImg(res.data.data.profileBytes);
@@ -160,18 +106,14 @@ function MyPage() {
       })
       .catch((err) => {
         console.log(err);
-        console.log("뭐야 ㅅㅄㅄ");
         console.log(err.request);
       });
-
-    console.log("여기 찍힘???");
   };
 
   useEffect(() => {
     axios
       .get(SERVER_URL + "/user-service/api/v1/members")
       .then((res) => {
-        console.log("여기 찍힘?");
         let tmpCm = {
           email: res.data.data.email,
           nickname: res.data.data.nickname,
@@ -182,7 +124,6 @@ function MyPage() {
       })
       .catch((err) => {
         console.log(err);
-        console.log("뭐야 ㅅㅄㅄ");
       });
 
     axios
@@ -221,6 +162,46 @@ function MyPage() {
       );
     }
   }, [phoneInput]);
+
+  function updateInfo(data) {
+    console.log("확인");
+    console.log(data);
+    axios
+      .post(
+        SERVER_URL + "/user-service/api/v1/members/update",
+        JSON.stringify(data),
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.log(err.request);
+      });
+  }
+
+  function postNickName(data) {
+    console.log(data);
+    console.log(JSON.stringify(data));
+    axios
+      .post(SERVER_URL + "/user-service/auth/nickname", JSON.stringify(data), {
+        headers: { "Content-Type": "application/json" },
+      })
+      .then((res) => {
+        console.log(res.data.result);
+        setNickNameVaild(true);
+        setNickNameMsg("사용 가능한 닉네임입니다.");
+      })
+      .catch((err) => {
+        console.log(err.request);
+        setNickNameVaild(false);
+        setNickNameMsg(
+          "이미 존재하는 닉네임입니다. 다른 닉네임을 입력해주세요."
+        );
+      });
+  }
 
   return (
     <div class="w-full font-test">

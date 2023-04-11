@@ -18,7 +18,6 @@ function BlogMain() {
 
   const [tmp, setTmp] = useState(false);
   const [writingList, setWritingList] = useState([]);
-  const [searchOption, setSearchOption] = useState("");
   const [streak, setStreak] = useState([]);
   const [workingSum, setWorkingSum] = useState(0);
   const [follower, setFollower] = useState([]);
@@ -178,7 +177,6 @@ function BlogMain() {
   };
 
   useEffect(() => {
-    setSearchOption("제목");
     loadFollowers(1);
     loadStreak();
   }, []);

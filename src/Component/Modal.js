@@ -1,6 +1,6 @@
 import axios from "axios";
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { SERVER_URL } from "../utils/SRC";
 import { fillScheduleStyleList, TimeList } from "./Schedule";
 
@@ -47,13 +47,13 @@ export function ApplyingModal(props) {
     }
     return result;
   }
+
   function loadApplying(page) {
     axios
       .get(SERVER_URL + "/matching-service/api/v1/members/waiting", {
         params: { page: page },
       })
       .then((res) => {
-        console.log(res);
         setTotalPage(res.data.data.totalPageCount);
         setProjectList([...res.data.data.boards]);
       })
@@ -61,23 +61,19 @@ export function ApplyingModal(props) {
         console.log(err.response);
       });
   }
+
   function cancleProject(projectId) {
     axios
       .delete(
         SERVER_URL + "/matching-service/api/v1/members/" + projectId + "/cancel"
       )
       .then((res) => {
-        console.log(res);
         loadApplying(1);
       })
       .catch((err) => {
         console.log(err.response);
       });
   }
-
-  useEffect(() => {
-    console.log(projectList);
-  }, [projectList]);
 
   useEffect(() => {
     loadApplying(1);
@@ -100,7 +96,6 @@ export function ApplyingModal(props) {
           </div>
           <div class="w-full mt-10 flex flex-col border-t border-gray-300">
             {projectList.map((item) => {
-              console.log("뭐야시발");
               return (
                 <div class="flex gap-2 items-center border-b py-1">
                   <div class="px-3 py-2 w-4/5 break-all">
@@ -185,7 +180,6 @@ export function ScheduleViewModal(props) {
   // props -> setShowScheduleViewModal
   let scheduleList = [];
   const day = ["월", "화", "수", "목", "금", "토", "일"];
-  //const [scheduleList, setScheduleList] = useState([]);
   const [scheduleStyleList, setScheduleStyleList] = useState([
     [],
     [],
@@ -195,11 +189,7 @@ export function ScheduleViewModal(props) {
     [],
     [],
   ]);
-  const [selectedSchedule, setSelectedSchedule] = useState({
-    startTime: "",
-    endTime: "",
-    week: "",
-  });
+
   function loadPropsSchedule() {
     let tmpScheduleList = [];
     props.timeTables.map((item) => {
@@ -212,6 +202,7 @@ export function ScheduleViewModal(props) {
       props.timeTables
     );
   }
+
   useEffect(() => {
     console.log(props.timeTables);
     console.log("propssss");
@@ -219,6 +210,7 @@ export function ScheduleViewModal(props) {
 
     loadPropsSchedule();
   }, []);
+
   return (
     <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
       <div class="bg-white w-[38%] min-w-[46rem] min-h-[49rem] h-[60%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
@@ -377,20 +369,22 @@ export function TeamScheduleModal(props) {
     endTime: "",
     week: "",
   });
+
   useEffect(() => {
     if (startTime.length === 4) {
       setStartTime(startTime.replace(/(\d{2})(\d{2})/, "$1:$2"));
     }
   }, [startTime]);
+
   useEffect(() => {
     if (endTime.length === 4) {
       setEndTime(endTime.replace(/(\d{2})(\d{2})/, "$1:$2"));
     }
   }, [endTime]);
+
   function checkSchedule() {
     let err = false;
     const regex = /^([0-9]{2})+:+?([0-9]{2})$/;
-    console.log("ㅎㅇ");
     if (selectedDay == "") {
       setDayMes("요일을 선택해주세요.");
       err = true;
@@ -399,7 +393,6 @@ export function TeamScheduleModal(props) {
     }
     if (!regex.test(startTime)) {
       setStartTimeMes("올바르지 않은 형식입니다.");
-      console.log("ㅅㅂ");
       err = true;
     } else if (
       startTime.slice(0, 2) * 1 < 0 ||
@@ -436,6 +429,7 @@ export function TeamScheduleModal(props) {
     }
     return err;
   }
+
   function addSchedule() {
     if (checkSchedule()) return;
     let tmpScheduleList = scheduleList;
@@ -453,6 +447,7 @@ export function TeamScheduleModal(props) {
       scheduleList
     );
   }
+
   function deleteSchedule(id) {
     let tmpScheduleList = scheduleList;
     for (let i = 0; i < tmpScheduleList.length; i++) {
@@ -471,6 +466,7 @@ export function TeamScheduleModal(props) {
     );
     setSelectedSchedule({ startTime: "", endTime: "", week: "" });
   }
+
   return (
     <div class="fixed bg-black top-0 w-full h-full bg-opacity-[30%] z-[100] flex justify-center items-center">
       <div class="bg-white w-[60%] min-w-[65rem] min-h-[50rem] h-[90%] flex flex-col font-test border rounded-xl shadow-lg px-8 py-5">
@@ -516,7 +512,6 @@ export function TeamScheduleModal(props) {
                                     endTime: item.endTime,
                                     week: week,
                                   });
-                                  //setShowScheduleDetailModal(true);
                                 }}
                               ></button>
                             );
@@ -689,7 +684,6 @@ export function TeamScheduleModal(props) {
               <button
                 class="relative bottom-0 w-full bg-black text-white text-2xl px-4 py-3 rounded-lg font-test "
                 onClick={() => {
-                  //addSchedule()
                   deleteSchedule(selectedSchedule.id);
                 }}
               >
@@ -704,7 +698,7 @@ export function TeamScheduleModal(props) {
 }
 
 export function ScheduleModal(props) {
-  // props -> postSchedule, setShowScheduleModal, 기타등등... 수정끝나면 쓰기
+  // props -> postSchedule, setShowScheduleModal, 기타등등...
   const [startTime, setStartTime] = useState("");
   const [startTimeMes, setStartTimeMes] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -712,6 +706,7 @@ export function ScheduleModal(props) {
   const [selectedDay, setSelectedDay] = useState("");
   const [dayMes, setDayMes] = useState("");
   const day = ["월", "화", "수", "목", "금", "토", "일"];
+
   useEffect(() => {
     if (startTime.length === 4) {
       let st = startTime.replace(/(\d{2})(\d{2})/, "$1:$2");
@@ -719,6 +714,7 @@ export function ScheduleModal(props) {
       props.setStartTime(st);
     }
   }, [startTime]);
+
   useEffect(() => {
     if (endTime.length === 4) {
       let et = endTime.replace(/(\d{2})(\d{2})/, "$1:$2");
@@ -726,6 +722,7 @@ export function ScheduleModal(props) {
       props.setEndTime(et);
     }
   }, [endTime]);
+
   function checkSchedule() {
     let err = false;
     const regex = /^([0-9]{2})+:+?([0-9]{2})$/;
@@ -738,7 +735,6 @@ export function ScheduleModal(props) {
     }
     if (!regex.test(startTime)) {
       setStartTimeMes("올바르지 않은 형식입니다.");
-      console.log("ㅅㅂ");
       err = true;
     } else if (
       startTime.slice(0, 2) * 1 < 0 ||
@@ -901,8 +897,6 @@ export function TagModal(props) {
       })
       .then((res) => {
         let tmptaglist = { tag: [], page: page };
-        // console.log("태그리스트 받아왔어요~");
-        // console.log(res);
         res.data.data.tags.map((item) => {
           tmptaglist.tag.push(item);
         });
@@ -919,6 +913,7 @@ export function TagModal(props) {
         console.log(err.response);
       });
   }
+
   function checkTagList(id, list) {
     for (let i = 0; i < list.length; i++) {
       if (list[i].id == id) {
@@ -927,6 +922,7 @@ export function TagModal(props) {
     }
     return false;
   }
+
   function Page() {
     let endPage = startPage + 9 > totalPage ? totalPage : startPage + 9;
     const result = [];
@@ -961,6 +957,7 @@ export function TagModal(props) {
     }
     return result;
   }
+
   useEffect(() => {
     getTagList(1);
   }, []);

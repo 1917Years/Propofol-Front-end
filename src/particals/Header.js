@@ -1,24 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { SERVER_URL } from "../utils/SRC";
-import logo from "../assets/img/logo_tmp.png";
-import { useNavigate, Navigate } from "react-router-dom";
-import axios from "axios";
-import { getCookie } from "../utils/cookie";
-import { getAccessToken, getRefreshToken, removeJWT } from "../utils/auth";
-import See from "../utils/sse";
+import { useNavigate } from "react-router-dom";
+import { getAccessToken, removeJWT } from "../utils/auth";
+import Sse from "../utils/sse";
 import { getUserDataToken, deleteUserData } from "../utils/user";
 
-function Header({ }) {
+function Header({}) {
   const navigate = useNavigate();
-  const [portfolioId, setPortfolioId] = useState(null);
   const [userMove, setUserMove] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
-
-  // useEffect(() => {
-  //   console.log("쿠키 나와");
-  //   console.log(getCookie("portfolioId"));
-  //   setPortfolioId(getCookie("portfolioId"));
-  // }, [userMove]);
 
   const checkPtf = () => {
     if (getUserDataToken() != null) {
@@ -31,8 +20,7 @@ function Header({ }) {
   useEffect(() => {
     if (getAccessToken() != "no access_token") {
       setIsLogin(true);
-    }
-    else {
+    } else {
       setIsLogin(false);
     }
   }, []);
@@ -70,7 +58,7 @@ function Header({ }) {
             프로젝트
           </button>
         </div>
-        {getAccessToken() != "no access_token" ?
+        {getAccessToken() != "no access_token" ? (
           <div class="flex w-[17%] justify-between">
             <button
               class="relative font-ltest"
@@ -91,10 +79,10 @@ function Header({ }) {
               MYPAGE
             </button>
             <div class="">
-              <See />
+              <Sse />
             </div>
           </div>
-          :
+        ) : (
           <div class="flex w-[12%] justify-between">
             <button
               class="relative font-ltest"
@@ -112,9 +100,8 @@ function Header({ }) {
             >
               회원가입
             </button>
-
           </div>
-        }
+        )}
       </div>
       <div class="h-16"></div>
     </div>

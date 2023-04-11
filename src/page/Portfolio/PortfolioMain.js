@@ -668,7 +668,6 @@ function PortfolioMain() {
           console.log("안녕 나는 두번째...");
           console.log(res);
 
-          console.log("시발");
           console.log(res.data);
 
           if (res.data.profileType == null) {
