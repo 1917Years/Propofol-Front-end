@@ -1,23 +1,16 @@
 import axios from "axios";
 import { React, useState, useEffect } from "react";
-import {
-  useNavigate,
-  Navigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import profileImage from "../../assets/img/profile.jpg";
 import { SERVER_URL } from "../../utils/SRC";
-import { TeamScheduleModal, ScheduleViewModal } from "../../Component/Modal";
+import { ScheduleViewModal } from "../../Component/Modal";
 import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
 import { getUserDataToken } from "../../utils/user";
-import Swal from "sweetalert2";
 
 function ProjectMyDetail() {
   const navigate = useNavigate();
   const [projectDetail, setProjectDetail] = useState({ id: 0, timeTables: [] });
-  //let tagList = [];
   const [tagList, setTagList] = useState([]);
   const id = useParams().id;
   //
@@ -35,7 +28,6 @@ function ProjectMyDetail() {
   const [showScheduleViewModal, setShowScheduleViewModal] = useState(false);
   const [timeTable, setTimeTable] = useState([]);
   const [name, setName] = useState("");
-  //let timeTable;
   const Swal = require("sweetalert2");
 
   function Page(props) {
@@ -115,7 +107,6 @@ function ProjectMyDetail() {
     async function loadRecommendedDev(page) {
       const params = new URLSearchParams();
       params.append("page", page);
-      //console.log(tagList);
       tagList.map((item) => {
         params.append("tagId", item.id);
       });
@@ -548,9 +539,6 @@ function ProjectMyDetail() {
         setTagList([...tmpTagIdList]);
         setProjectDetail(res.data.data);
         setIsLoadingCompleted(true);
-        //loadRecommendedDev(1);
-        //loadApplyDev(1);
-        //loadParticipants(1);
       })
       .catch((err) => {
         console.log(err.response);

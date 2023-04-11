@@ -1,6 +1,6 @@
 import axios from "axios";
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate, useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { SERVER_URL } from "../../utils/SRC";
 import ProjectSearchBar from "../../Component/Project/ProjectSearchBar";
 import { TagModal } from "../../Component/Modal";
@@ -11,8 +11,8 @@ function ProjectSearch() {
   const navigate = useNavigate();
   //
   const [searchParams, setSeratchParams] = useSearchParams();
-  const keyword = searchParams.get('keyword');
-  const tag = searchParams.get('tag');
+  const keyword = searchParams.get("keyword");
+  const tag = searchParams.get("tag");
   //
   const [projectList, setProjectList] = useState([]);
   const [projectTextList, setProejctTextList] = useState([]);
@@ -26,7 +26,7 @@ function ProjectSearch() {
   //
 
   function Page() {
-    let endPage = (startPage + 9 > totalPage ? totalPage : startPage + 9);
+    let endPage = startPage + 9 > totalPage ? totalPage : startPage + 9;
     const result = [];
     console.log(totalPage);
     console.log(endPage);
@@ -42,9 +42,8 @@ function ProjectSearch() {
           >
             {i}
           </button>
-        )
-      }
-      else {
+        );
+      } else {
         result.push(
           <button
             class="pr-2 text-gray-500"
@@ -71,56 +70,53 @@ function ProjectSearch() {
     taglist.map((item) => {
       tmptaglist.push({ name: item.split("_")[1], id: item.split("_")[0] });
       tagIdlist.push(item.split("_")[0]);
-    })
+    });
     setSelectedTagList([...tmptaglist]);
     console.log(taglist);
     console.log(tagIdlist);
     const params = new URLSearchParams();
-    params.append('keyword', keyword);
-    params.append('page', page);
+    params.append("keyword", keyword);
+    params.append("page", page);
     tagIdlist.map((item) => {
-      params.append('tagId', item);
+      params.append("tagId", item);
     });
     console.log(taglist);
-    await axios.get(SERVER_URL + "/matching-service/api/v1/matchings/search?",
-      {
-        params: params
+    await axios
+      .get(SERVER_URL + "/matching-service/api/v1/matchings/search?", {
+        params: params,
       })
       .then((res) => {
-        let tmpProjectList = [], tmpTextList = [];
+        let tmpProjectList = [],
+          tmpTextList = [];
         console.log(res);
         res.data.data.boards.map((item) => {
           tmpProjectList.push(item);
           tmpTextList.push(htmlDetailToText(item.content));
-        })
+        });
         tmpProjectList.map((item) => {
           console.log(item);
-        })
+        });
         setProjectList([...tmpProjectList]);
         setProejctTextList([...tmpTextList]);
         setTotalPage(res.data.data.totalPageCount);
       })
       .catch((err) => {
         console.log(err.response);
-      })
+      });
   }
-
-  let tmpDetail =
-    "절대 잠수타지 않고 끝까지 책임감 있게 함께 지속해나갈 팀원을 구합니다. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절. 잠수 사절.  잠수 사절. 잠수 사절. 잠수 사절.잠수 사절.";
 
   useEffect(() => {
     loadSearchResult(1);
   }, []);
   return (
     <div class="bg-white w-full font-test">
-      {showTagMoadl ?
-        (<TagModal
+      {showTagMoadl ? (
+        <TagModal
           setShowTagModal={setShowTagModal}
           selectedTagList={selectedTagList}
           setSelectedTagList={setSelectedTagList}
-        />)
-        :
-        (null)}
+        />
+      ) : null}
       <div class="relative w-[60rem] inset-x-1/2 transform -translate-x-1/2">
         <div class="relative my-10">
           <ProjectSearchBar
@@ -132,7 +128,9 @@ function ProjectSearch() {
             <ProjectWritingList
               projectList={projectList}
               projectTextList={projectTextList}
-              onWritingClickHandler={(e) => { navigate('/pm/detail/' + e.currentTarget.value) }}
+              onWritingClickHandler={(e) => {
+                navigate("/pm/detail/" + e.currentTarget.value);
+              }}
             />
           </div>
           <div class="mt-5 flex gap-2 justify-center w-full px-2">
@@ -145,24 +143,24 @@ function ProjectSearch() {
                   setSelected(startPage - 10);
                 }
               }}
-            >{"<"}
+            >
+              {"<"}
             </button>
             <Page />
             <button
               class="text-gray-500"
               onClick={() => {
-                if (startPage + 10 <= totalPage) { //totalPage를 넘어가지 않을 경우에만 작동
+                if (startPage + 10 <= totalPage) {
+                  //totalPage를 넘어가지 않을 경우에만 작동
                   setStartPage(startPage + 10);
                   loadSearchResult(startPage + 10);
                   setSelected(startPage + 10);
                 }
               }}
-            >{">"}
+            >
+              {">"}
             </button>
           </div>
-
-
-
         </div>
       </div>
     </div>

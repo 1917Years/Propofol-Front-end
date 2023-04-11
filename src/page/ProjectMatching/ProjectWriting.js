@@ -1,18 +1,17 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import DatePicker from "react-datepicker";
 import { SERVER_URL } from "../../utils/SRC";
 import { TagModal, TeamScheduleModal } from "../../Component/Modal";
 import "react-datepicker/dist/react-datepicker.css";
 import ProjectEditor from "../../Component/Project/ProjectEditor";
 import axios from "axios";
-import Swal from "sweetalert2";
 
 function ProjectWriting() {
   const [isModify, setIsModify] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const [loadingComplete, setLoadingComplete] = useState(false);
-  const writingNo = searchParams.get('No');
+  const writingNo = searchParams.get("No");
   const navigate = useNavigate();
 
   const [title, setTitle] = useState("");
@@ -55,8 +54,8 @@ function ProjectWriting() {
     let start = 0;
     let end = 0;
     let k = 0;
-    while (tmpInfo.content.indexOf("<img src=\"http://", end) != -1) {
-      start = tmpInfo.content.indexOf("<img src=\"http://");
+    while (tmpInfo.content.indexOf('<img src="http://', end) != -1) {
+      start = tmpInfo.content.indexOf('<img src="http://');
       end = tmpInfo.content.indexOf(">", start);
       tmpimgsrc.push(tmpInfo.content.slice(start + 10, end - 1));
       tmpimgsrctype.push(tmpimgsrc[k].slice(-3));
@@ -68,11 +67,14 @@ function ProjectWriting() {
       k++;
     }
     for (let i = 0; i < tmpimgsrc.length; i++) {
-      await axios.get(tmpimgsrc[i])
+      await axios
+        .get(tmpimgsrc[i])
         .then((res) => {
           console.log("이미지 바이트를 가져왔어요~");
           console.log(res);
-          tmploadbyte.push("data:image/" + tmpimgsrctype[i] + ";base64," + res.data);
+          tmploadbyte.push(
+            "data:image/" + tmpimgsrctype[i] + ";base64," + res.data
+          );
           console.log(tmploadbyte[i]);
         })
         .catch((err) => {
@@ -94,7 +96,7 @@ function ProjectWriting() {
     setRecruit(tmpInfo.recruit);
     setContent(tmpInfo.content);
     await setLoadingComplete(true);
-  };
+  }
 
   function findImage(isUpdated, imgByteList, imgByteTypeList) {
     //content 내부의 image를 string 검색으로 찾아냄.
@@ -107,10 +109,11 @@ function ProjectWriting() {
     //
     tmpContent = content;
 
-    if (isUpdated || !(isModify)) { //만약 업데이트가 되었거나, props.isModify가 거짓일 경우(글 수정이 아니라 작성 중일 경우)
+    if (isUpdated || !isModify) {
+      //만약 업데이트가 되었거나, props.isModify가 거짓일 경우(글 수정이 아니라 작성 중일 경우)
       tmpContent = content; //tmpContent에 content 넣어줌.
-    }
-    else { // 글 수정중이고, 업데이트도 되지 않았을 경우
+    } else {
+      // 글 수정중이고, 업데이트도 되지 않았을 경우
       tmpContent = content; //props.loadWritingInfo에서 받아온 기존 글의 detail을 넣어줌.
     }
 
@@ -164,11 +167,10 @@ function ProjectWriting() {
     }
   }
 
-
   async function modifyHandler() {
-    // saveHandler와 동일하게 정보를 보냄. 
+    // saveHandler와 동일하게 정보를 보냄.
     // 기존 내용에서 수정되지 않았을 경우를 if문으로 처리해줌.
-    // 이미지를 보낼 때 boardId도 함께 보내줌. 
+    // 이미지를 보낼 때 boardId도 함께 보내줌.
     const formData_Save = new FormData();
     const formData_Image = new FormData();
     let imgByteList = [];
@@ -177,22 +179,36 @@ function ProjectWriting() {
     console.log("모디파이핸들러입니다!! 안녕하세요><");
     console.log(content);
     console.log(title);
-    if (content == "") { // content에 변화가 없어 setState로 관리되는 htmlContent가 비어있을 때 
+    if (content == "") {
+      // content에 변화가 없어 setState로 관리되는 htmlContent가 비어있을 때
       await findImage(false, imgByteList, imgByteTypeList); // findImage에 내용 변화가 없었음을 전달
-    }
-    else { // 내용 변화가 있었을 경우
+    } else {
+      // 내용 변화가 있었을 경우
       await findImage(true, imgByteList, imgByteTypeList); // findImage에 내용 변화가 있었음을 전달
     }
     await makeImageFileStruct(imgByteList, imgByteTypeList, formData_Image);
-    if (title == "") { formData_Save.append('title', project.title); } // 제목에 변화가 없었을 시 기존 제목 formData_Save에 넣어줌.
-    else { formData_Save.append('title', title); }
+    if (title == "") {
+      formData_Save.append("title", project.title);
+    } // 제목에 변화가 없었을 시 기존 제목 formData_Save에 넣어줌.
+    else {
+      formData_Save.append("title", title);
+    }
     //
-    if (startDate == null) { formData_Save.append("startDate", project.startDate); }
-    else { formData_Save.append("startDate", dateToString(startDate)); }
-    if (endDate == null) { formData_Save.append("startDate", project.startDate); }
-    else { formData_Save.append("endDate", dateToString(endDate)); }
-    if (recruit == "") { formData_Save.append("recruit", project.recruit); }
-    else { formData_Save.append("recruit", recruit); }
+    if (startDate == null) {
+      formData_Save.append("startDate", project.startDate);
+    } else {
+      formData_Save.append("startDate", dateToString(startDate));
+    }
+    if (endDate == null) {
+      formData_Save.append("startDate", project.startDate);
+    } else {
+      formData_Save.append("endDate", dateToString(endDate));
+    }
+    if (recruit == "") {
+      formData_Save.append("recruit", project.recruit);
+    } else {
+      formData_Save.append("recruit", recruit);
+    }
 
     selectedTagList.map((item) => {
       tmpTagIdList.push(item.id);
@@ -202,7 +218,7 @@ function ProjectWriting() {
     //
     if (imgByteList.length != 0) {
       let htmlContent_after;
-      formData_Image.append('boardId', project.id * 1);
+      formData_Image.append("boardId", project.id * 1);
       await axios
         .post(SERVER_URL + "/matching-service/api/v1/images", formData_Image)
         .then((res) => {
@@ -210,52 +226,66 @@ function ProjectWriting() {
           let tmpUrlList = [];
           let tmpNameList = [];
           res.data.data.map((result) => {
-            let IMG_URL = result.toString().replace("http://localhost:8000", SERVER_URL);
-            let imageName = result.toString().replace("http://localhost:8000/matching-service/api/v1/images/", "");
+            let IMG_URL = result
+              .toString()
+              .replace("http://localhost:8000", SERVER_URL);
+            let imageName = result
+              .toString()
+              .replace(
+                "http://localhost:8000/matching-service/api/v1/images/",
+                ""
+              );
             console.log("유알엘 : " + IMG_URL);
             console.log("이름 : " + imageName);
             tmpUrlList.push(IMG_URL);
             tmpNameList.push(imageName);
-          })
+          });
           tmpNameList.map((fileName) => {
-            formData_Save.append('fileName', fileName);
+            formData_Save.append("fileName", fileName);
             console.log("fileName = " + fileName);
-          })
+          });
 
-          if (content == "") { // 내용 수정이 없었을 시, props.loadWritingInfo.detail에서 image src 교체
+          if (content == "") {
+            // 내용 수정이 없었을 시, props.loadWritingInfo.detail에서 image src 교체
             console.log("내용수정이 없었네용~ prevContent는 " + content);
             htmlContent_after = content;
-          }
-          else {
+          } else {
             console.log("내용수정했다!" + content);
             htmlContent_after = content;
           }
           for (let i = 0; i < tmpUrlList.length; i++) {
-            htmlContent_after = htmlContent_after.toString().replace(imgByteList[i], tmpUrlList[i]);
+            htmlContent_after = htmlContent_after
+              .toString()
+              .replace(imgByteList[i], tmpUrlList[i]);
           }
-          formData_Save.append('content', htmlContent_after);
-          console.log(formData_Save.get('content'));
+          formData_Save.append("content", htmlContent_after);
+          console.log(formData_Save.get("content"));
         })
         .catch((err) => {
           if (err.response) {
             console.log(err.response);
           }
         });
-    }
-    else { //이미지가 없을 시
+    } else {
+      //이미지가 없을 시
       console.log("이미지 리스트가 없어용~");
       console.log(content);
-      if (content == "") { // 내용 변화가 없었으므로 기존 내용을 formData_save에 'content' 키값으로 저장
+      if (content == "") {
+        // 내용 변화가 없었으므로 기존 내용을 formData_save에 'content' 키값으로 저장
         console.log("내용수정이 없었네용~ prevContent는 " + content);
-        formData_Save.append('content', content);
-      } else { //, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
+        formData_Save.append("content", content);
+      } else {
+        //, 기존 htmlContent를 그대로 formData_save에 'content' 키값으로 저장
         console.log("씨발");
-        formData_Save.append('content', content);
+        formData_Save.append("content", content);
       }
     }
-    console.log(formData_Save.get('content'));
+    console.log(formData_Save.get("content"));
     await axios
-      .post(SERVER_URL + "/matching-service/api/v1/matchings/" + project.id, formData_Save)
+      .post(
+        SERVER_URL + "/matching-service/api/v1/matchings/" + project.id,
+        formData_Save
+      )
       .then((res) => {
         console.log("성공.");
         console.log(res);
@@ -278,20 +308,21 @@ function ProjectWriting() {
       tmpTagIdList.push(item.id);
     });
 
-    if (title == "") { setErrmsg("제목을 입력해주세요."); }
-    else if (content == "") { setErrmsg("내용을 입력해주세요."); }
-    else if (startDate == null) { setErrmsg("시작 날짜를 선택해주세요."); }
-    else if (endDate == null) { setErrmsg("종료 날짜를 선택해주세요."); }
-    else if (recruit == "") {
+    if (title == "") {
+      setErrmsg("제목을 입력해주세요.");
+    } else if (content == "") {
+      setErrmsg("내용을 입력해주세요.");
+    } else if (startDate == null) {
+      setErrmsg("시작 날짜를 선택해주세요.");
+    } else if (endDate == null) {
+      setErrmsg("종료 날짜를 선택해주세요.");
+    } else if (recruit == "") {
       setErrmsg("모집 인원을 입력해주세요.");
-    }
-    else if (selectedTagList.length == 0) {
+    } else if (selectedTagList.length == 0) {
       setErrmsg("태그를 선택해주세요.");
-    }
-    else if (teamScheduleList.length == 0) {
+    } else if (teamScheduleList.length == 0) {
       setErrmsg("팀 시간표를 생성해주세요.");
-    }
-    else {
+    } else {
       err = 0;
     }
     if (err == -1) {
@@ -300,7 +331,7 @@ function ProjectWriting() {
         confirmButtonText: "",
         confirmButtonColor: "#171717",
         timer: 650,
-        icon: 'error',
+        icon: "error",
         showConfirmButton: false,
         timerProgressBar: false,
       });
@@ -316,10 +347,7 @@ function ProjectWriting() {
     //
     if (formData_Image.getAll("file").length != 0) {
       await axios
-        .post(
-          SERVER_URL + "/matching-service/api/v1/images",
-          formData_Image
-        )
+        .post(SERVER_URL + "/matching-service/api/v1/images", formData_Image)
         .then((res) => {
           console.log(res);
           let content_after = content;
@@ -331,7 +359,10 @@ function ProjectWriting() {
               .replace("http://localhost:8000", SERVER_URL);
             let imageName = result
               .toString()
-              .replace("http://localhost:8000/matching-service/api/v1/images/", "");
+              .replace(
+                "http://localhost:8000/matching-service/api/v1/images/",
+                ""
+              );
             tmpUrlList.push(IMG_URL);
             tmpNameList.push(imageName);
           });
@@ -350,8 +381,7 @@ function ProjectWriting() {
         .catch((err) => {
           console.log(err.response);
         });
-    }
-    else {
+    } else {
       formData_Save.append("content", content);
     }
     console.log(formData_Save.get("content"));
@@ -387,9 +417,9 @@ function ProjectWriting() {
     let keyword = e.currentTarget.value;
     let taglist = "";
     selectedTagList.map((item) => {
-      taglist = taglist + "+" + item.id
-    })
-    if (e.key === 'Enter') {
+      taglist = taglist + "+" + item.id;
+    });
+    if (e.key === "Enter") {
       navigate("/pm/search?keyword=" + keyword + "&tag=" + taglist);
     }
   };
@@ -401,7 +431,8 @@ function ProjectWriting() {
 
   function loadProjectDetail() {
     let tmpInfo;
-    axios.get(SERVER_URL + "/matching-service/api/v1/matchings/" + writingNo)
+    axios
+      .get(SERVER_URL + "/matching-service/api/v1/matchings/" + writingNo)
       .then((res) => {
         console.log(res);
         //setProject(res.data.data);
@@ -413,7 +444,7 @@ function ProjectWriting() {
       })
       .catch((err) => {
         console.log(err.response);
-      })
+      });
   }
 
   useEffect(() => {
@@ -509,56 +540,50 @@ function ProjectWriting() {
             </div>
           </div>
           <div class="mt-4 flex text-lg text-gray-600 font-ltest justify-start gap-10">
-            {isModify ?
-              (null)
-              :
-              (
-                teamScheduleList.length == 0 ?
-                  (<button
-                    class=""
-                    onClick={() => {
-                      setShowTeamScheduleModal(true);
-                    }}
-                  >
-                    팀 시간표 생성{">"}
-                  </button>)
-                  :
-                  (<button
-                    class=""
-                    onClick={() => {
-                      setShowTeamScheduleModal(true);
-                    }}
-                  >
-                    팀 시간표 조회{">"}
-                  </button>)
-
-              )}
+            {isModify ? null : teamScheduleList.length == 0 ? (
+              <button
+                class=""
+                onClick={() => {
+                  setShowTeamScheduleModal(true);
+                }}
+              >
+                팀 시간표 생성{">"}
+              </button>
+            ) : (
+              <button
+                class=""
+                onClick={() => {
+                  setShowTeamScheduleModal(true);
+                }}
+              >
+                팀 시간표 조회{">"}
+              </button>
+            )}
           </div>
           {isModify ? (
-            loadingComplete ?
-              (
-                <>
-                  <div class="w-full mt-6 min-h-[60rem] border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
-                    <ProjectEditor
-                      setContent={setContent}
-                      isModify={isModify}
-                      content={content}
-                    />
-                  </div>
-                  <div class="mt-4 flex justify-end">
-                    <button
-                      class="bg-gray-600 text-white border rounded-lg px-4 py-2"
-                      onClick={() => {
-                        modifyHandler();
-                      }}
-                    >
-                      수정하기
-                    </button>
-                  </div>
-                </>
-              )
-              :
-              (<div>로딩중...</div>)
+            loadingComplete ? (
+              <>
+                <div class="w-full mt-6 min-h-[60rem] border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
+                  <ProjectEditor
+                    setContent={setContent}
+                    isModify={isModify}
+                    content={content}
+                  />
+                </div>
+                <div class="mt-4 flex justify-end">
+                  <button
+                    class="bg-gray-600 text-white border rounded-lg px-4 py-2"
+                    onClick={() => {
+                      modifyHandler();
+                    }}
+                  >
+                    수정하기
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div>로딩중...</div>
+            )
           ) : (
             <>
               <div class="w-full mt-6 min-h-[60rem] border border-gray-300 bg-white text-lg font-ltest min-w-[20rem] ">
