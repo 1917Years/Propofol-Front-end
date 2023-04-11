@@ -1,44 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "animate.css";
-import { useNavigate, Navigate } from "react-router-dom";
+import { useNavigationType } from "react-router-dom";
 import { Link } from "react-scroll";
-import axios from "axios";
-import { SERVER_URL } from "../utils/SRC";
-import {
-  setRefreshTokenToCookie,
-  getRefreshToken,
-  refreshJWT,
-  getAccessToken,
-} from "../utils/auth.js";
-import { setCookie } from "../utils/cookie";
 
-function Mainpage(props) {
-  const navigate = useNavigate();
-  const [userMove, setUserMove] = useState(false);
-
+function Mainpage() {
   const style = {
     backgroundImage:
       "url(https://cdn.discordapp.com/attachments/766266146520563785/980038822052102184/whiteboard_-_1658_Original.mp4)",
   };
-
-  // useEffect(() => {
-  //   console.log("이친구 왜 실행이 안될까...........?");
-  //   if (getAccessToken != "no access_token") {
-  //     axios
-  //       .get(SERVER_URL + "/ptf-service/api/v1/portfolio/checkPortfolio")
-  //       .then((res) => {
-  //         console.log("기존에 포폴 있는지 조회하기");
-  //         console.log(res);
-
-  //         if (res.data.data != "no") {
-  //           setCookie("portfolioId", res.data.data);
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       });
-  //   }
-  // }, [userMove]);
 
   return (
     <div class="text-gray-800 antialiased z-1">

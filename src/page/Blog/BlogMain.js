@@ -1,5 +1,5 @@
 import { React, useState, useEffect } from "react";
-import { useNavigate, Navigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
 import { SERVER_URL } from "../../utils/SRC";
@@ -12,8 +12,6 @@ import { Streak } from "../../Component/Blog/Streak";
 import { TagModal } from "../../Component/Modal";
 import BlogSearchBar from "../../Component/Blog/BlogSearchBar";
 
-let tmpSt = [];
-
 function BlogMain() {
   const navigate = useNavigate();
   const page = useParams().page;
@@ -21,10 +19,7 @@ function BlogMain() {
   const [tmp, setTmp] = useState(false);
   const [writingList, setWritingList] = useState([]);
   const [searchOption, setSearchOption] = useState("");
-  const [tmpStreak, setTmpStreak] = useState([]);
   const [streak, setStreak] = useState([]);
-  const [streakUpdated, setStreakUpdated] = useState(false);
-  const [tmpWorkingSUm, setTmpWorkingSum] = useState(0);
   const [workingSum, setWorkingSum] = useState(0);
   const [follower, setFollower] = useState([]);
   const [followingCount, setFollowingCount] = useState(0);
@@ -42,33 +37,35 @@ function BlogMain() {
   function putNumberToStreak(year, IsLeafYear) {
     let temp = [];
     let day = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    console.log("왜 안오니?");
-
     if (IsLeafYear) {
       for (let i = 1; i <= 366; i++) {
         let tmpDate = numberToDate(year, IsLeafYear, i);
         temp.push({
-          date: tmpDate, day: day[new Date(tmpDate).getDay()], working: 0
+          date: tmpDate,
+          day: day[new Date(tmpDate).getDay()],
+          working: 0,
         });
       }
-    }
-    else {
+    } else {
       for (let i = 1; i <= 365; i++) {
         let tmpDate = numberToDate(year, IsLeafYear, i);
         temp.push({
-          date: tmpDate, day: day[new Date(tmpDate).getDay()], working: 0
+          date: tmpDate,
+          day: day[new Date(tmpDate).getDay()],
+          working: 0,
         });
         //console.log(tmpDate + "일의 요일은 " + day[new Date(tmpDate).getDay()]);
       }
     }
     return temp;
-    //setStreak([...temp]);
   }
 
   function loadStreak() {
-    axios.get(SERVER_URL + "/user-service/api/v1/members/streak")
+    axios
+      .get(SERVER_URL + "/user-service/api/v1/members/streak")
       .then((res) => {
-        let temp, tmpsum = 0;
+        let temp,
+          tmpsum = 0;
         isLeafYear = leafYear(res.data.data.year);
         temp = putNumberToStreak(res.data.data.year, isLeafYear);
         res.data.data.streaks.map((item) => {
@@ -85,28 +82,24 @@ function BlogMain() {
   }
 
   useEffect(() => {
-    console.log("저는 페이지입니다.");
-    console.log(page);
     loadWritings(page);
 
-    axios.get(SERVER_URL + "/til-service/api/v1/members/myBoards?page=" + currentPage)
+    axios
+      .get(
+        SERVER_URL + "/til-service/api/v1/members/myBoards?page=" + currentPage
+      )
       .then((res) => {
         let tmpPageCount = res.data.data.totalPageCount;
         setMaxPageCount(tmpPageCount);
-        console.log("페이지 카운트 최대 몇?");
-        console.log(tmpPageCount);
         let max = tmpPageCount;
         let tmpPgList = [];
         for (let i = 1; i <= max; i++) {
           tmpPgList.push(i);
         }
         setPageList([...tmpPgList]);
-        console.log("페이지 리스트를 보여주시겠어요?");
-        console.log(pageList);
       })
-      .catch((err) => {
-      })
-  }, [page])
+      .catch((err) => {});
+  }, [page]);
 
   useEffect(() => {
     console.log("지금부터 스트릭을 출력해보겠습니다~~");
@@ -114,41 +107,28 @@ function BlogMain() {
   }, [streak]);
 
   function loadWritings(currentPage) {
-    console.log("현재 페이지를 알려주세요");
-    console.log(currentPage)
-    axios.get(SERVER_URL + "/til-service/api/v1/boards/myBoards?page=" + currentPage)
+    axios
+      .get(
+        SERVER_URL + "/til-service/api/v1/boards/myBoards?page=" + currentPage
+      )
       .then((res) => {
-        console.log("저는 글을 로딩하고 있어요");
-        console.log(res);
         let tmpPageCount;
-        if (res.data.data.totalCount == 0)
-          setCheckNoPost(true);
-        else
-          setCheckNoPost(false);
+        if (res.data.data.totalCount == 0) setCheckNoPost(true);
+        else setCheckNoPost(false);
         tmpPageCount = res.data.data.totalPageCount;
-        // if (res.data.data.totalPageCount > 1)
-        //   tmpPageCount = res.data.data.totalPageCount;
-        // else
-        //   tmpPageCount = 1;
         setMaxPageCount(tmpPageCount);
-        console.log("페이지 카운트 최대 몇?");
-        console.log(tmpPageCount);
-        //
-
         let tmpPgList = pageList;
         for (let i = 1; i <= tmpPageCount; i++) {
           tmpPgList.push(i);
         }
         setPageList([...tmpPgList]);
-        console.log("페이지 리스트를 보여주시겠어요?");
-        console.log(pageList);
 
-
-        let tmpWrList = [], tmpTextList = [];
+        let tmpWrList = [],
+          tmpTextList = [];
         res.data.data.boards.map((writing) => {
           let tmpimgtype = null;
           if (writing.imgtype != null) {
-            tmpimgtype = writing.imageType.toString().split('/')[1];
+            tmpimgtype = writing.imageType.toString().split("/")[1];
           }
           let tmpWr;
           tmpWr = {
@@ -162,15 +142,13 @@ function BlogMain() {
             like: writing.recommend,
             comment: writing.commentCount,
             tag: writing.tags == null ? [] : writing.tags,
-          }
-          tmpWr.date = tmpWr.date.substring(0, 10) + "   " + tmpWr.date.substring(11, 16);
+          };
+          tmpWr.date =
+            tmpWr.date.substring(0, 10) + "   " + tmpWr.date.substring(11, 16);
           tmpTextList.push(htmlDetailToText(writing.content));
-          console.log("아이디는 " + tmpWr.id);
           tmpWrList.push(tmpWr);
           setWritingList([...tmpWrList]);
           setTmp(!tmp);
-          console.log("tmpWR : ");
-          console.log(tmpWr);
         });
         setWritingTextList([...tmpTextList]);
       })
@@ -183,53 +161,33 @@ function BlogMain() {
     console.log("현재 페이지를 알려주겠니?");
     console.log(page);
     navigate("/blog/main/" + page);
-  }
+  };
 
   const onPreviousPageHandler = () => {
-    var iPage = parseInt(page);
-    var previousPage = iPage - 1;
-    if (previousPage == 0)
-      navigate("/blog/main/" + page);
-    else
-      navigate("/blog/main/" + previousPage);
-  }
+    let iPage = parseInt(page);
+    let previousPage = iPage - 1;
+    if (previousPage == 0) navigate("/blog/main/" + page);
+    else navigate("/blog/main/" + previousPage);
+  };
 
   const onNextPageHandler = () => {
-    var iPage = parseInt(page);
-    var nextPage = iPage + 1;
-    console.log("뭐야");
-    console.log(nextPage);
-    console.log(maxPageCount);
-    if (nextPage > maxPageCount)
-      navigate("/blog/main/" + page);
-    else
-      navigate("/blog/main/" + nextPage);
-
-  }
+    let iPage = parseInt(page);
+    let nextPage = iPage + 1;
+    if (nextPage > maxPageCount) navigate("/blog/main/" + page);
+    else navigate("/blog/main/" + nextPage);
+  };
 
   useEffect(() => {
-    // axios
-    //   .get(SERVER_URL + "/user-service/api/v1/members/follower")
-    //   .then((res) => {
-    //     console.log("팔로워 조회");
-    //     console.log(res);
-    //     setFollowingCount(res.data.data);
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //     console.log("뭐야 ㅅㅄㅄ");
-    //   });
-
     setSearchOption("제목");
     loadFollowers(1);
-    // setCurrentPage(page);
-    // loadWritings(currentPage);
     loadStreak();
   }, []);
 
   function loadFollowers(page) {
-    axios.get(SERVER_URL + "/user-service/api/v1/subscribe/followers",
-      { params: { page: page } })
+    axios
+      .get(SERVER_URL + "/user-service/api/v1/subscribe/followers", {
+        params: { page: page },
+      })
       .then((res) => {
         console.log(res);
         setFollower(res.data.data.data);
@@ -237,20 +195,18 @@ function BlogMain() {
       })
       .catch((err) => {
         console.log(err.response);
-      })
+      });
   }
 
   return (
     <div class="bg-white w-full h-screen font-test ">
-      {showTagMoadl ?
-        (<TagModal
+      {showTagMoadl ? (
+        <TagModal
           setShowTagModal={setShowTagModal}
           selectedTagList={selectedTagList}
           setSelectedTagList={setSelectedTagList}
-        />)
-        :
-        (null)
-      }
+        />
+      ) : null}
       <div class="relative w-[80rem] inset-x-1/2 transform -translate-x-1/2 mt-10 border-b border-gray-200 pb-5">
         <BlogSearchBar
           setShowTagModal={setShowTagModal}
@@ -261,14 +217,15 @@ function BlogMain() {
         <div class="flex flex-col items-center w-[22rem]">
           <div class="relative pt-10 flex items-start h-full border-r border-gray-200 pr-5 flex-col gap-5 pb-6">
             <div class="text-[2.5rem] font-btest text-center text-gray-400 font-test">
-              <a class="text-indigo-400 text-[2.75rem]">T</a>oday <a class="text-indigo-400 text-[2.75rem]">I</a>{" "}
+              <a class="text-indigo-400 text-[2.75rem]">T</a>oday{" "}
+              <a class="text-indigo-400 text-[2.75rem]">I</a>{" "}
               <a class="text-indigo-400 text-[2.75rem]">L</a>earned
             </div>
             <div class="w-full flex flex-col items-center gap-2 text-gray-600 border-b border-gray-200 pb-5">
               <button
                 class="text-gray-500 font-sbtest rounded-lg border border-gray-300 w-full h-full py-2 shadow-[0_3px_3px_0px_rgba(0,0,0,0.055)]"
                 onClick={() => {
-                  navigate('/blog/writing');
+                  navigate("/blog/writing");
                 }}
               >
                 오늘 학습한 내용 쓰러가기 📒
@@ -276,12 +233,21 @@ function BlogMain() {
             </div>
             <div class="flex flex-col gap-2 items-cetenr w-full text-gray-500">
               <div class="text-gray-700 text-xl font-sbtest">Follower</div>
-              <div class="flex gap-1 text-center">✨ <div class="flex"><div class="text-indigo-400">{followingCount}</div>명이 내 블로그를 구독하고 있어요!</div></div>
+              <div class="flex gap-1 text-center">
+                ✨{" "}
+                <div class="flex">
+                  <div class="text-indigo-400">{followingCount}</div>명이 내
+                  블로그를 구독하고 있어요!
+                </div>
+              </div>
               <div class="flex flex-col gap-2 pl-5 border-l-[6px] border-gray-200 font-ltest text-lg">
                 {follower.map((item) => {
                   return (
-                    <div class="flex items-center gap-2"><div class="w-6 h-6 rounded-full bg-gray-300"></div><div>{item.nickname}</div></div>
-                  )
+                    <div class="flex items-center gap-2">
+                      <div class="w-6 h-6 rounded-full bg-gray-300"></div>
+                      <div>{item.nickname}</div>
+                    </div>
+                  );
                 })}
                 <div class="w-fit self-center flex gap-2 border rounded-lg py-1 px-2 font-sbtest">
                   <Page />
@@ -291,26 +257,31 @@ function BlogMain() {
           </div>
         </div>
         <div class="w-[60rem] pt-5">
-
           <div class="flex flex-col gap-10 pt-6">
             <section className="Streak grow">
-              <Streak
-                workingSum={workingSum}
-                streak={streak}
-              />
+              <Streak workingSum={workingSum} streak={streak} />
             </section>
           </div>
 
           <div class="mt-10 border rounded-lg">
             {
               <div class="flex justify-center">
-                <div class={checkNoPost == true ? "my-10 m-auto text-center"
-                  : "hidden"}>{checkNoPost == true ? "아직 아무 글도 작성하지 않았어요 😥" : ""}</div>
+                <div
+                  class={
+                    checkNoPost == true ? "my-10 m-auto text-center" : "hidden"
+                  }
+                >
+                  {checkNoPost == true
+                    ? "아직 아무 글도 작성하지 않았어요 😥"
+                    : ""}
+                </div>
               </div>
             }
             <BlogWritingList
               writingList={writingList}
-              onWritingClickHandler={(e) => { navigate('/blog/detail/' + e.currentTarget.value) }}
+              onWritingClickHandler={(e) => {
+                navigate("/blog/detail/" + e.currentTarget.value);
+              }}
               writingTextList={writingTextList}
             />
           </div>
@@ -319,38 +290,68 @@ function BlogMain() {
               <ul class="inline-flex items-center -space-x-px">
                 <li>
                   <button
-                    onClick={() => { onPreviousPageHandler() }}
-                    class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd"></path></svg>
+                    onClick={() => {
+                      onPreviousPageHandler();
+                    }}
+                    class="block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
                   </button>
                 </li>
 
-                {
-                  pageList.map((page) => {
-                    return (
-                      <li>
-                        <button
-                          onClick={() => { onCurrentPageHandler(page) }}
-                          class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                        >{page}</button>
-                      </li>
-                    );
-                  })
-                }
+                {pageList.map((page) => {
+                  return (
+                    <li>
+                      <button
+                        onClick={() => {
+                          onCurrentPageHandler(page);
+                        }}
+                        class="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                      >
+                        {page}
+                      </button>
+                    </li>
+                  );
+                })}
 
                 <li>
                   <button
-                    onClick={() => { onNextPageHandler() }}
-                    class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
-                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path></svg>
+                    onClick={() => {
+                      onNextPageHandler();
+                    }}
+                    class="block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+                  >
+                    <svg
+                      class="w-5 h-5"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                        clip-rule="evenodd"
+                      ></path>
+                    </svg>
                   </button>
                 </li>
               </ul>
             </nav>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 }
 

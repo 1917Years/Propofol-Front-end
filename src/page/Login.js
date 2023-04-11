@@ -2,8 +2,13 @@ import { React, useState } from "react";
 import axios from "axios";
 import { SERVER_URL } from "../utils/SRC";
 import { useNavigate, Navigate } from "react-router-dom";
-import Cookies from 'universal-cookie';
-import { setRefreshTokenToCookie, setAccessTokenToCookie, getRefreshToken, getAccessToken } from "../utils/auth.js"
+import Cookies from "universal-cookie";
+import {
+  setRefreshTokenToCookie,
+  setAccessTokenToCookie,
+  getRefreshToken,
+  getAccessToken,
+} from "../utils/auth.js";
 import { setUserDataCookie } from "../utils/user";
 
 const cookies = new Cookies();
@@ -14,31 +19,16 @@ export function setRefreshTokenToCookie(refresh_token) { //나중에 로그아�
 }
 */
 
-function Login(props) {
-  const postLogin = async ({
-    data,
-    setSync,
-    setLoginError,
-  }) => {
+function Login() {
+  const postLogin = async ({ data, setLoginError }) => {
     await axios
       .post(SERVER_URL + "/user-service/auth/login", data) //나중에 경로 /user-service/ 추가하기
       .then((res) => {
-        console.log(res);
         setLoginError(false);
         if (res.data.data.accessToken != null) {
-          //const at = res.data.data.accessToken;
-          /*
-          axios.defaults.headers.common['Authorization'] = `Bearer ${at}`;
-          */
           setAccessTokenToCookie(res.data.data.accessToken);
-          console.log(axios.defaults.headers.common['Authorization']);
-          // console.log(getAccessToken());
-          console.log(res.data.data.refreshToken);
           setRefreshTokenToCookie(res.data.data.refreshToken);
-          console.log("refresh Token : ");
-          console.log(getRefreshToken());
           moveToMain(res.data.data.accessToken);
-          console.log(res.data.data.accessToken);
         }
       })
       .catch((err) => {
@@ -56,7 +46,7 @@ function Login(props) {
       .then((res) => {
         console.log(res);
         setUserDataCookie(res.data.data);
-        navigate('/');
+        navigate("/");
       })
       .catch((err) => {
         if (err.response) {
@@ -68,7 +58,6 @@ function Login(props) {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [sync, setSync] = useState(false);
   const [emailError, setEmailError] = useState(false);
   const [pwdError, setPwdError] = useState(false);
   const [loginError, setLoginError] = useState(false);
@@ -84,12 +73,11 @@ function Login(props) {
     <div class="w-full font-test">
       <div className="Header" class="pt-10">
         <div class="mt-20 text-center">
-          <h1 class="text-black font-rumpi text-6xl">
-            Propofol
-          </h1>
+          <h1 class="text-black font-rumpi text-6xl">Propofol</h1>
           <p class="text-2xl opacity-90 font-ltest text-gray-500">
             ( <a class="font-sbtest text-black ">Pro</a>file +{" "}
-            <a class="font-sbtest text-black ">Po</a>rt<a class="font-sbtest text-black">fol</a>io )
+            <a class="font-sbtest text-black ">Po</a>rt
+            <a class="font-sbtest text-black">fol</a>io )
           </p>
         </div>
       </div>
@@ -98,12 +86,14 @@ function Login(props) {
           class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-3 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-xl font-ltest min-w-[20rem]"
           placeholder="아이디"
           onChange={onEmailHandler}
-          type="text" />
+          type="text"
+        />
         <input
           class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 py-3 px-3 border rounded-lg bg-gray-50 focus:outline-0 text-xl font-ltest min-w-[20rem]"
           placeholder="비밀번호"
           onChange={onPasswordHandler}
-          type="password" />
+          type="password"
+        />
         <button
           class="relative inset-x-1/2 transform -translate-x-1/2 w-1/5 rounded-lg bg-black text-white py-3 text-2xl font-sbtest min-w-[20rem]"
           onClick={() => {
@@ -121,7 +111,7 @@ function Login(props) {
             } else {
               setPwdError(false);
             }
-            postLogin({ data, setSync, setLoginError });
+            postLogin({ data, setLoginError });
           }}
         >
           Login
@@ -130,8 +120,10 @@ function Login(props) {
           <div>아직 계정이 없다면? </div>
           <button
             onClick={() => {
-              navigate('/register');
-            }}>회원가입{">"}
+              navigate("/register");
+            }}
+          >
+            회원가입{">"}
           </button>
         </div>
       </div>
@@ -146,16 +138,17 @@ function Login(props) {
             onClick={() => {
               window.location.href =
                 "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=678d756d0781894fae5a6e2baebfd493&redirect_uri=http://localhost:3000/oauth2/kakao/login";
-            }}>
+            }}
+          >
             <img
               src="https://cdn.discordapp.com/attachments/874658668434583655/968415948904210472/kakao_login_medium_wide.png"
               class="w-full align-middle rounded-t-lg"
             ></img>
           </button>
-
         </div>
       </div>
-    </div>);
+    </div>
+  );
 }
 
 export default Login;
